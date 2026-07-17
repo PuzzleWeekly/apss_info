@@ -237,7 +237,8 @@
             <h2 class="text-2xl font-bold mb-3 text-correct flex-shrink-0">Mission Accomplished!</h2>
             
             <div class="flex-grow overflow-y-auto mb-4 flex flex-col items-center">
-                <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md mb-4 bg-gray-200 border-2 border-gray-300">
+                <!-- Changed aspect-video to aspect-square for IG post sized images (1080x1080) -->
+                <div class="w-full max-w-[300px] aspect-square rounded-xl overflow-hidden shadow-md mb-4 bg-gray-200 border-2 border-gray-300">
                     <img id="result-img" src="" alt="Success Image" class="w-full h-full object-cover">
                 </div>
                 <p id="result-desc" class="text-[15px] text-gray-700 leading-relaxed text-left font-medium w-full"></p>
@@ -281,8 +282,8 @@
                 <video id="camera-feed" class="w-full h-full object-cover transform scale-x-[-1]" autoplay playsinline></video>
                 
                 <!-- User Provided Camera Frame Overlay -->
-                <!-- Change src to your exact file path. Must be a PNG with transparent background! -->
-                <img id="camera-frame" src="image/camera_frame.png" onerror="this.src='https://placehold.co/600x800/transparent/6cba65?text=APSS+Frame+(Transparent)'" class="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-10" crossorigin="anonymous">
+                <!-- The src will be dynamically injected via JS based on the chosen path -->
+                <img id="camera-frame" src="" onerror="this.src='https://placehold.co/600x800/transparent/6cba65?text=APSS+Frame+(Transparent)'" class="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-10" crossorigin="anonymous">
                 
                 <!-- Result Image (Hidden until capture) -->
                 <img id="captured-photo" class="hidden absolute top-0 left-0 w-full h-full object-cover z-20">
@@ -317,12 +318,30 @@
                     🔄 Retake
                 </button>
                 <button onclick="finishCameraAndRestart()" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg mt-1">
-                    Play Again
+                    Continue
                 </button>
             </div>
             
             <!-- Hidden Canvas for merging video and frame -->
             <canvas id="photo-canvas" class="hidden"></canvas>
+        </div>
+
+        <!-- 7. Play Again Selection Screen -->
+        <div id="view-play-again" class="view-panel flex-col h-full p-6 text-center justify-center">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full border-4 border-theme flex items-center justify-center bg-green-50 shadow-inner">
+                <span class="text-5xl">🎓</span>
+            </div>
+            <h2 class="text-2xl font-bold text-theme mb-2">Journey Complete!</h2>
+            <p class="text-gray-600 text-sm mb-8">You've successfully simulated your APSS experience. Do you want to explore the other major?</p>
+            
+            <div class="flex flex-col gap-4 w-full">
+                <button onclick="showView('pathSelect')" class="w-full bg-present text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    🔄 Try Another Major
+                </button>
+                <button onclick="showView('intro')" class="w-full bg-gray-200 text-gray-700 font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    🏠 Return to Start
+                </button>
+            </div>
         </div>
 
         <!-- Toast Notification -->
@@ -346,51 +365,51 @@
             onSuccess: null
         };
 
-        // Configuration with revised Mission 1 Target Word ("FIFTY")
+        // Energetic, Simulation-style Game Data
         const gameData = {
             mission1: {
-                title: "Mission 1: The Global Standing",
-                story: "Welcome to the BA (Hons) Scheme in Applied Social Sciences (JS3250)! <br><br>APSS has a strong global reputation. In the 2026 global subject rankings by Times Higher Education, APSS Social Sciences achieved a remarkable rank in the world.<br><br>Can you guess the first part of our ranking?",
+                title: "Mission 1: The Global Stage",
+                story: "BOOM! 🎉 Welcome to PolyU JS3250! You've just stepped into the BA (Hons) Scheme in Applied Social Sciences. Get ready for an amazing 4-year journey!<br><br>Did you know APSS has a massive global reputation? In the 2026 Times Higher Education subject rankings, we achieved a jaw-dropping rank. Can you guess where we stand?",
                 target: "FIFTY",
                 hint: "APSS Ranking: [ _ _ _ _ _ ] TWO",
-                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Ranked+52nd+Globally!",
-                desc: "Excellent! APSS is ranked 52nd in the world! <br><br>Students enter the scheme first, follow a common Year 1 social science curriculum, and then progress to a specific major from Year 2 onwards."
+                img: "public/image/result_m1_ranking.png", // Ensure this exists (1080x1080 png)
+                desc: "YES! Ranked 52nd in the world! 🌍<br><br>APSS provides top-tier international exposure. You've officially started your Year 1 common curriculum, building a rock-solid foundation in social sciences!"
             },
             transition: {
-                title: "Year 1: Common Curriculum",
-                story: "During your first year, you explore core theory, research methods, and diverse social issues. <br><br>This solid foundation allows you to truly understand your passions before you make a crucial decision for your future..."
+                title: "Year 1: Foundation Built",
+                story: "You survived Year 1! 📚 You've explored core theories, research methods, and diverse social issues.<br><br>With this solid foundation, you are now ready to make a crucial decision for your future. It's time to pick your major..."
             },
             mission3_sw: {
-                title: "Mission 3: Social Work Path",
-                story: "You chose the path of a Social Worker! 🤝 <br><br>This is a professionally accredited programme. To graduate, you need 115 academic credits, but there is one crucial hands-on element you must complete.",
+                title: "Mission 3: Hands-On Impact",
+                story: "Welcome to Year 2! You chose the noble path of a Social Worker! 🤝<br><br>This is a professionally accredited programme. To graduate, you need 115 academic credits, but there is one thrilling hands-on challenge awaiting you. 15 clinical credits depend on it!",
                 target: "FIELDWORK",
-                hint: "Crucial practical element (9 letters)",
-                img: "https://placehold.co/800x450/fc8d1e/FFFFFF?text=Fieldwork+Practicum",
-                desc: "Spot on! <strong>FIELDWORK</strong>! <br><br>Graduation requires 15 clinical/field credits, reflecting substantial practicum and professional training to prepare you for real-world challenges."
+                hint: "Crucial practical training element (9 letters)",
+                img: "public/image/result_m3_sw_fieldwork.png", // Ensure this exists (1080x1080 png)
+                desc: "Spot on! FIELDWORK! 🏃‍♂️<br><br>You will undergo substantial practicum, stepping into real-world NGOs and communities, training to become a compassionate and effective social worker."
             },
             mission3_spse: {
-                title: "Mission 3: SPSE Path",
-                story: "You chose Social Policy & Social Entrepreneurship! 💡 <br><br>A unique Dual Degree option allows you to spend 2 years at PolyU and 2 years at the University of Warsaw to earn two degrees!",
+                title: "Mission 3: Global Changemaker",
+                story: "Welcome to Year 2! You chose Social Policy & Social Entrepreneurship! 💡<br><br>Ready to change the system? We offer an incredible Dual Degree option where you spend 2 years at PolyU and 2 years overseas earning TWO degrees! Where is our partner university?",
                 target: "POLAND",
-                hint: "Which country is the Univ. of Warsaw in? (6 letters)",
-                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Dual+Degree+in+Poland",
-                desc: "Correct! <strong>POLAND</strong>! <br><br>By studying in Warsaw, you gain international exposure, with departmental scholarships available for living costs."
+                hint: "University of Warsaw is in... (6 letters)",
+                img: "public/image/result_m3_spse_poland.png", // Ensure this exists (1080x1080 png)
+                desc: "Nailed it! POLAND! ✈️<br><br>By studying in Warsaw, you'll gain massive international exposure and even get a departmental scholarship. Your global changemaker journey has begun!"
             },
             mission4_sw: {
-                title: "Mission 4: Graduation (SW)",
-                story: "Four years have flown by. You've completed your intensive fieldwork and passed all your classes. <br><br>You are now ready to serve in family service, youth service, or medical social service.",
+                title: "Mission 4: Graduation Day (SW)",
+                story: "Flash forward! ⏳ Four intense years have flown by. You survived the fieldwork, aced your classes, and you're wearing your graduation gown.<br><br>You are fully equipped to serve families, youth, and medical sectors. What are you now?",
                 target: "PROFESSIONAL",
-                hint: "You are a registered, qualified... (12 letters)",
-                img: "https://placehold.co/800x450/fc8d1e/FFFFFF?text=Registered+Professional",
-                desc: "Congratulations! You are a <strong>PROFESSIONAL</strong> Social Worker!<br><br>Our graduates secure impactful roles in NGOs, government, and social service agencies."
+                hint: "Registered and qualified... (12 letters)",
+                img: "public/image/result_m4_sw_prof.png", // Ensure this exists (1080x1080 png)
+                desc: "Congratulations! You are a registered PROFESSIONAL Social Worker! 🎓<br><br>From case management to community development in top NGOs and government agencies, you are out there making a real difference in people's lives!"
             },
             mission4_spse: {
-                title: "Mission 4: Graduation (SPSE)",
-                story: "Four years have flown by. You've mastered policy analysis and social enterprise operations. <br><br>You are ready to change the world.",
+                title: "Mission 4: Graduation Day (SPSE)",
+                story: "Flash forward! ⏳ Four years of policy analysis, ESG strategies, and social innovation.<br><br>You might have even taken the Fast-track MSc in ESG! You are wearing your graduation gown, ready to disrupt the status quo. What are you driving?",
                 target: "INNOVATION",
                 hint: "Driving social... (10 letters)",
-                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Social+Innovation+Leaders",
-                desc: "Congratulations! You are driving <strong>INNOVATION</strong>!<br><br>SPSE graduates become policy analysts, social enterprise founders, and leaders in CSR and ESG."
+                img: "public/image/result_m4_spse_innov.png", // Ensure this exists (1080x1080 png)
+                desc: "Congratulations! You are a master of INNOVATION! 🚀<br><br>Whether founding your own social enterprise, driving corporate sustainability (CSR/ESG), or shaping government policy, you are a leader of tomorrow!"
             }
         };
 
@@ -479,6 +498,14 @@
         let currentFacingMode = 'user'; // default to selfie
 
         async function openCameraView() {
+            // Set dynamic camera frame based on path
+            const frameEl = document.getElementById('camera-frame');
+            if (currentPath === 'sw') {
+                frameEl.src = 'public/image/camera_frame_sw.png';
+            } else {
+                frameEl.src = 'public/image/camera_frame_spse.png';
+            }
+
             showView('camera');
             document.getElementById('camera-controls').classList.remove('hidden');
             document.getElementById('result-controls').classList.add('hidden');
@@ -622,8 +649,8 @@
                 videoStream.getTracks().forEach(track => track.stop());
                 videoStream = null;
             }
-            currentPath = "";
-            showView('pathSelect');
+            // Go to Play Again screen instead of directly restarting
+            showView('playAgain');
         }
 
         function renderStory(title, text, onContinue) {
