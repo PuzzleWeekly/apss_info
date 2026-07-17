@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PolyU APSS Information Day - Woodle Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Requested Color Palette */
+            --c-correct: #4bb747;
+            --c-present: #fc8d1e;
+            --c-absent: #919395;
+            --c-theme: #6cba65;
+            
+            /* Supporting Colors */
+            --c-bg: #f3f4f6;
+            --c-panel: #ffffff;
+            --c-text-main: #1f2937;
+            --c-key-default: #d1d5db;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--c-bg);
+            color: var(--c-text-main);
+            /* Mobile no-scroll lock */
+            height: 100dvh; 
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation; /* Prevents double-tap zoom on mobile */
+        }
+
+        /* Utility Color Classes */
+        .bg-theme { background-color: var(--c-theme); }
+        .text-theme { color: var(--c-theme); }
+        .border-theme { border-color: var(--c-theme); }
+        
+        .bg-correct { background-color: var(--c-correct); }
+        .bg-present { background-color: var(--c-present); }
+
+        .woodle-grid {
+            display: grid;
+            gap: 5px;
+            margin: 0 auto;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .woodle-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 55px;
+            max-height: 55px;
+            border: 2px solid var(--c-key-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--c-text-main);
+            transition: transform 0.15s ease, background-color 0.3s, border-color 0.3s, color 0.3s;
+            user-select: none;
+            background-color: var(--c-panel);
+            border-radius: 6px;
+        }
+
+        /* Active/Filled Cell */
+        .woodle-cell.filled {
+            border-color: var(--c-absent);
+        }
+
+        /* Animations */
+        @keyframes pop {
+            0% { transform: scale(0.8); }
+            40% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop { animation: pop 0.1s ease-in-out; }
+
+        @keyframes shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+        @keyframes flipIn {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(-90deg); }
+            100% { transform: rotateX(0); }
+        }
+        .animate-flip { animation: flipIn 0.6s ease-in forwards; }
+
+        /* Cell States (Overrides) */
+        .cell-correct { background-color: var(--c-correct) !important; border-color: var(--c-correct) !important; color: white !important; }
+        .cell-present { background-color: var(--c-present) !important; border-color: var(--c-present) !important; color: white !important; }
+        .cell-absent { background-color: var(--c-absent) !important; border-color: var(--c-absent) !important; color: white !important; }
+
+        /* Keyboard Styles */
+        .key {
+            background-color: var(--c-key-default);
+            color: var(--c-text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        .key:active { transform: scale(0.92); opacity: 0.8; }
+        
+        /* Keyboard State Colors */
+        .key.key-correct { background-color: var(--c-correct) !important; color: white !important; }
+        .key.key-present { background-color: var(--c-present) !important; color: white !important; }
+        .key.key-absent { background-color: var(--c-absent) !important; color: white !important; }
+
+        /* View Management */
+        .view-panel {
+            display: none;
+        }
+        .view-panel.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Fixed Header -->
+    <header class="w-full p-3 flex items-center justify-center bg-theme text-white shadow-md flex-shrink-0 z-10">
+        <h1 class="text-xl font-extrabold tracking-wider drop-shadow-sm">
+            APSS WOODLE
+        </h1>
+    </header>
+
+    <!-- Main Content Area (Mobile bounds) -->
+    <main class="flex-grow flex flex-col relative w-full max-w-lg mx-auto bg-white shadow-xl overflow-hidden">
+        
+        <!-- 1. Intro Screen -->
+        <div id="view-intro" class="view-panel active flex-col h-full p-6 text-center">
+            <div class="flex-grow flex flex-col justify-center items-center">
+                <div class="w-24 h-24 mb-6 rounded-full border-4 border-theme flex items-center justify-center bg-green-50 shadow-inner">
+                    <span class="text-5xl">🎓</span>
+                </div>
+                <h2 class="text-2xl font-bold mb-3 text-theme">Welcome to APSS!</h2>
+                <p class="text-gray-600 mb-8 text-sm px-4">Embark on a journey to discover the BA (Hons) Scheme in Applied Social Sciences (JS3250). Solve the puzzles to reveal your path!</p>
+                
+                <div class="w-full max-w-sm">
+                    <input type="text" id="player-name" placeholder="Enter your name..." 
+                           class="w-full px-4 py-3 rounded-xl bg-gray-100 border-2 border-gray-200 text-gray-800 focus:outline-none focus:border-theme mb-6 text-center text-lg font-semibold placeholder-gray-400 transition-colors">
+                </div>
+            </div>
+            <button onclick="startGame()" class="w-full bg-theme text-white font-bold py-4 px-6 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex-shrink-0">
+                Start Journey
+            </button>
+        </div>
+
+        <!-- 2. Story / Narrative Screen -->
+        <div id="view-story" class="view-panel flex-col h-full p-6">
+            <h2 id="story-title" class="text-xl font-bold mb-3 text-theme border-b-2 border-theme pb-2 flex-shrink-0">Mission Title</h2>
+            <!-- Internal scroll for long stories -->
+            <div class="flex-grow overflow-y-auto mb-4 pr-2">
+                <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium">Story text goes here...</p>
+            </div>
+            <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform flex-shrink-0 text-lg">
+                Continue
+            </button>
+        </div>
+
+        <!-- 3. Woodle Game Screen -->
+        <div id="view-game" class="view-panel flex-col h-full bg-gray-50 pb-2 pt-4">
+            
+            <!-- Hint Box -->
+            <div class="px-4 flex-shrink-0 text-center mb-2">
+                <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-gray-200 inline-block">
+                    <h3 id="game-hint" class="text-[15px] font-bold text-theme">Hint goes here</h3>
+                </div>
+            </div>
+            
+            <!-- Dynamic Grid (Centers flexibly) -->
+            <div class="flex-grow flex items-center justify-center overflow-hidden w-full px-2">
+                <div id="woodle-board" class="woodle-grid"></div>
+            </div>
+
+            <!-- Keyboard (Fixed bottom) -->
+            <div id="keyboard" class="w-full px-1.5 flex-shrink-0 pb-1">
+                <div class="flex justify-center gap-1 mb-1.5">
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="Q">Q</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="W">W</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="E">E</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="R">R</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="T">T</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="Y">Y</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="U">U</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="I">I</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="O">O</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="P">P</button>
+                </div>
+                <div class="flex justify-center gap-1 mb-1.5 px-3">
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="A">A</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="S">S</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="D">D</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="F">F</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="G">G</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="H">H</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="J">J</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="K">K</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="L">L</button>
+                </div>
+                <div class="flex justify-center gap-1 px-0.5">
+                    <button class="key w-[15%] h-11 sm:h-12 text-[10px] font-bold tracking-tighter" data-key="ENTER">ENTER</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="Z">Z</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="X">X</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="C">C</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="V">V</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="B">B</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="N">N</button>
+                    <button class="key flex-1 h-11 sm:h-12 text-sm" data-key="M">M</button>
+                    <button class="key w-[15%] h-11 sm:h-12 text-sm font-bold" data-key="BACKSPACE">⌫</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Result/Success Screen -->
+        <div id="view-result" class="view-panel flex-col h-full p-6 text-center">
+            <h2 class="text-2xl font-bold mb-3 text-correct flex-shrink-0">Mission Accomplished!</h2>
+            
+            <div class="flex-grow overflow-y-auto mb-4 flex flex-col items-center">
+                <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md mb-4 bg-gray-200 border-2 border-gray-300">
+                    <img id="result-img" src="" alt="Success Image" class="w-full h-full object-cover">
+                </div>
+                <p id="result-desc" class="text-[15px] text-gray-700 leading-relaxed text-left font-medium w-full"></p>
+            </div>
+
+            <button id="result-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform flex-shrink-0 text-lg">
+                Next Mission
+            </button>
+        </div>
+
+        <!-- 5. Path Selection Screen -->
+        <div id="view-path-select" class="view-panel flex-col h-full p-6">
+            <div class="text-center flex-shrink-0 mb-4">
+                <h2 class="text-2xl font-bold text-theme">Choose Your Major</h2>
+                <p class="text-gray-600 text-sm mt-2">Year 1 is complete! Progress to your specific award.</p>
+            </div>
+            
+            <div class="flex-grow flex flex-col gap-4 justify-center">
+                <button onclick="selectPath('sw')" class="w-full bg-present text-white font-bold py-8 px-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center">
+                    <span class="text-4xl mb-2 drop-shadow-md">🤝</span>
+                    <span class="text-lg">BA (Hons) in<br>Social Work</span>
+                </button>
+                
+                <button onclick="selectPath('spse')" class="w-full bg-correct text-white font-bold py-8 px-4 rounded-2xl shadow-lg active:scale-95 transition-transform flex flex-col items-center justify-center">
+                    <span class="text-4xl mb-2 drop-shadow-md">💡</span>
+                    <span class="text-lg">BA (Hons) in<br>Social Policy & Social Entrepreneurship</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 6. Camera / Photo Screen -->
+        <div id="view-camera" class="view-panel flex-col h-full p-4 items-center">
+            <div class="text-center flex-shrink-0 mb-2">
+                <h2 class="text-2xl font-bold text-theme">Commemorative Photo</h2>
+                <p class="text-gray-600 text-xs mt-1">Capture your APSS Information Day moment!</p>
+            </div>
+            
+            <!-- Camera Feed Container -->
+            <div id="camera-container" class="relative w-full max-w-sm aspect-[3/4] bg-gray-200 rounded-xl overflow-hidden shadow-lg flex-shrink-0 border-4 border-white mx-auto">
+                <!-- playsinline is crucial for iOS to not open full screen -->
+                <video id="camera-feed" class="w-full h-full object-cover transform scale-x-[-1]" autoplay playsinline></video>
+                
+                <!-- User Provided Camera Frame Overlay -->
+                <!-- Change src to your exact file path. Must be a PNG with transparent background! -->
+                <img id="camera-frame" src="image/camera_frame.png" onerror="this.src='https://placehold.co/600x800/transparent/6cba65?text=APSS+Frame+(Transparent)'" class="absolute top-0 left-0 w-full h-full object-cover pointer-events-none z-10" crossorigin="anonymous">
+                
+                <!-- Result Image (Hidden until capture) -->
+                <img id="captured-photo" class="hidden absolute top-0 left-0 w-full h-full object-cover z-20">
+            </div>
+
+            <!-- Pre-Capture Controls -->
+            <div id="camera-controls" class="w-full flex-grow flex flex-col justify-center items-center gap-3 mt-4">
+                <button onclick="takePhoto()" class="w-16 h-16 bg-correct rounded-full border-4 border-white shadow-[0_0_0_4px_#4bb747] active:scale-95 transition-transform flex-shrink-0 flex items-center justify-center">
+                    📸
+                </button>
+                <div class="flex gap-6 mt-2">
+                    <button onclick="switchCamera()" class="text-gray-500 underline text-sm font-semibold active:text-gray-800">
+                        Switch Camera
+                    </button>
+                    <button onclick="skipCamera()" class="text-gray-400 underline text-sm font-semibold active:text-gray-600">
+                        Skip
+                    </button>
+                </div>
+            </div>
+
+            <!-- Post-Capture Controls -->
+            <div id="result-controls" class="hidden w-full flex-grow flex flex-col justify-end gap-2 mt-2">
+                <div class="flex gap-2">
+                    <button onclick="sharePhoto()" class="flex-1 bg-[#1da1f2] text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base flex items-center justify-center gap-1">
+                        <span>📤</span> Share
+                    </button>
+                    <button onclick="downloadPhoto()" class="flex-1 bg-present text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base flex items-center justify-center gap-1">
+                        <span>⬇️</span> Save
+                    </button>
+                </div>
+                <button onclick="retakePhoto()" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg mt-1">
+                    🔄 Retake
+                </button>
+                <button onclick="finishCameraAndRestart()" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg mt-1">
+                    Play Again
+                </button>
+            </div>
+            
+            <!-- Hidden Canvas for merging video and frame -->
+            <canvas id="photo-canvas" class="hidden"></canvas>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="absolute top-1/4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white font-bold px-6 py-3 rounded-xl shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 text-center w-[80%] max-w-xs">
+            Message
+        </div>
+
+    </main>
+
+    <script>
+        // --- Game State & Data ---
+        let playerName = "";
+        let currentPath = ""; 
+        
+        const MAX_GUESSES = 6;
+        let woodleState = {
+            target: "",
+            guesses: [],
+            currentGuess: "",
+            gameOver: false,
+            onSuccess: null
+        };
+
+        // Configuration with revised Mission 1 Target Word ("FIFTY")
+        const gameData = {
+            mission1: {
+                title: "Mission 1: The Global Standing",
+                story: "Welcome to the BA (Hons) Scheme in Applied Social Sciences (JS3250)! <br><br>APSS has a strong global reputation. In the 2026 global subject rankings by Times Higher Education, APSS Social Sciences achieved a remarkable rank in the world.<br><br>Can you guess the first part of our ranking?",
+                target: "FIFTY",
+                hint: "APSS Ranking: [ _ _ _ _ _ ] TWO",
+                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Ranked+52nd+Globally!",
+                desc: "Excellent! APSS is ranked 52nd in the world! <br><br>Students enter the scheme first, follow a common Year 1 social science curriculum, and then progress to a specific major from Year 2 onwards."
+            },
+            transition: {
+                title: "Year 1: Common Curriculum",
+                story: "During your first year, you explore core theory, research methods, and diverse social issues. <br><br>This solid foundation allows you to truly understand your passions before you make a crucial decision for your future..."
+            },
+            mission3_sw: {
+                title: "Mission 3: Social Work Path",
+                story: "You chose the path of a Social Worker! 🤝 <br><br>This is a professionally accredited programme. To graduate, you need 115 academic credits, but there is one crucial hands-on element you must complete.",
+                target: "FIELDWORK",
+                hint: "Crucial practical element (9 letters)",
+                img: "https://placehold.co/800x450/fc8d1e/FFFFFF?text=Fieldwork+Practicum",
+                desc: "Spot on! <strong>FIELDWORK</strong>! <br><br>Graduation requires 15 clinical/field credits, reflecting substantial practicum and professional training to prepare you for real-world challenges."
+            },
+            mission3_spse: {
+                title: "Mission 3: SPSE Path",
+                story: "You chose Social Policy & Social Entrepreneurship! 💡 <br><br>A unique Dual Degree option allows you to spend 2 years at PolyU and 2 years at the University of Warsaw to earn two degrees!",
+                target: "POLAND",
+                hint: "Which country is the Univ. of Warsaw in? (6 letters)",
+                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Dual+Degree+in+Poland",
+                desc: "Correct! <strong>POLAND</strong>! <br><br>By studying in Warsaw, you gain international exposure, with departmental scholarships available for living costs."
+            },
+            mission4_sw: {
+                title: "Mission 4: Graduation (SW)",
+                story: "Four years have flown by. You've completed your intensive fieldwork and passed all your classes. <br><br>You are now ready to serve in family service, youth service, or medical social service.",
+                target: "PROFESSIONAL",
+                hint: "You are a registered, qualified... (12 letters)",
+                img: "https://placehold.co/800x450/fc8d1e/FFFFFF?text=Registered+Professional",
+                desc: "Congratulations! You are a <strong>PROFESSIONAL</strong> Social Worker!<br><br>Our graduates secure impactful roles in NGOs, government, and social service agencies."
+            },
+            mission4_spse: {
+                title: "Mission 4: Graduation (SPSE)",
+                story: "Four years have flown by. You've mastered policy analysis and social enterprise operations. <br><br>You are ready to change the world.",
+                target: "INNOVATION",
+                hint: "Driving social... (10 letters)",
+                img: "https://placehold.co/800x450/4bb747/FFFFFF?text=Social+Innovation+Leaders",
+                desc: "Congratulations! You are driving <strong>INNOVATION</strong>!<br><br>SPSE graduates become policy analysts, social enterprise founders, and leaders in CSR and ESG."
+            }
+        };
+
+        const views = {
+            intro: document.getElementById('view-intro'),
+            story: document.getElementById('view-story'),
+            game: document.getElementById('view-game'),
+            result: document.getElementById('view-result'),
+            pathSelect: document.getElementById('view-path-select'),
+            camera: document.getElementById('view-camera')
+        };
+        const toastEl = document.getElementById('toast');
+        const boardEl = document.getElementById('woodle-board');
+
+        function hideAllViews() {
+            Object.values(views).forEach(v => v.classList.remove('active'));
+        }
+
+        function showView(viewName) {
+            hideAllViews();
+            views[viewName].classList.add('active');
+        }
+
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.style.opacity = '1';
+            setTimeout(() => { toastEl.style.opacity = '0'; }, 2000);
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if(!nameInput) {
+                showToast("Please enter your name!");
+                return;
+            }
+            playerName = nameInput;
+            playMission1();
+        }
+
+        function playMission1() {
+            renderStory(
+                gameData.mission1.title,
+                `Hello, <strong>${playerName}</strong>!<br><br>` + gameData.mission1.story,
+                () => {
+                    initWoodle(gameData.mission1.target, gameData.mission1.hint, () => {
+                        renderResult(gameData.mission1.img, gameData.mission1.desc, playTransition);
+                    });
+                }
+            );
+        }
+
+        function playTransition() {
+            renderStory(gameData.transition.title, gameData.transition.story, () => showView('pathSelect'));
+        }
+
+        function selectPath(path) {
+            currentPath = path;
+            const data = path === 'sw' ? gameData.mission3_sw : gameData.mission3_spse;
+            renderStory(data.title, data.story, () => {
+                initWoodle(data.target, data.hint, () => {
+                    renderResult(data.img, data.desc, () => playMission4(path));
+                });
+            });
+        }
+
+        function playMission4(path) {
+            const data = path === 'sw' ? gameData.mission4_sw : gameData.mission4_spse;
+            renderStory(data.title, data.story, () => {
+                initWoodle(data.target, data.hint, () => {
+                    renderResult(data.img, data.desc, playEnding);
+                });
+            });
+        }
+
+        function playEnding() {
+            renderStory(
+                "Journey Complete!",
+                `Congratulations, <strong>${playerName}</strong>! 🎓<br><br>You successfully navigated the APSS programme. Your future is bright!<br><br>Let's capture this moment before you try another path!`,
+                openCameraView
+            );
+            document.getElementById('story-btn').textContent = "Take Photo 📸";
+        }
+
+        // --- Camera & Photo Logic ---
+        let videoStream = null;
+        let currentFacingMode = 'user'; // default to selfie
+
+        async function openCameraView() {
+            showView('camera');
+            document.getElementById('camera-controls').classList.remove('hidden');
+            document.getElementById('result-controls').classList.add('hidden');
+            document.getElementById('captured-photo').classList.add('hidden');
+            await startCamera();
+        }
+
+        async function startCamera() {
+            const videoElement = document.getElementById('camera-feed');
+            
+            // Stop existing stream if any
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode }
+                });
+                videoElement.srcObject = videoStream;
+                
+                // Mirror video if selfie cam
+                if (currentFacingMode === 'user') {
+                    videoElement.classList.add('transform', 'scale-x-[-1]');
+                } else {
+                    videoElement.classList.remove('transform', 'scale-x-[-1]');
+                }
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                showToast("Camera access denied or unavailable.");
+            }
+        }
+
+        function switchCamera() {
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+            startCamera();
+        }
+
+        function takePhoto() {
+            if (!videoStream) {
+                showToast("Camera not active!");
+                return;
+            }
+
+            const video = document.getElementById('camera-feed');
+            const frame = document.getElementById('camera-frame');
+            const canvas = document.getElementById('photo-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size to match video resolution
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Handle mirroring for selfie cam
+            if (currentFacingMode === 'user') {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            // Draw video feed
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Reset transform before drawing the frame overlay
+            if (currentFacingMode === 'user') {
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+            }
+
+            // Draw the APSS frame overlay
+            try {
+                ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+            } catch(e) {
+                console.warn("Could not draw frame to canvas (might be a cross-origin issue if testing locally).", e);
+            }
+
+            // Generate image and display
+            const imgData = canvas.toDataURL('image/png');
+            const photoEl = document.getElementById('captured-photo');
+            photoEl.src = imgData;
+            photoEl.classList.remove('hidden');
+
+            // Swap controls
+            document.getElementById('camera-controls').classList.add('hidden');
+            document.getElementById('result-controls').classList.remove('hidden');
+        }
+
+        function downloadPhoto() {
+            const photoEl = document.getElementById('captured-photo');
+            if(!photoEl.src) return;
+            
+            const a = document.createElement('a');
+            a.href = photoEl.src;
+            a.download = `APSS_InfoDay_${playerName.replace(/\s+/g, '_')}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("Photo saved!");
+        }
+
+        async function sharePhoto() {
+            const photoEl = document.getElementById('captured-photo');
+            if(!photoEl.src) return;
+
+            try {
+                // Convert data URL to Blob for sharing
+                const res = await fetch(photoEl.src);
+                const blob = await res.blob();
+                const file = new File([blob], `APSS_InfoDay_${playerName.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'My APSS Info Day Journey',
+                        text: `I just completed my APSS Info Day Journey as ${playerName}!`,
+                        files: [file]
+                    });
+                    showToast("Thanks for sharing!");
+                } else {
+                    // Fallback for browsers/devices that do not support native file sharing
+                    showToast("Sharing not supported on this browser. Please Save the photo instead.");
+                }
+            } catch (error) {
+                console.error("Error sharing:", error);
+                // AbortError happens if the user cancels the share sheet, no need to show an error for that
+                if (error.name !== 'AbortError') {
+                    showToast("Could not share photo.");
+                }
+            }
+        }
+
+        function skipCamera() {
+            finishCameraAndRestart();
+        }
+
+        function retakePhoto() {
+            document.getElementById('captured-photo').classList.add('hidden');
+            document.getElementById('camera-controls').classList.remove('hidden');
+            document.getElementById('result-controls').classList.add('hidden');
+        }
+
+        function finishCameraAndRestart() {
+            // Turn off camera
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            currentPath = "";
+            showView('pathSelect');
+        }
+
+        function renderStory(title, text, onContinue) {
+            document.getElementById('story-title').innerHTML = title;
+            document.getElementById('story-text').innerHTML = text;
+            const btn = document.getElementById('story-btn');
+            btn.textContent = "Continue";
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', onContinue);
+            showView('story');
+        }
+
+        function renderResult(imgUrl, descText, onNext) {
+            document.getElementById('result-img').src = imgUrl;
+            document.getElementById('result-desc').innerHTML = descText;
+            const btn = document.getElementById('result-btn');
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', onNext);
+            showView('result');
+        }
+
+        function initWoodle(targetWord, hint, successCallback) {
+            woodleState.target = targetWord.toUpperCase();
+            woodleState.guesses = [];
+            woodleState.currentGuess = "";
+            woodleState.gameOver = false;
+            woodleState.onSuccess = successCallback;
+            
+            document.getElementById('game-hint').textContent = hint;
+            
+            boardEl.style.gridTemplateColumns = `repeat(${woodleState.target.length}, minmax(0, 1fr))`;
+            
+            // Adjust cell size dynamically based on length to fit screen width
+            let cellSize = woodleState.target.length > 8 ? 32 : (woodleState.target.length > 6 ? 40 : 50);
+            document.documentElement.style.setProperty('--cell-max', `${cellSize}px`);
+            
+            buildBoard();
+            resetKeyboard();
+            showView('game');
+        }
+
+        function buildBoard() {
+            boardEl.innerHTML = '';
+            for (let r = 0; r < MAX_GUESSES; r++) {
+                for (let c = 0; c < woodleState.target.length; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'woodle-cell';
+                    cell.id = `cell-${r}-${c}`;
+                    boardEl.appendChild(cell);
+                }
+            }
+            updateBoard();
+        }
+
+        function updateBoard() {
+            const rows = MAX_GUESSES;
+            const cols = woodleState.target.length;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    
+                    if (r > woodleState.guesses.length || (r === woodleState.guesses.length && c >= woodleState.currentGuess.length)) {
+                        cell.textContent = "";
+                        cell.classList.remove('animate-pop', 'filled');
+                    }
+                    
+                    if (r === woodleState.guesses.length) {
+                        if (c < woodleState.currentGuess.length) {
+                            cell.textContent = woodleState.currentGuess[c];
+                            if(!cell.classList.contains('animate-pop')) cell.classList.add('animate-pop');
+                            cell.classList.add('filled');
+                        }
+                    }
+                }
+            }
+        }
+
+        function submitGuess() {
+            if (woodleState.currentGuess.length !== woodleState.target.length) {
+                showToast("Not enough letters!");
+                shakeCurrentRow();
+                return;
+            }
+
+            const guess = woodleState.currentGuess;
+            const target = woodleState.target;
+            const rowIdx = woodleState.guesses.length;
+            
+            let result = Array(target.length).fill('absent');
+            let targetLetters = target.split('');
+            let guessLetters = guess.split('');
+
+            for (let i = 0; i < target.length; i++) {
+                if (guessLetters[i] === targetLetters[i]) {
+                    result[i] = 'correct';
+                    targetLetters[i] = null;
+                    guessLetters[i] = null;
+                }
+            }
+
+            for (let i = 0; i < target.length; i++) {
+                if (guessLetters[i] !== null) {
+                    let idx = targetLetters.indexOf(guessLetters[i]);
+                    if (idx !== -1) {
+                        result[i] = 'present';
+                        targetLetters[idx] = null;
+                    }
+                }
+            }
+
+            animateRowResult(rowIdx, guess, result, () => {
+                woodleState.guesses.push(guess);
+                woodleState.currentGuess = "";
+                
+                if (guess === target) {
+                    woodleState.gameOver = true;
+                    setTimeout(woodleState.onSuccess, 800);
+                } else if (woodleState.guesses.length >= MAX_GUESSES) {
+                    woodleState.gameOver = true;
+                    showToast(`Mission Failed! The word was ${target}.`);
+                    setTimeout(() => {
+                        initWoodle(woodleState.target, document.getElementById('game-hint').textContent, woodleState.onSuccess);
+                    }, 2000);
+                }
+            });
+        }
+
+        function animateRowResult(rowIdx, guess, result, callback) {
+            let delay = 0;
+            for (let c = 0; c < woodleState.target.length; c++) {
+                const cell = document.getElementById(`cell-${rowIdx}-${c}`);
+                setTimeout(() => {
+                    cell.classList.add('animate-flip');
+                    setTimeout(() => {
+                        cell.classList.add(`cell-${result[c]}`);
+                        updateKeyboardColor(guess[c], result[c]);
+                    }, 300);
+                }, delay);
+                delay += 200;
+            }
+            setTimeout(callback, delay + 400);
+        }
+
+        function shakeCurrentRow() {
+            for (let c = 0; c < woodleState.target.length; c++) {
+                const cell = document.getElementById(`cell-${woodleState.guesses.length}-${c}`);
+                cell.classList.remove('animate-shake');
+                void cell.offsetWidth;
+                cell.classList.add('animate-shake');
+            }
+        }
+
+        function updateKeyboardColor(letter, status) {
+            const keyBtn = document.querySelector(`.key[data-key="${letter}"]`);
+            if(!keyBtn) return;
+            if (keyBtn.classList.contains('key-correct')) return;
+            if (keyBtn.classList.contains('key-present') && status === 'absent') return;
+            keyBtn.classList.remove('key-correct', 'key-present', 'key-absent');
+            keyBtn.classList.add(`key-${status}`);
+        }
+
+        function resetKeyboard() {
+            document.querySelectorAll('.key').forEach(btn => {
+                btn.classList.remove('key-correct', 'key-present', 'key-absent');
+            });
+        }
+
+        function handleKeyPress(key) {
+            if (woodleState.gameOver) return;
+            if (key === 'ENTER') {
+                submitGuess();
+            } else if (key === 'BACKSPACE') {
+                woodleState.currentGuess = woodleState.currentGuess.slice(0, -1);
+                updateBoard();
+            } else if (/^[A-Z]$/.test(key) && woodleState.currentGuess.length < woodleState.target.length) {
+                woodleState.currentGuess += key;
+                updateBoard();
+            }
+        }
+
+        document.querySelectorAll('.key').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevents zoom/scroll on touch
+                handleKeyPress(btn.getAttribute('data-key'));
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!views.game.classList.contains('active')) return;
+            let key = e.key.toUpperCase();
+            if (key === 'ENTER' || key === 'BACKSPACE') {
+                handleKeyPress(key);
+            } else if (/^[A-Z]$/.test(key) && key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                handleKeyPress(key);
+            }
+        });
+
+        document.getElementById('player-name').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') startGame();
+        });
+    </script>
+</body>
+</html>
