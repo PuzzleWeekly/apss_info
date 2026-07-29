@@ -66,6 +66,7 @@
             display: none;
         }
 
+        /* Swing Meter Styles */
         .meter-container {
             width: 100%;
             height: 48px;
@@ -95,77 +96,89 @@
             z-index: 10;
         }
 
-        .match-btn {
-            transition: all 0.2s ease;
-            border: 2px solid #e2e8f0;
-        }
-        .match-btn.selected {
-            border-color: #fc8d1e;
-            background-color: #fff7ed;
-            transform: scale(1.02);
-        }
-        .match-btn.matched {
-            border-color: #4bb747;
-            background-color: #f0fdf4;
-            color: #166534;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        .match-btn.wrong {
-            animation: shake 0.4s;
-            border-color: #ef4444;
-            background-color: #fef2f2;
-        }
-
-        .timer-bar-container {
+        /* Memory Game Styles */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             width: 100%;
-            height: 12px;
-            background-color: #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
+            perspective: 1000px;
         }
-        .timer-bar {
+        .memory-card {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .memory-card-inner {
+            position: absolute;
+            width: 100%;
             height: 100%;
-            background-color: #4bb747;
+            text-align: center;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card.matched .memory-card-inner {
+            transform: rotateY(180deg) scale(0.95);
+            box-shadow: 0 0 15px rgba(75, 183, 71, 0.5);
+        }
+        .memory-front, .memory-back {
+            position: absolute;
             width: 100%;
-            transition: width 0.1s linear;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.3;
         }
-        .timer-bar.warning { background-color: #fc8d1e; }
-        .timer-bar.danger { background-color: #ef4444; }
-
-        .timeline-slot {
-            border: 2px dashed #cbd5e1;
-            transition: all 0.2s;
+        .memory-front {
+            background: linear-gradient(135deg, #6cba65, #4bb747);
+            color: white;
+            font-size: 24px;
         }
-        .timeline-slot.filled {
-            border: 2px solid #4bb747;
-            background-color: #f0fdf4;
-        }
-        
-        .esg-card {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .selectable-item {
-            transition: all 0.2s;
+        .memory-back {
+            background-color: white;
+            color: #334155;
+            transform: rotateY(180deg);
             border: 2px solid #e2e8f0;
         }
-        .selectable-item.active {
-            border-color: #4bb747;
-            background-color: #f0fdf4;
-        }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        /* Chat Styles (Professional Boundaries) */
+        .chat-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s;
         }
+        .chat-client { background-color: #f1f5f9; color: #334155; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-player { background-color: #6cba65; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        /* Catcher Styles */
+        .falling-item { position: absolute; padding: 8px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; white-space: nowrap; transform: translateX(-50%); }
+        .catcher-player { position: absolute; bottom: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
+        
+        /* ESG Card Styles */
+        .esg-card { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        
+        <!-- INTRO VIEW -->
         <div id="view-intro" class="view-panel active flex-col items-center justify-center p-6 bg-theme text-white relative overflow-hidden">
             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
             <div class="relative z-10 w-full max-w-sm flex flex-col items-center text-center">
@@ -185,26 +198,33 @@
             </div>
         </div>
 
-        <div id="view-story" class="view-panel h-full flex-col p-6">
+        <!-- STORY VIEW -->
+        <div id="view-story" class="view-panel h-full flex-col p-6 bg-gray-50">
             <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0 pt-4"></h2>
-            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <p id="story-text" class="text-[16px] text-gray-700 leading-relaxed font-medium"></p>
             </div>
-            <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex-shrink-0">
-                Continue
-            </button>
+            <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
+                <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Continue</button>
+            </div>
         </div>
 
+        <!-- SWING GAME (MISSION 1) -->
         <div id="view-swing-game" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Mission: JUPAS Challenge</h3>
+                <h3 class="font-bold text-gray-700">Pre-U: JUPAS Challenge</h3>
             </div>
             <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
                 <p id="swing-hint" class="text-sm text-blue-800 font-semibold text-center"></p>
             </div>
             <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8">
+                <div class="w-full flex gap-2 mb-4">
+                    <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-3" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                </div>
                 <div class="text-center w-full">
-                    <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target Best 5: Mid-20s</div>
+                    <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target</div>
                     <div id="swing-score-display" class="font-bold text-2xl text-gray-800 transition-colors h-8">Waiting...</div>
                 </div>
                 <div class="w-full relative py-4">
@@ -219,151 +239,73 @@
             </div>
         </div>
 
-        <div id="view-match-game" class="view-panel h-full flex-col bg-white">
+        <!-- MEMORY GAME (YEAR 1) -->
+        <div id="view-year1-memory" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 id="match-game-title" class="font-bold text-gray-700">Mission Match</h3>
+                <h3 class="font-bold text-gray-700">Year 1: Social Issues & Solutions</h3>
             </div>
-            <div id="match-game-hint-container" class="px-4 py-3 bg-green-50 border-b border-green-100 flex-shrink-0">
-                <p id="match-game-hint" class="text-sm text-green-800 font-semibold text-center"></p>
+            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100 flex-shrink-0 flex justify-between items-center">
+                <p class="text-sm text-purple-800 font-semibold">Match Issue with Solution!</p>
+                <div class="font-bold text-theme bg-white px-3 py-1 rounded-full shadow-sm" id="memory-timer">20s</div>
             </div>
-            <div class="flex-grow p-4 flex flex-col justify-center gap-6 overflow-y-auto">
-                <div class="flex gap-4 h-full max-h-[400px]">
-                    <div class="flex-1 flex flex-col gap-3" id="match-left"></div>
-                    <div class="flex-1 flex flex-col gap-3" id="match-right"></div>
+            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-8 bg-gray-50">
+                <div class="memory-grid" id="memory-grid">
+                    <!-- Cards injected via JS -->
                 </div>
             </div>
         </div>
 
-        <div id="view-sw-assessment" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 1: Case Assessment</h3>
-            </div>
-            <div class="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex-shrink-0">
-                <p class="text-sm text-indigo-800 font-semibold text-center">Read the case and select the 3 primary risk factors!</p>
-            </div>
-            <div class="flex-grow p-4 overflow-y-auto flex flex-col gap-4">
-                <div class="bg-gray-100 p-4 rounded-xl border-l-4 border-theme shadow-sm">
-                    <p class="text-sm text-gray-500 font-bold mb-1">CLIENT PROFILE: MR. CHAN (80)</p>
-                    <p class="text-gray-800 text-sm font-medium leading-relaxed">"Mr. Chan lives alone on the 6th floor of a walk-up building. His wife passed away last month. Lately, he hasn't been leaving the house because his knees hurt on the stairs, and he feels he has nobody to talk to anymore."</p>
-                </div>
-                <div class="mt-2">
-                    <p class="text-xs text-gray-500 font-bold mb-2 uppercase tracking-wide">Select 3 Needs/Risks:</p>
-                    <div id="sw-assessment-tags" class="flex flex-wrap gap-2">
-                        <!-- Tags injected by JS -->
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 bg-gray-50 flex-shrink-0 border-t border-gray-200">
-                <button id="btn-submit-assessment" onclick="checkSwAssessment()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl shadow-md transition-all text-lg pointer-events-none">Select 3 items (0/3)</button>
-            </div>
-        </div>
-        
-        <div id="view-sw-crisis" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 3: Crisis Intervention</h3>
-            </div>
-            <div class="px-4 py-3 bg-red-50 border-b border-red-100 flex-shrink-0">
-                <p class="text-sm text-red-800 font-semibold text-center">A runaway youth is distressed. Tap the intervention steps in the correct professional order!</p>
-            </div>
-            <div class="flex-grow p-4 flex flex-col gap-4 overflow-y-auto">
-                <div class="flex flex-col gap-2 mb-2">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">1</div>
-                        <div id="sw-slot-0" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">2</div>
-                        <div id="sw-slot-1" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">3</div>
-                        <div id="sw-slot-2" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">4</div>
-                        <div id="sw-slot-3" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                </div>
-                <div class="border-t border-gray-100 pt-4 mt-auto">
-                    <p class="text-xs text-gray-500 font-bold mb-2 uppercase tracking-wide text-center">Steps to Arrange:</p>
-                    <div id="sw-crisis-cards" class="flex flex-col gap-2"></div>
+        <!-- MAJOR SELECT -->
+        <div id="view-major-select" class="view-panel h-full flex-col p-6 bg-gray-50">
+            <h2 class="text-2xl font-bold mb-4 text-theme flex-shrink-0 pt-4 text-center">Choose Your Path</h2>
+            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-6">
+                <p class="text-[16px] text-gray-700 leading-relaxed font-medium">You have completed Year 1! Now, you must choose your major for the rest of your APSS journey.</p>
+                <div class="w-full flex flex-col gap-4">
+                    <button onclick="startMajor('sw')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>🤝</span> Social Work (SW)
+                    </button>
+                    <button onclick="startMajor('spse')" class="w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>💡</span> SPSE
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div id="view-quiz-game" class="view-panel h-full flex-col bg-white">
+        <!-- CATCHER GAME (YEAR 2/3 - DUAL MODE) -->
+        <div id="view-catcher" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 4: Fieldwork II & Registration</h3>
+                <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
             </div>
-            <div class="px-4 py-3 bg-orange-50 border-b border-orange-100 flex-shrink-0">
-                <p class="text-sm text-orange-800 font-semibold text-center">Choose the most empathetic response before time runs out!</p>
+            <div class="px-4 py-2 bg-yellow-50 flex-shrink-0 flex justify-between items-center border-b border-yellow-100">
+                <span class="text-sm font-bold text-yellow-800" id="catcher-instruction">Catch items!</span>
+                <span id="catcher-score" class="font-bold text-lg text-theme">0/5</span>
             </div>
-            <div class="flex-grow p-6 flex flex-col gap-4 overflow-y-auto">
-                <div class="timer-bar-container mt-2 flex-shrink-0">
-                    <div id="quiz-timer" class="timer-bar"></div>
-                </div>
-                <div class="bg-gray-100 p-5 rounded-xl border-l-4 border-theme shadow-sm mt-4 flex-shrink-0">
-                    <p class="text-sm text-gray-500 font-bold mb-1">CLIENT SAYS:</p>
-                    <p class="text-gray-800 italic font-medium">"I feel like I'm failing at everything, no matter how hard I try..."</p>
-                </div>
-                <div id="quiz-options" class="flex flex-col gap-3 mt-4"></div>
+            <div id="catcher-area" class="flex-grow relative overflow-hidden bg-gray-50 touch-none">
+                <div id="catcher-player" class="catcher-player">🎒</div>
+                <!-- Falling items injected here -->
             </div>
         </div>
 
-        <div id="view-spse-timeline" class="view-panel h-full flex-col bg-white">
+        <!-- CHAT GAME (YEAR 4 SW - BOUNDARIES) -->
+        <div id="view-sw-chat" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 1: 2+2 Global Pathway Plan</h3>
+                <h3 class="font-bold text-gray-700">Year 4: Professional Boundaries</h3>
             </div>
-            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100 flex-shrink-0">
-                <p class="text-sm text-purple-800 font-semibold text-center">Tap the milestones in chronological order to plan your Dual Degree!</p>
+            <div class="flex-grow p-4 overflow-y-auto bg-gray-50 flex flex-col" id="chat-container">
+                <!-- Chat messages injected here -->
             </div>
-            <div class="flex-grow p-4 flex flex-col gap-4 overflow-y-auto">
-                <div class="flex flex-col gap-2 mb-2">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">1</div>
-                        <div id="spse-slot-0" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">2</div>
-                        <div id="spse-slot-1" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">3</div>
-                        <div id="spse-slot-2" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 font-bold flex items-center justify-center flex-shrink-0">4</div>
-                        <div id="spse-slot-3" class="timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400">Empty...</div>
-                    </div>
-                </div>
-                <div class="border-t border-gray-100 pt-4 mt-auto">
-                    <p class="text-xs text-gray-500 font-bold mb-2 uppercase tracking-wide text-center">Milestones to Arrange:</p>
-                    <div id="spse-timeline-cards" class="grid grid-cols-2 gap-2"></div>
-                </div>
+            <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0 flex flex-col gap-2" id="chat-options">
+                <!-- Reply buttons injected here -->
             </div>
         </div>
 
-        <div id="view-spse-scholarship" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 2: The Scholarship Pitch</h3>
-            </div>
-            <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
-                <p class="text-sm text-blue-800 font-semibold text-center">You have HKD 100,000! Select 3 activities to maximize your exchange in Poland.</p>
-            </div>
-            <div class="flex-grow p-4 flex flex-col gap-3 overflow-y-auto" id="scholarship-list">
-                <!-- Injected via JS -->
-            </div>
-            <div class="p-4 bg-gray-50 flex-shrink-0 border-t border-gray-200">
-                <button id="btn-submit-scholarship" onclick="checkScholarship()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl shadow-md transition-all text-lg pointer-events-none">Select 3 items (0/3)</button>
-            </div>
-        </div>
-
+        <!-- ESG DECISION MAKER (YEAR 4 SPSE) -->
         <div id="view-spse-esg" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 4: The ESG Decision Maker</h3>
+                <h3 class="font-bold text-gray-700">Year 4: ESG Decision Maker</h3>
             </div>
-            <div class="px-4 py-3 bg-yellow-50 border-b border-yellow-100 flex-shrink-0">
-                <p class="text-sm text-yellow-800 font-semibold text-center">Make ethical corporate choices! Ensure long-term ESG impact.</p>
+            <div class="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex-shrink-0">
+                <p class="text-sm text-indigo-800 font-semibold text-center">Make ethical corporate choices! Ensure long-term ESG impact.</p>
             </div>
             <div class="flex-grow p-6 flex flex-col items-center justify-center gap-6 overflow-hidden relative">
                 <div class="w-full h-8 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300">
@@ -386,6 +328,7 @@
             </div>
         </div>
 
+        <!-- RESULT VIEW -->
         <div id="view-result" class="view-panel h-full flex-col bg-gray-50">
             <div class="flex-shrink-0 w-full aspect-square bg-gray-200 overflow-hidden relative shadow-sm">
                 <img id="result-img" src="" alt="Result" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/6cba65/ffffff?text=Mission+Accomplished'">
@@ -398,6 +341,7 @@
             </div>
         </div>
 
+        <!-- QUIT / ALTERNATIVE VIEW -->
         <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
             <div class="flex-shrink-0 w-full aspect-square bg-gray-200 overflow-hidden relative shadow-sm">
                 <img src="public/image/quit.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
@@ -415,6 +359,7 @@
             </div>
         </div>
 
+        <!-- CAMERA VIEW -->
         <div id="view-camera" class="view-panel h-full flex-col bg-black relative">
             <h2 class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Graduation Photo!</h2>
             <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
@@ -430,6 +375,7 @@
             </div>
         </div>
 
+        <!-- END VIEW -->
         <div id="view-end" class="view-panel h-full flex-col p-6 bg-theme text-white items-center justify-center text-center relative overflow-hidden">
              <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
              <div class="relative z-10 w-full flex flex-col items-center">
@@ -447,12 +393,27 @@
             </div>
         </div>
         
+        <!-- MODALS -->
         <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
                 <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4">💡</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Wait a moment!</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Notice</h3>
                 <p id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
                 <button id="msg-modal-btn" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Got it</button>
+            </div>
+        </div>
+
+        <div id="teacher-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="teacher-modal-content">
+                <div class="flex items-center gap-4 mb-4 border-b border-gray-100 pb-4">
+                    <div class="w-16 h-16 bg-blue-50 border-2 border-blue-100 text-4xl rounded-full flex items-center justify-center shadow-sm">👩‍🏫</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">APSS Teacher</h3>
+                        <p class="text-sm text-theme font-semibold">Hint & Guidance</p>
+                    </div>
+                </div>
+                <p id="teacher-modal-text" class="text-gray-700 mb-6 font-medium leading-relaxed"></p>
+                <button onclick="closeTeacherHint()" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Understood!</button>
             </div>
         </div>
 
@@ -460,38 +421,37 @@
 
     <script>
         let playerName = "";
-        let currentMajor = ""; // 'sw' or 'spse'
+        let currentMajor = "";
         
         const gameData = {
-            mission1: {
-                title: "The JUPAS Challenge",
-                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education 2026 subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready?",
-                swingHint: "Tap STOP when the needle is in the GREEN zone to hit the required DSE Best 5 score (Low to mid-20s)!",
+            preU: {
+                title: "Form 6: Planning for JUPAS",
+                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?"
+            },
+            jupasSuccess: {
                 img: "public/image/result_m1_ranking.png",
                 desc: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort of about 64 students following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. This foundational year allows you to explore your passions before specialising.<br><br>Now, it's time to choose your path for the next 3 years!"
+                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Before you select your major, let's see how well you understand current social problems in Hong Kong and their solutions!"
+            },
+            interstitials: {
+                swYear2: { title: "Years 2 & 3: Trust Building", story: "You chose Social Work! 🤝<br><br>As a social worker, your workload requires balance. You must dedicate time to community programs and case follow-ups, while managing administrative tasks." },
+                swYear4: { title: "Year 4: Professional Boundaries", story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must support distressed clients empathetically while strictly maintaining professional boundaries and emotional balance." },
+                spseYear2: { title: "Years 2 & 3: Social Innovator", story: "You chose SPSE! 💡<br><br>To build a successful social enterprise, you need the right team. You must gather positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors." },
+                spseYear4: { title: "Year 4: ESG Leadership", story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG Decision Maker. Balance corporate profit with ethical social impact to graduate successfully." }
             },
             sw: {
-                mission3: {
-                    img: "public/image/result_m3_sw_fieldwork.png",
-                    desc: "Excellent matching! <strong>FIELDWORK</strong> is the heart of the BA (Hons) in Social Work.<br><br>This professionally accredited programme requires 115 academic credits plus 15 clinical/field credits. You gain hands-on, supervised experience in real-world settings (placements usually in Year 2 and 4), preparing you for professional registration."
-                },
                 mission4: {
                     img: "public/image/result_m4_sw_prof.png",
-                    desc: "You did it! You demonstrated core empathy skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
+                    desc: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
                 }
             },
             spse: {
-                mission3: { 
-                    img: "public/image/result_m3_spse_poland.png",
-                    desc: "Great pitch! Welcome to <strong>POLAND</strong>.<br><br>SPSE students can pursue a Dual Degree, spending 2 years at PolyU and 2 years at the University of Warsaw (Poland)! With departmental scholarships up to <strong>HKD100,000</strong> to help with living costs, you gain a truly global experience and graduate with two degrees!"
-                },
                 mission4: { 
                     img: "public/image/result_m4_spse_innov.png",
-                    desc: "Perfect balance! You mastered <strong>INNOVATION & ESG</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
+                    desc: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
                 }
             }
         };
@@ -500,12 +460,10 @@
             intro: document.getElementById('view-intro'),
             story: document.getElementById('view-story'),
             swingGame: document.getElementById('view-swing-game'),
-            swAssessment: document.getElementById('view-sw-assessment'),
-            matchGame: document.getElementById('view-match-game'),
-            swCrisis: document.getElementById('view-sw-crisis'),
-            quizGame: document.getElementById('view-quiz-game'),
-            spseTimeline: document.getElementById('view-spse-timeline'),
-            spseScholarship: document.getElementById('view-spse-scholarship'),
+            year1Memory: document.getElementById('view-year1-memory'),
+            majorSelect: document.getElementById('view-major-select'),
+            catcher: document.getElementById('view-catcher'),
+            swChat: document.getElementById('view-sw-chat'),
             spseEsg: document.getElementById('view-spse-esg'),
             result: document.getElementById('view-result'),
             quit: document.getElementById('view-quit'),
@@ -523,28 +481,54 @@
             const content = document.getElementById('msg-modal-content');
             document.getElementById('msg-modal-text').innerText = text;
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
-
-            const btn = document.getElementById('msg-modal-btn');
-            btn.onclick = () => {
-                modal.classList.add('opacity-0');
-                content.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    if(callback) callback();
-                }, 200);
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            document.getElementById('msg-modal-btn').onclick = () => {
+                modal.classList.add('opacity-0'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); if(callback) callback(); }, 200);
             };
+        }
+
+        function showTeacherHint(text) {
+            const modal = document.getElementById('teacher-modal');
+            const content = document.getElementById('teacher-modal-content');
+            document.getElementById('teacher-modal-text').innerText = text;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        }
+
+        function closeTeacherHint() {
+            const modal = document.getElementById('teacher-modal');
+            const content = document.getElementById('teacher-modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function injectHintButton(viewId, hintText) {
+            const header = document.querySelector(`#${viewId} > div:first-child`);
+            if (header && !header.querySelector('.hint-btn')) {
+                const btn = document.createElement('button');
+                btn.className = "hint-btn text-theme font-bold text-sm bg-green-50 px-3 py-1 rounded-full border border-green-200 active:bg-green-100 flex items-center gap-1 shadow-sm transition-colors";
+                btn.innerHTML = "💡 Hint";
+                btn.onclick = () => showTeacherHint(hintText);
+                header.appendChild(btn);
+            } else if (header && header.querySelector('.hint-btn')) {
+                header.querySelector('.hint-btn').onclick = () => showTeacherHint(hintText);
+            }
         }
 
         function renderStory(title, text, buttonAction) {
             document.getElementById('story-title').innerHTML = title;
             document.getElementById('story-text').innerHTML = text;
-            const btn = document.getElementById('story-btn');
-            btn.style.display = 'block';
+            
+            const btnContainer = document.getElementById('story-btn-container');
+            btnContainer.innerHTML = '';
+            
+            const btn = document.createElement('button');
+            btn.className = "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
+            btn.innerText = "Continue";
             btn.onclick = buttonAction;
+            btnContainer.appendChild(btn);
+            
             showView('story');
         }
 
@@ -552,7 +536,9 @@
             const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
                 playerName = nameInput;
-                playMission1();
+                renderStory(gameData.preU.title, `Hello, <strong>${playerName}</strong>!<br><br>` + gameData.preU.story, () => {
+                    initSwingGame(1);
+                });
             } else {
                 const inputEl = document.getElementById('player-name');
                 inputEl.style.transform = 'translateX(-10px)';
@@ -561,77 +547,11 @@
             }
         }
 
-        function playMission1() {
-            renderStory(
-                gameData.mission1.title,
-                `Hello, <strong>${playerName}</strong>!<br><br>` + gameData.mission1.story,
-                () => {
-                    initSwingGame(gameData.mission1.swingHint, () => {
-                        renderResult(gameData.mission1.img, gameData.mission1.desc, [
-                            {
-                                text: "✅ Enter APSS",
-                                className: "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
-                                onClick: playYear1
-                            },
-                            {
-                                text: "❌ Quit & Explore Elsewhere",
-                                className: "w-full bg-absent text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base mt-3",
-                                onClick: playQuit
-                            }
-                        ]);
-                    });
-                }
-            );
-        }
-
-        function playQuit() { showView('quit'); }
-
-        function playYear1() {
-            renderStory(gameData.year1.title, gameData.year1.story, selectMajor);
-        }
-
-        function selectMajor() {
-            document.getElementById('story-title').innerHTML = "Select Your Major";
-            document.getElementById('story-text').innerHTML = "Choose your path for the next 3 years:";
-            
-            const btnContainer = document.createElement('div');
-            btnContainer.className = "flex flex-col gap-3 mt-4";
-            
-            const btnSW = document.createElement('button');
-            btnSW.className = "w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
-            btnSW.innerText = "Social Work (SW)";
-            btnSW.onclick = () => startMajor('sw');
-
-            const btnSPSE = document.createElement('button');
-            btnSPSE.className = "w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
-            btnSPSE.innerText = "Social Policy & Entrepreneurship (SPSE)";
-            btnSPSE.onclick = () => startMajor('spse');
-
-            btnContainer.appendChild(btnSW);
-            btnContainer.appendChild(btnSPSE);
-            
-            const storyBtn = document.getElementById('story-btn');
-            storyBtn.style.display = 'none';
-            document.getElementById('story-text').appendChild(btnContainer);
-        }
-
-        function startMajor(major) {
-            currentMajor = major;
-            if(major === 'sw') {
-                initSwAssessment(); // Year 1 SW
-            } else {
-                initSpseTimeline(); // Year 1 SPSE
-            }
-        }
-
         function renderResult(imgUrl, descText, buttons) {
-            const imgEl = document.getElementById('result-img');
-            imgEl.src = imgUrl; 
+            document.getElementById('result-img').src = imgUrl; 
             document.getElementById('result-desc').innerHTML = descText;
-            
             const btnContainer = document.getElementById('result-btn-container');
             btnContainer.innerHTML = ''; 
-            
             buttons.forEach(btnInfo => {
                 const btn = document.createElement('button');
                 btn.innerText = btnInfo.text;
@@ -642,21 +562,42 @@
             showView('result');
         }
 
-        let swingState = { active: false, position: 0, direction: 1, speed: 2.2, targetMin: 65, targetMax: 85, animationId: null, onSuccess: null };
+        /* --- MISSION 1: SWING METER --- */
+        let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
 
-        function initSwingGame(hint, successCallback) {
-            document.getElementById('swing-hint').textContent = hint;
+        function initSwingGame(stage) {
+            swingState.stage = stage;
             swingState.active = true;
-            swingState.position = 0;
-            swingState.direction = 1;
-            swingState.onSuccess = successCallback;
+            swingState.pos = 0;
+            swingState.dir = 1;
+
+            const hint = document.getElementById('swing-hint');
+            const scoreTitle = document.getElementById('swing-score-title');
             
-            swingState.targetMin = Math.floor(Math.random() * 40) + 40; 
-            swingState.targetMax = swingState.targetMin + 20; 
+            if(stage === 1) {
+                hint.innerText = "Stage 1: DSE Chinese requires Level 3! Stop the needle in the green zone.";
+                scoreTitle.innerText = "Target: Chinese Level 3";
+                swingState.speed = 2.5; swingState.min = 40; swingState.max = 70;
+            } else if(stage === 2) {
+                hint.innerText = "Stage 2: DSE English requires Level 3! It's moving slightly faster!";
+                scoreTitle.innerText = "Target: English Level 3";
+                swingState.speed = 3.5; swingState.min = 55; swingState.max = 80;
+            } else {
+                hint.innerText = "Stage 3: APSS is highly competitive! Aim for Best 5 (Mid-20s)!";
+                scoreTitle.innerText = "Target Best 5: Mid-20s";
+                swingState.speed = 4.5; swingState.min = 70; swingState.max = 85;
+            }
+
+            [1,2,3].forEach(i => {
+                const step = document.getElementById(`swing-step-${i}`);
+                if (i < stage) step.className = "h-2 flex-1 rounded-full bg-correct";
+                else if (i === stage) step.className = "h-2 flex-1 rounded-full bg-present";
+                else step.className = "h-2 flex-1 rounded-full bg-gray-200";
+            });
 
             const targetZone = document.getElementById('swing-target-zone');
-            targetZone.style.left = `${swingState.targetMin}%`;
-            targetZone.style.width = `${swingState.targetMax - swingState.targetMin}%`;
+            targetZone.style.left = `${swingState.min}%`;
+            targetZone.style.width = `${swingState.max - swingState.min}%`;
 
             const scoreDisplay = document.getElementById('swing-score-display');
             scoreDisplay.textContent = "Waiting...";
@@ -673,418 +614,382 @@
 
         function swingLoop() {
             if (!swingState.active) return;
-            swingState.position += swingState.speed * swingState.direction;
-            if (swingState.position >= 100) { swingState.position = 100; swingState.direction = -1; } 
-            else if (swingState.position <= 0) { swingState.position = 0; swingState.direction = 1; }
-            document.getElementById('swing-needle').style.left = `${swingState.position}%`;
-            swingState.animationId = requestAnimationFrame(swingLoop);
+            swingState.pos += swingState.speed * swingState.dir;
+            if (swingState.pos >= 100) { swingState.pos = 100; swingState.dir = -1; } 
+            else if (swingState.pos <= 0) { swingState.pos = 0; swingState.dir = 1; }
+            document.getElementById('swing-needle').style.left = `${swingState.pos}%`;
+            swingState.animId = requestAnimationFrame(swingLoop);
         }
 
         function stopSwing() {
             if (!swingState.active) return;
             swingState.active = false;
-            cancelAnimationFrame(swingState.animationId);
+            cancelAnimationFrame(swingState.animId);
             
-            const pos = swingState.position;
-            const isSuccess = pos >= swingState.targetMin && pos <= swingState.targetMax;
+            const isSuccess = swingState.pos >= swingState.min && swingState.pos <= swingState.max;
             const scoreDisplay = document.getElementById('swing-score-display');
             const btn = document.getElementById('btn-swing-stop');
             
             if (isSuccess) {
-                scoreDisplay.textContent = "DSE Score: High! 🎉";
+                scoreDisplay.textContent = "Great! 🎉";
                 scoreDisplay.classList.add('text-correct');
-                btn.textContent = "Continue";
+                btn.textContent = swingState.stage === 3 ? "View Results" : "Next Subject";
                 btn.className = "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
-                btn.onclick = () => swingState.onSuccess();
+                btn.onclick = () => {
+                    if(swingState.stage < 3) initSwingGame(swingState.stage + 1);
+                    else showJupasResult();
+                };
             } else {
-                scoreDisplay.textContent = "Score too low... Try again!";
+                scoreDisplay.textContent = "Missed it... Try again!";
                 scoreDisplay.classList.add('text-present');
                 btn.textContent = "RETRY";
                 btn.className = "w-full bg-present text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
-                btn.onclick = retrySwing;
+                btn.onclick = () => initSwingGame(swingState.stage);
             }
         }
 
-        let swAssessmentState = { selected: [] };
-        const swTags = [
-            { id: 1, text: "Bereavement/Grief", correct: true },
-            { id: 2, text: "Mobility Issues", correct: true },
-            { id: 3, text: "Social Isolation", correct: true },
-            { id: 4, text: "Youth Unemployment", correct: false },
-            { id: 5, text: "Substance Abuse", correct: false },
-            { id: 6, text: "Academic Stress", correct: false }
-        ];
-
-        function initSwAssessment() {
-            swAssessmentState.selected = [];
-            const container = document.getElementById('sw-assessment-tags');
-            container.innerHTML = '';
-
-            [...swTags].sort(() => Math.random() - 0.5).forEach(tag => {
-                const btn = document.createElement('button');
-                btn.className = "selectable-item bg-white rounded-full px-4 py-2 font-bold text-gray-600 text-sm shadow-sm";
-                btn.innerText = tag.text;
-                btn.onclick = () => toggleSwAssessmentTag(tag, btn);
-                container.appendChild(btn);
-            });
-
-            updateSwAssessmentBtn();
-            showView('swAssessment');
-        }
-
-        function toggleSwAssessmentTag(tag, el) {
-            const idx = swAssessmentState.selected.indexOf(tag);
-            if(idx > -1) {
-                swAssessmentState.selected.splice(idx, 1);
-                el.classList.remove('active', 'text-theme');
-            } else {
-                if(swAssessmentState.selected.length >= 3) return;
-                swAssessmentState.selected.push(tag);
-                el.classList.add('active', 'text-theme');
-            }
-            updateSwAssessmentBtn();
-        }
-
-        function updateSwAssessmentBtn() {
-            const btn = document.getElementById('btn-submit-assessment');
-            const count = swAssessmentState.selected.length;
-            if(count === 3) {
-                btn.className = "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg pointer-events-auto";
-                btn.innerText = "Assess Needs";
-            } else {
-                btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl shadow-md transition-all text-lg pointer-events-none";
-                btn.innerText = `Select 3 items (${count}/3)`;
-            }
-        }
-
-        function checkSwAssessment() {
-            const isPerfect = swAssessmentState.selected.every(i => i.correct);
-            if(isPerfect) {
-                initMatchGame('sw'); // Move to Year 2 Fieldwork match
-            } else {
-                showMessage("Look closer at the case. Focus on his recent loss, his physical environment, and his social connections.", initSwAssessment);
-            }
-        }
-
-        let matchState = { selectedLeft: null, matches: 0, mode: '' };
-        
-        const swMatchData = [
-            { id: 'm1', cText: '👴 Elderly living alone', sText: '🏥 Elderly Day Care' },
-            { id: 'm2', cText: '🎒 Stressed Student', sText: '💬 Youth Counseling' },
-            { id: 'm3', cText: '👨‍👩‍👧 Low-income family', sText: '🏢 Subsidized Housing' }
-        ];
-
-        const spseMatchData = [
-            { id: 'm1', cText: '🧠 Youth Well-being & Mental Health', sText: '🎮 P.A.T.H.S. Gamification Program (EUROINVENT Award)' },
-            { id: 'm2', cText: '🏙️ Urban Decay & Ageing Districts', sText: '🥽 360-Camera / HiVE Community Revitalization' },
-            { id: 'm3', cText: '♻️ Green HK & Public Health', sText: '📱 AI-Driven ESG & Sustainability Tracking' }
-        ];
-
-        function initMatchGame(mode) {
-            matchState = { selectedLeft: null, matches: 0, mode: mode };
-            const lContainer = document.getElementById('match-left');
-            const rContainer = document.getElementById('match-right');
-            lContainer.innerHTML = ''; rContainer.innerHTML = '';
-
-            const data = mode === 'sw' ? swMatchData : spseMatchData;
-            
-            document.getElementById('match-game-title').innerText = mode === 'sw' ? 'Year 2: Fieldwork Practicum I' : 'Year 3: Social Innovation & Tech';
-            document.getElementById('match-game-hint').innerText = mode === 'sw' ? 'Tap a Client, then tap the correct Community Service to help them!' : 'APSS students win awards! Match the social issue to the tech solution!';
-            document.getElementById('match-game-hint-container').className = mode === 'sw' ? 'px-4 py-3 bg-green-50 border-b border-green-100 flex-shrink-0' : 'px-4 py-3 bg-teal-50 border-b border-teal-100 flex-shrink-0';
-
-            let shuffledRight = [...data].sort(() => Math.random() - 0.5);
-
-            data.forEach(item => {
-                const lBtn = document.createElement('button');
-                lBtn.className = "match-btn bg-white rounded-xl shadow-sm p-4 text-left font-bold text-gray-700 text-sm h-full flex items-center";
-                lBtn.innerText = item.cText;
-                lBtn.onclick = () => selectLeftMatch(lBtn, item.id);
-                lContainer.appendChild(lBtn);
-            });
-
-            shuffledRight.forEach(item => {
-                const rBtn = document.createElement('button');
-                rBtn.className = "match-btn bg-white rounded-xl shadow-sm p-4 text-left font-bold text-gray-700 text-sm h-full flex items-center";
-                rBtn.innerText = item.sText;
-                rBtn.onclick = () => selectRightMatch(rBtn, item.id);
-                rContainer.appendChild(rBtn);
-            });
-
-            showView('matchGame');
-        }
-
-        function selectLeftMatch(btn, id) {
-            document.querySelectorAll(`#match-left .match-btn`).forEach(b => {
-                if(!b.classList.contains('matched')) b.classList.remove('selected');
-            });
-            btn.classList.add('selected');
-            matchState.selectedLeft = { btn, id };
-        }
-
-        function selectRightMatch(rBtn, rId) {
-            if(!matchState.selectedLeft) return; 
-            
-            const lBtn = matchState.selectedLeft.btn;
-            const lId = matchState.selectedLeft.id;
-
-            if(lId === rId) {
-                lBtn.classList.remove('selected');
-                lBtn.classList.add('matched');
-                rBtn.classList.add('matched');
-                matchState.selectedLeft = null;
-                matchState.matches++;
-                
-                if(matchState.matches === 3) {
-                    setTimeout(() => {
-                        if(matchState.mode === 'sw') {
-                            renderResult(gameData.sw.mission3.img, gameData.sw.mission3.desc, [{
-                                text: "Next Mission", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: initSwCrisis
-                            }]);
-                        } else {
-                            initSpseEsg(); // Year 4
-                        }
-                    }, 500);
+        function showJupasResult() {
+            renderResult(gameData.jupasSuccess.img, gameData.jupasSuccess.desc, [
+                {
+                    text: "✅ Enter APSS (Year 1)",
+                    className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                    onClick: () => renderStory(gameData.year1.title, gameData.year1.story, initMemoryGame)
+                },
+                {
+                    text: "❌ Quit & Explore Elsewhere",
+                    className: "w-full bg-absent text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base mt-3",
+                    onClick: () => showView('quit')
                 }
-            } else {
-                rBtn.classList.add('wrong');
-                setTimeout(() => rBtn.classList.remove('wrong'), 400);
-            }
+            ]);
         }
 
-        let swCrisisState = { currentSlot: 0, order: [] };
-        const swCrisisCards = [
-            { id: 1, text: "🛑 Ensure immediate safety & space" },
-            { id: 2, text: "👂 Listen actively to their feelings" },
-            { id: 3, text: "📋 Assess basic shelter/health needs" },
-            { id: 4, text: "🤝 Mediate with family (if safe)" }
+        /* --- YEAR 1: MEMORY MATCHING --- */
+        let memoryCards = [];
+        let flippedIndices = [];
+        let matchesFound = 0;
+        let memoryTimer = 20;
+        let memoryInterval = null;
+        let lockBoard = false;
+
+        const memoryPairs = [
+            { id: 0, text: "Intergeneration Poverty", type: "issue" },
+            { id: 0, text: "Strive & Rise Programme", type: "solution" },
+            { id: 1, text: "Sub-divided Unit", type: "issue" },
+            { id: 1, text: "Community Living Room", type: "solution" },
+            { id: 2, text: "Digital Exclusion", type: "issue" },
+            { id: 2, text: "Smart Silver Programme", type: "solution" }
         ];
 
-        function initSwCrisis() {
-            swCrisisState = { currentSlot: 0, order: [] };
-            for(let i=0; i<4; i++) {
-                const slot = document.getElementById(`sw-slot-${i}`);
-                slot.className = "timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400";
-                slot.innerText = "Empty...";
-            }
+        function initMemoryGame() {
+            injectHintButton('view-year1-memory', "Match the social problem to the correct community program designed to solve it!");
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
             
-            const cardsContainer = document.getElementById('sw-crisis-cards');
-            cardsContainer.innerHTML = '';
+            // Shuffle cards
+            memoryCards = [...memoryPairs].sort(() => Math.random() - 0.5);
+            flippedIndices = [];
+            matchesFound = 0;
+            memoryTimer = 20;
+            lockBoard = false;
             
-            [...swCrisisCards].sort(() => Math.random() - 0.5).forEach(card => {
-                const btn = document.createElement('button');
-                btn.className = "bg-white border border-gray-200 rounded-lg p-3 text-sm font-bold text-gray-700 shadow-sm active:scale-95 transition-transform text-left";
-                btn.innerText = card.text;
-                btn.onclick = () => selectSwCrisisCard(card, btn);
-                cardsContainer.appendChild(btn);
-            });
-            showView('swCrisis');
-        }
+            document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
 
-        function selectSwCrisisCard(card, btn) {
-            if (swCrisisState.currentSlot >= 4) return;
-            
-            const slot = document.getElementById(`sw-slot-${swCrisisState.currentSlot}`);
-            slot.innerText = card.text;
-            slot.classList.add('filled', 'text-gray-800');
-            slot.classList.remove('text-gray-400', 'bg-gray-50');
-            btn.style.display = 'none'; 
-            
-            swCrisisState.order.push(card.id);
-            swCrisisState.currentSlot++;
-
-            if(swCrisisState.currentSlot === 4) {
-                if(swCrisisState.order.join(',') === '1,2,3,4') {
-                    setTimeout(() => initQuizGame(), 600); // Proceed to Year 4
-                } else {
-                    setTimeout(() => {
-                        showMessage("In a crisis, safety always comes first, followed by emotional support before planning long-term mediation.", initSwCrisis);
-                    }, 500);
-                }
-            }
-        }
-
-        let quizTimerId;
-        function initQuizGame() {
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-            
-            const options = [
-                { text: "Don't worry, you're not failing. Just try harder.", correct: false },
-                { text: "You should make a schedule to manage your time better.", correct: false },
-                { text: "It sounds like you're carrying a heavy burden right now. Let's talk.", correct: true }
-            ].sort(() => Math.random() - 0.5);
-
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "bg-white border border-gray-200 rounded-xl p-4 text-left font-bold text-gray-700 shadow-sm active:bg-gray-50 transition-colors";
-                btn.innerText = opt.text;
-                btn.onclick = () => handleQuizAnswer(opt.correct, btn);
-                optionsContainer.appendChild(btn);
+            memoryCards.forEach((card, index) => {
+                const el = document.createElement('div');
+                el.className = 'memory-card';
+                el.innerHTML = `
+                    <div class="memory-card-inner">
+                        <div class="memory-front">?</div>
+                        <div class="memory-back text-[12px] p-2 leading-tight flex flex-col justify-center items-center text-center">
+                            <span class="text-[10px] text-gray-400 uppercase mb-1">${card.type}</span>
+                            ${card.text}
+                        </div>
+                    </div>
+                `;
+                el.onclick = () => flipMemoryCard(index, el);
+                grid.appendChild(el);
             });
 
-            startQuizTimer();
-            showView('quizGame');
-        }
-
-        function startQuizTimer() {
-            const bar = document.getElementById('quiz-timer');
-            bar.className = 'timer-bar';
-            bar.style.width = '100%';
-            let timeLeft = 100;
-            
-            clearInterval(quizTimerId);
-            quizTimerId = setInterval(() => {
-                timeLeft -= 1;
-                bar.style.width = `${timeLeft}%`;
-                if(timeLeft <= 30) bar.classList.add('danger');
-                else if(timeLeft <= 60) bar.classList.add('warning');
-
-                if(timeLeft <= 0) {
-                    clearInterval(quizTimerId);
-                    showMessage("Time's up! In social work fieldwork, quick empathetic responses are key. Try again!", initQuizGame);
+            clearInterval(memoryInterval);
+            memoryInterval = setInterval(() => {
+                memoryTimer--;
+                document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
+                if(memoryTimer <= 0) {
+                    clearInterval(memoryInterval);
+                    showMessage("Time's up! Let's try matching them again.", initMemoryGame);
                 }
-            }, 100);
+            }, 1000);
+            
+            showView('year1Memory');
         }
 
-        function handleQuizAnswer(isCorrect, btn) {
-            clearInterval(quizTimerId);
-            if(isCorrect) {
-                btn.classList.add('bg-correct', 'text-white', 'border-correct');
-                btn.classList.remove('bg-white', 'text-gray-700');
+        function flipMemoryCard(index, element) {
+            if (lockBoard || element.classList.contains('flipped') || element.classList.contains('matched')) return;
+
+            element.classList.add('flipped');
+            flippedIndices.push(index);
+
+            if (flippedIndices.length === 2) {
+                lockBoard = true;
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const idx1 = flippedIndices[0];
+            const idx2 = flippedIndices[1];
+            const card1 = memoryCards[idx1];
+            const card2 = memoryCards[idx2];
+            const elements = document.querySelectorAll('.memory-card');
+
+            if (card1.id === card2.id) {
+                // Match
+                matchesFound++;
                 setTimeout(() => {
-                    renderResult(gameData.sw.mission4.img, gameData.sw.mission4.desc, [{
-                        text: "Graduate & Take Photo!", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: startCamera
-                    }]);
+                    elements[idx1].classList.add('matched');
+                    elements[idx2].classList.add('matched');
+                    resetMemoryBoard();
+                    if (matchesFound === 3) {
+                        clearInterval(memoryInterval);
+                        setTimeout(() => showView('majorSelect'), 800);
+                    }
                 }, 500);
             } else {
-                btn.classList.add('bg-absent', 'text-white', 'border-absent');
-                btn.classList.remove('bg-white', 'text-gray-700');
+                // No match
                 setTimeout(() => {
-                    showMessage("That response might alienate the client. Focus on active listening and empathy.", initQuizGame);
+                    elements[idx1].classList.remove('flipped');
+                    elements[idx2].classList.remove('flipped');
+                    resetMemoryBoard();
                 }, 1000);
             }
         }
 
-        let timelineState = { currentSlot: 0, order: [] };
-        const timelineCards = [
-            { id: 1, text: "🎓 PolyU Foundation (Year 1 & 2)" },
-            { id: 2, text: "✈️ Fly to Poland (Exchange Begins)" },
-            { id: 3, text: "🏛️ Warsaw Public Policy Studies" },
-            { id: 4, text: "📜 Dual Degree Graduation!" }
-        ];
-
-        function initSpseTimeline() {
-            timelineState = { currentSlot: 0, order: [] };
-            for(let i=0; i<4; i++) {
-                const slot = document.getElementById(`spse-slot-${i}`);
-                slot.className = "timeline-slot h-12 w-full rounded-lg bg-gray-50 flex items-center px-4 text-sm font-bold text-gray-400";
-                slot.innerText = "Empty...";
-            }
-            
-            const cardsContainer = document.getElementById('spse-timeline-cards');
-            cardsContainer.innerHTML = '';
-            
-            [...timelineCards].sort(() => Math.random() - 0.5).forEach(card => {
-                const btn = document.createElement('button');
-                btn.className = "bg-white border border-gray-200 rounded-lg p-3 text-sm font-bold text-gray-700 shadow-sm active:scale-95 transition-transform text-left";
-                btn.innerText = card.text;
-                btn.onclick = () => selectTimelineCard(card, btn);
-                cardsContainer.appendChild(btn);
-            });
-            showView('spseTimeline');
+        function resetMemoryBoard() {
+            flippedIndices = [];
+            lockBoard = false;
         }
 
-        function selectTimelineCard(card, btn) {
-            if (timelineState.currentSlot >= 4) return;
-            
-            const slot = document.getElementById(`spse-slot-${timelineState.currentSlot}`);
-            slot.innerText = card.text;
-            slot.classList.add('filled', 'text-gray-800');
-            slot.classList.remove('text-gray-400', 'bg-gray-50');
-            btn.style.visibility = 'hidden'; 
-            
-            timelineState.order.push(card.id);
-            timelineState.currentSlot++;
+        /* --- MAJOR SELECT --- */
+        function startMajor(major) {
+            currentMajor = major;
+            if(major === 'sw') renderStory(gameData.interstitials.swYear2.title, gameData.interstitials.swYear2.story, () => initCatcher('sw'));
+            else renderStory(gameData.interstitials.spseYear2.title, gameData.interstitials.spseYear2.story, () => initCatcher('spse'));
+        }
 
-            if(timelineState.currentSlot === 4) {
-                if(timelineState.order.join(',') === '1,2,3,4') {
-                    setTimeout(() => initSpseScholarship(), 600); // Year 2
-                } else {
-                    setTimeout(() => {
-                        showMessage("The timeline is out of order! Plan carefully starting from PolyU.", initSpseTimeline);
-                    }, 500);
+        /* --- YEARS 2-3: CATCHER GAME (Unified for SW and SPSE) --- */
+        let catcherState = { score: 0, active: false, animId: null, items: [], lastSpawn: 0, playerX: 150, config: null };
+        
+        const catcherConfigs = {
+            sw: {
+                title: "Years 2-3: Workload Balance",
+                instruction: "Catch Direct Work, Dodge Admin!",
+                hint: "Balance your work! Catch Green items (Community programs, Cases) and dodge Red items (Heavy admin) to prioritize your clients.",
+                words: [
+                    { t: "Community Prog.", g: true }, { t: "Case Follow-up", g: true },
+                    { t: "Proposal Writing", g: false }, { t: "Endless Budgeting", g: false }, { t: "Heavy Eval", g: false }
+                ],
+                nextTitle: gameData.interstitials.swYear4.title,
+                nextStory: gameData.interstitials.swYear4.story,
+                nextInit: initSwChat
+            },
+            spse: {
+                title: "Years 2-3: Social Innovator Team",
+                instruction: "Catch Positive Traits!",
+                hint: "Build a strong social enterprise team! Catch green positive traits (Empathy, Shared Vision) and avoid red toxic traits.",
+                words: [
+                    { t: "Shared Vision", g: true }, { t: "Active Listening", g: true }, { t: "Empathy", g: true },
+                    { t: "Micromanagement", g: false }, { t: "Blaming", g: false }, { t: "Selfishness", g: false }
+                ],
+                nextTitle: gameData.interstitials.spseYear4.title,
+                nextStory: gameData.interstitials.spseYear4.story,
+                nextInit: initSpseEsg
+            }
+        };
+
+        function initCatcher(mode) {
+            catcherState.config = catcherConfigs[mode];
+            document.getElementById('catcher-title').innerText = catcherState.config.title;
+            document.getElementById('catcher-instruction').innerText = catcherState.config.instruction;
+            injectHintButton('view-catcher', catcherState.config.hint);
+            
+            catcherState.score = 0;
+            catcherState.active = true;
+            catcherState.items.forEach(item => item.el.remove());
+            catcherState.items = [];
+            document.getElementById('catcher-score').innerText = `0/5`;
+            showView('catcher');
+            
+            const container = document.getElementById('catcher-area');
+            const player = document.getElementById('catcher-player');
+            
+            catcherState.playerX = container.offsetWidth / 2;
+            player.style.left = `${catcherState.playerX}px`;
+
+            const moveHandler = (e) => {
+                if (!catcherState.active) return;
+                const rect = container.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                let targetX = clientX - rect.left;
+                targetX = Math.max(30, Math.min(container.offsetWidth - 30, targetX));
+                catcherState.playerX = targetX;
+                player.style.left = `${catcherState.playerX}px`;
+            };
+            
+            container.addEventListener('touchmove', moveHandler, {passive: true});
+            container.addEventListener('mousemove', moveHandler);
+
+            catcherLoop();
+        }
+
+        function spawnCatcherItem(container) {
+            const word = catcherState.config.words[Math.floor(Math.random() * catcherState.config.words.length)];
+            const el = document.createElement('div');
+            el.className = `falling-item ${word.g ? 'bg-green-100 border-2 border-correct text-green-800' : 'bg-red-100 border-2 border-absent text-red-800'}`;
+            el.innerText = word.t;
+            
+            const startX = Math.random() * (container.offsetWidth - 80) + 40;
+            el.style.left = `${startX}px`;
+            el.style.top = `-40px`;
+            
+            container.appendChild(el);
+            catcherState.items.push({ el: el, y: -40, g: word.g });
+        }
+
+        function catcherLoop(timestamp) {
+            if (!catcherState.active) return;
+            
+            const container = document.getElementById('catcher-area');
+            const player = document.getElementById('catcher-player');
+            
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > 900) {
+                spawnCatcherItem(container);
+                catcherState.lastSpawn = timestamp;
+            }
+
+            const playerRect = player.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            for (let i = catcherState.items.length - 1; i >= 0; i--) {
+                let item = catcherState.items[i];
+                item.y += 3.5; 
+                item.el.style.top = `${item.y}px`;
+
+                const itemRect = item.el.getBoundingClientRect();
+
+                if (itemRect.bottom > playerRect.top + 10 && itemRect.top < playerRect.bottom &&
+                    itemRect.right > playerRect.left + 10 && itemRect.left < playerRect.right - 10) {
+                    
+                    if (item.g) {
+                        catcherState.score++;
+                        player.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                        setTimeout(() => player.style.transform = 'translate(-50%, -50%) scale(1)', 150);
+                    } else {
+                        catcherState.score = Math.max(0, catcherState.score - 1);
+                        player.style.backgroundColor = '#ef4444';
+                        setTimeout(() => player.style.backgroundColor = '#4bb747', 150);
+                    }
+                    
+                    document.getElementById('catcher-score').innerText = `${catcherState.score}/5`;
+                    item.el.remove();
+                    catcherState.items.splice(i, 1);
+                    
+                    if (catcherState.score >= 5) {
+                        catcherState.active = false;
+                        cancelAnimationFrame(catcherState.animId);
+                        renderStory(catcherState.config.nextTitle, catcherState.config.nextStory, catcherState.config.nextInit);
+                        return;
+                    }
+                } else if (item.y > containerRect.height) {
+                    item.el.remove();
+                    catcherState.items.splice(i, 1);
                 }
             }
+            catcherState.animId = requestAnimationFrame(catcherLoop);
         }
 
-        let scholarshipState = { selected: [] };
-        const scholarshipItems = [
-            { id: 1, text: "🇵🇱 Learn Polish & Explore EU Culture", correct: true },
-            { id: 2, text: "🏙️ Compare HK vs EU Housing Policies", correct: true },
-            { id: 3, text: "🤝 Engage with Local Warsaw NGOs", correct: true },
-            { id: 4, text: "🎮 Skip classes to play video games", correct: false },
-            { id: 5, text: "👜 Buy luxury designer bags", correct: false }
+        /* --- YEAR 4 SW: PROFESSIONAL BOUNDARIES CHAT --- */
+        const chatScript = [
+            { client: "I'm having a panic attack, everything is falling apart! You're the only one who cares. Can you come over to my house right now?", opts: [
+                { text: "I'll be right there, hang on!", correct: false, reply: "" },
+                { text: "I hear how overwhelmed you are. I cannot come over, but I am here on the crisis line with you. Let's breathe together.", correct: true, reply: "Okay... okay. I'm listening. Thank you for staying on the line." }
+            ]},
+            { client: "I just feel so alone. Can we exchange personal social media? I want to message you as a friend when I'm sad.", opts: [
+                { text: "Sure, add me on Instagram, I want to support you.", correct: false, reply: "" },
+                { text: "As your social worker, I must keep our relationship professional to help you best. We will use our scheduled sessions to work through this.", correct: true, reply: "I understand. I'll see you at our appointment on Tuesday." }
+            ]}
         ];
+        let chatStep = 0;
 
-        function initSpseScholarship() {
-            scholarshipState.selected = [];
-            const list = document.getElementById('scholarship-list');
-            list.innerHTML = '';
+        function initSwChat() {
+            injectHintButton('view-sw-chat', "Validate their feelings, but never agree to non-professional requests (like visiting their home unannounced or adding personal social media).");
+            chatStep = 0;
+            document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('chat-options').innerHTML = '';
+            showView('swChat');
+            renderChatStep();
+        }
 
-            [...scholarshipItems].sort(() => Math.random() - 0.5).forEach(item => {
-                const div = document.createElement('div');
-                div.className = "selectable-item bg-white rounded-xl p-4 flex justify-between items-center cursor-pointer shadow-sm";
-                div.innerHTML = `<span class="font-bold text-gray-700 text-sm">${item.text}</span> <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center indicator"></div>`;
-                div.onclick = () => toggleScholarshipItem(item, div);
-                list.appendChild(div);
+        function renderChatStep() {
+            if(chatStep >= chatScript.length) {
+                setTimeout(() => {
+                    renderResult(gameData.sw.mission4.img, gameData.sw.mission4.desc, [{
+                        text: "Graduate & Take Photo!", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: startCamera
+                    }]);
+                }, 1000);
+                return;
+            }
+            
+            const step = chatScript[chatStep];
+            const container = document.getElementById('chat-container');
+            
+            const cDiv = document.createElement('div');
+            cDiv.className = "chat-bubble chat-client mt-4 shadow-sm border border-gray-100";
+            cDiv.innerText = step.client;
+            container.appendChild(cDiv);
+            container.scrollTop = container.scrollHeight;
+
+            const optsContainer = document.getElementById('chat-options');
+            optsContainer.innerHTML = '';
+            step.opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl shadow-sm text-left active:border-theme active:bg-green-50 transition-colors text-sm";
+                btn.innerText = opt.text;
+                btn.onclick = () => handleChatReply(opt, cDiv);
+                optsContainer.appendChild(btn);
             });
-
-            updateScholarshipBtn();
-            showView('spseScholarship');
         }
 
-        function toggleScholarshipItem(item, el) {
-            const idx = scholarshipState.selected.indexOf(item);
-            const indicator = el.querySelector('.indicator');
-
-            if(idx > -1) {
-                scholarshipState.selected.splice(idx, 1);
-                el.classList.remove('active');
-                indicator.innerHTML = '';
-                indicator.className = "w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center indicator";
-            } else {
-                if(scholarshipState.selected.length >= 3) return; 
-                scholarshipState.selected.push(item);
-                el.classList.add('active');
-                indicator.innerHTML = '✓';
-                indicator.className = "w-6 h-6 rounded-full bg-correct text-white font-bold flex items-center justify-center indicator border-correct";
+        function handleChatReply(opt, prevDiv) {
+            if(!opt.correct) {
+                showMessage("That response crossed a professional boundary. Remember to balance empathy with strict professional limits.", () => initSwChat());
+                return;
             }
-            updateScholarshipBtn();
-        }
 
-        function updateScholarshipBtn() {
-            const btn = document.getElementById('btn-submit-scholarship');
-            const count = scholarshipState.selected.length;
-            if(count === 3) {
-                btn.className = "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg pointer-events-auto";
-                btn.innerText = "Submit Pitch";
-            } else {
-                btn.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-xl shadow-md transition-all text-lg pointer-events-none";
-                btn.innerText = `Select 3 items (${count}/3)`;
+            document.getElementById('chat-options').innerHTML = '';
+            const container = document.getElementById('chat-container');
+            
+            const pDiv = document.createElement('div');
+            pDiv.className = "chat-bubble chat-player mt-2 shadow-sm";
+            pDiv.innerText = opt.text;
+            container.appendChild(pDiv);
+
+            if (chatScript[chatStep].reply) {
+                setTimeout(() => {
+                    const rDiv = document.createElement('div');
+                    rDiv.className = "chat-bubble chat-client mt-2 shadow-sm border border-gray-100 opacity-80 text-sm";
+                    rDiv.innerText = chatScript[chatStep].reply;
+                    container.appendChild(rDiv);
+                    container.scrollTop = container.scrollHeight;
+                }, 800);
             }
+
+            setTimeout(() => {
+                chatStep++;
+                renderChatStep();
+            }, 2000);
         }
 
-        function checkScholarship() {
-            const isPerfect = scholarshipState.selected.every(i => i.correct);
-            if(isPerfect) {
-                renderResult(gameData.spse.mission3.img, gameData.spse.mission3.desc, [{
-                    text: "Next Mission", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: () => initMatchGame('spse') // Go to Year 3 Matching
-                }]);
-            } else {
-                showMessage("Some choices won't help your studies... Try focusing on cultural exchange and policy learning!", initSpseScholarship);
-            }
-        }
-
+        /* --- YEAR 4 SPSE: ESG DECISION MAKER --- */
         const esgScenarios = [
             { text: "Switch to eco-friendly but slightly more expensive packaging.", correct: true },
             { text: "Cut the employee mental wellness program to save 5% budget.", correct: false },
@@ -1093,6 +998,7 @@
         let esgState = { currentIdx: 0, score: 0 };
 
         function initSpseEsg() {
+            injectHintButton('view-spse-esg', "Eco-friendly packaging and CSR initiatives are ethical choices ✅. Cutting mental wellness to save a small budget is a bad choice ❌.");
             esgState = { currentIdx: 0, score: 0 };
             updateEsgUI();
             showView('spseEsg');
@@ -1100,16 +1006,12 @@
 
         function updateEsgUI() {
             document.getElementById('esg-progress-bar').style.width = `${(esgState.currentIdx / esgScenarios.length) * 100}%`;
-            
             if(esgState.currentIdx < esgScenarios.length) {
                 const card = document.getElementById('esg-card-container');
-                card.style.transform = 'scale(0.8)';
-                card.style.opacity = '0';
-                
+                card.style.transform = 'scale(0.8)'; card.style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('esg-scenario').innerText = esgScenarios[esgState.currentIdx].text;
-                    card.style.transform = 'scale(1)';
-                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)'; card.style.opacity = '1';
                 }, 150);
             } else {
                 if(esgState.score === esgScenarios.length) {
@@ -1125,8 +1027,8 @@
         function handleEsgChoice(isApprove) {
             const scenario = esgScenarios[esgState.currentIdx];
             const isCorrect = (isApprove === scenario.correct);
-            
             const card = document.getElementById('esg-card-container');
+            
             if(isApprove) card.style.transform = 'translateX(100px) rotate(15deg)';
             else card.style.transform = 'translateX(-100px) rotate(-15deg)';
             card.style.opacity = '0';
@@ -1140,12 +1042,12 @@
             }, 300);
         }
 
+        /* --- CAMERA & SHARING --- */
         let stream = null;
         let capturedPhotoBlob = null;
 
         async function startCamera() {
             showView('camera');
-            
             const frameImg = document.getElementById('camera-frame');
             frameImg.src = currentMajor === 'sw' ? 'public/image/camera_frame_sw.png' : 'public/image/camera_frame_spse.png';
 
@@ -1156,15 +1058,10 @@
             skipBtn.className = "text-white/70 font-semibold px-4 py-2 transition-all";
             captureBtn.style.display = 'flex';
 
-            skipBtn.onclick = () => {
-                stopCamera();
-                showEndScreen();
-            };
+            skipBtn.onclick = () => { stopCamera(); showEndScreen(); };
             
             try {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    throw new Error("Camera API not supported.");
-                }
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("Camera API not supported.");
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 document.getElementById('camera-feed').srcObject = stream;
             } catch (err) {
@@ -1177,15 +1074,11 @@
         }
 
         function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
+            if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; }
         }
 
         function takePhoto() {
             if (!stream) return; 
-            
             const video = document.getElementById('camera-feed');
             const canvas = document.getElementById('camera-canvas');
             const frameImg = document.getElementById('camera-frame');
@@ -1194,56 +1087,35 @@
             canvas.height = video.videoHeight || 480;
             const ctx = canvas.getContext('2d');
             
-            // Draw video (mirrored)
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
+            ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+            ctx.setTransform(1, 0, 0, 1, 0, 0); 
             
-            // Draw frame on top
             if(frameImg.complete && frameImg.naturalHeight !== 0) {
                  ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
             }
             
-            video.pause();
-            stopCamera(); 
-
-            canvas.toBlob((blob) => {
-                capturedPhotoBlob = blob;
-                showEndScreen(true);
-            }, 'image/png');
+            video.pause(); stopCamera(); 
+            canvas.toBlob((blob) => { capturedPhotoBlob = blob; showEndScreen(true); }, 'image/png');
         }
 
         function showEndScreen(hasPhoto = false) {
             showView('end');
             const shareBtn = document.getElementById('btn-share');
-            
             if (hasPhoto && navigator.share) {
                 shareBtn.classList.remove('hidden');
                 shareBtn.onclick = async () => {
                     try {
                         const file = new File([capturedPhotoBlob], 'apss_graduation.png', { type: 'image/png' });
-                        await navigator.share({
-                            title: 'My PolyU APSS Journey',
-                            text: `I just graduated from PolyU APSS in ${currentMajor.toUpperCase()}! 🎓✨`,
-                            files: [file]
-                        });
-                    } catch (error) {
-                        console.log('Error sharing', error);
-                    }
+                        await navigator.share({ title: 'My PolyU APSS Journey', text: `I graduated from PolyU APSS in ${currentMajor.toUpperCase()}! 🎓`, files: [file] });
+                    } catch (error) { console.log('Error sharing', error); }
                 };
             } else if (hasPhoto) {
-                 shareBtn.innerText = "Download Photo ⬇️";
-                 shareBtn.classList.remove('hidden');
+                 shareBtn.innerText = "Download Photo ⬇️"; shareBtn.classList.remove('hidden');
                  shareBtn.onclick = () => {
                      const url = window.URL.createObjectURL(capturedPhotoBlob);
-                     const a = document.createElement('a');
-                     a.style.display = 'none';
-                     a.href = url;
-                     a.download = 'apss_graduation.png';
-                     document.body.appendChild(a);
-                     a.click();
-                     window.URL.revokeObjectURL(url);
+                     const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = 'apss_graduation.png';
+                     document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
                  };
             }
         }
