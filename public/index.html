@@ -198,14 +198,19 @@
             </div>
         </div>
 
-        <!-- STORY VIEW -->
-        <div id="view-story" class="view-panel h-full flex-col p-6 bg-gray-50">
-            <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0 pt-4"></h2>
-            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center">
-                <p id="story-text" class="text-[16px] text-gray-700 leading-relaxed font-medium"></p>
+        <!-- STORY/TRANSITION VIEW (WITH PICTURE) -->
+        <div id="view-story" class="view-panel h-full flex-col bg-gray-50">
+            <div class="flex-shrink-0 w-full aspect-square max-h-[35vh] bg-gray-200 overflow-hidden relative shadow-sm">
+                <img id="story-img" src="" alt="Story Image" class="w-full h-full object-cover">
             </div>
-            <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
-                <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Continue</button>
+            <div class="flex-grow p-6 overflow-y-auto hide-scrollbar flex flex-col">
+                <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0"></h2>
+                <div class="flex-grow bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4 overflow-y-auto">
+                    <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+                </div>
+                <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
+                    <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
+                </div>
             </div>
         </div>
 
@@ -217,7 +222,7 @@
             <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
                 <p id="swing-hint" class="text-sm text-blue-800 font-semibold text-center"></p>
             </div>
-            <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8">
+            <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8 relative">
                 <div class="w-full flex gap-2 mb-4">
                     <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
                     <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
@@ -236,37 +241,24 @@
                 <button id="btn-swing-stop" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-2xl tracking-wider uppercase mt-4">
                     STOP!
                 </button>
+                <button id="btn-swing-retry" onclick="retrySwing()" class="hidden w-full bg-present text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl tracking-wider uppercase mt-2">
+                    RETRY
+                </button>
             </div>
         </div>
 
         <!-- MEMORY GAME (YEAR 1) -->
         <div id="view-year1-memory" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 1: Social Issues & Solutions</h3>
+                <h3 class="font-bold text-gray-700">Year 1: Core Knowledge</h3>
             </div>
             <div class="px-4 py-3 bg-purple-50 border-b border-purple-100 flex-shrink-0 flex justify-between items-center">
                 <p class="text-sm text-purple-800 font-semibold">Match Issue with Solution!</p>
-                <div class="font-bold text-theme bg-white px-3 py-1 rounded-full shadow-sm" id="memory-timer">20s</div>
+                <div class="font-bold text-theme bg-white px-3 py-1 rounded-full shadow-sm border border-purple-100" id="memory-timer">20s</div>
             </div>
             <div class="flex-grow p-6 flex flex-col items-center justify-center gap-8 bg-gray-50">
                 <div class="memory-grid" id="memory-grid">
                     <!-- Cards injected via JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- MAJOR SELECT -->
-        <div id="view-major-select" class="view-panel h-full flex-col p-6 bg-gray-50">
-            <h2 class="text-2xl font-bold mb-4 text-theme flex-shrink-0 pt-4 text-center">Choose Your Path</h2>
-            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-6">
-                <p class="text-[16px] text-gray-700 leading-relaxed font-medium">You have completed Year 1! Now, you must choose your major for the rest of your APSS journey.</p>
-                <div class="w-full flex flex-col gap-4">
-                    <button onclick="startMajor('sw')" class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                        <span>🤝</span> Social Work (SW)
-                    </button>
-                    <button onclick="startMajor('spse')" class="w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                        <span>💡</span> SPSE
-                    </button>
                 </div>
             </div>
         </div>
@@ -289,7 +281,7 @@
         <!-- CHAT GAME (YEAR 4 SW - BOUNDARIES) -->
         <div id="view-sw-chat" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 4: Professional Boundaries</h3>
+                <h3 class="font-bold text-gray-700">Year 4: Social Work</h3>
             </div>
             <div class="flex-grow p-4 overflow-y-auto bg-gray-50 flex flex-col" id="chat-container">
                 <!-- Chat messages injected here -->
@@ -302,7 +294,7 @@
         <!-- ESG DECISION MAKER (YEAR 4 SPSE) -->
         <div id="view-spse-esg" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
-                <h3 class="font-bold text-gray-700">Year 4: ESG Decision Maker</h3>
+                <h3 class="font-bold text-gray-700">Year 4: SPSE</h3>
             </div>
             <div class="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex-shrink-0">
                 <p class="text-sm text-indigo-800 font-semibold text-center">Make ethical corporate choices! Ensure long-term ESG impact.</p>
@@ -328,22 +320,9 @@
             </div>
         </div>
 
-        <!-- RESULT VIEW -->
-        <div id="view-result" class="view-panel h-full flex-col bg-gray-50">
-            <div class="flex-shrink-0 w-full aspect-square bg-gray-200 overflow-hidden relative shadow-sm">
-                <img id="result-img" src="" alt="Result" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/6cba65/ffffff?text=Mission+Accomplished'">
-            </div>
-            <div class="flex-grow p-6 overflow-y-auto hide-scrollbar flex flex-col">
-                <div class="flex-grow bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
-                    <p id="result-desc" class="text-[15px] text-gray-700 leading-relaxed"></p>
-                </div>
-                <div id="result-btn-container" class="flex-shrink-0 flex flex-col gap-3"></div>
-            </div>
-        </div>
-
         <!-- QUIT / ALTERNATIVE VIEW -->
         <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
-            <div class="flex-shrink-0 w-full aspect-square bg-gray-200 overflow-hidden relative shadow-sm">
+            <div class="flex-shrink-0 w-full aspect-square max-h-[40vh] bg-gray-200 overflow-hidden relative shadow-sm">
                 <img src="public/image/quit.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
             </div>
             <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between">
@@ -393,27 +372,25 @@
             </div>
         </div>
         
-        <!-- MODALS -->
-        <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+        <!-- INSTRUCTION MODAL (PRE-GAME) -->
+        <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
+                <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">How to Play</h3>
+                <p id="instruction-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
+                <button id="instruction-modal-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    Start Game
+                </button>
+            </div>
+        </div>
+
+        <!-- MESSAGE MODAL (ERROR/FEEDBACK) -->
+        <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
                 <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4">💡</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Notice</h3>
                 <p id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
                 <button id="msg-modal-btn" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Got it</button>
-            </div>
-        </div>
-
-        <div id="teacher-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="teacher-modal-content">
-                <div class="flex items-center gap-4 mb-4 border-b border-gray-100 pb-4">
-                    <div class="w-16 h-16 bg-blue-50 border-2 border-blue-100 text-4xl rounded-full flex items-center justify-center shadow-sm">👩‍🏫</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800">APSS Teacher</h3>
-                        <p class="text-sm text-theme font-semibold">Hint & Guidance</p>
-                    </div>
-                </div>
-                <p id="teacher-modal-text" class="text-gray-700 mb-6 font-medium leading-relaxed"></p>
-                <button onclick="closeTeacherHint()" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Understood!</button>
             </div>
         </div>
 
@@ -423,35 +400,75 @@
         let playerName = "";
         let currentMajor = "";
         
+        // Data defining the stories, instructions, and images
         const gameData = {
             preU: {
                 title: "Form 6: Planning for JUPAS",
-                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?"
+                img: "public/image/story_preu.png",
+                fallbackColor: "fc8d1e",
+                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?",
+                instruction: "Tap 'STOP!' to land the fast-moving needle inside the GREEN zone. You must pass 3 stages of increasing speed representing DSE score requirements."
             },
             jupasSuccess: {
                 img: "public/image/result_m1_ranking.png",
-                desc: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
+                fallbackColor: "4bb747",
+                title: "JUPAS Results",
+                story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Before you select your major, let's see how well you understand current social problems in Hong Kong and their solutions!"
+                img: "public/image/story_year1.png",
+                fallbackColor: "6cba65",
+                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Let's see how well you understand current social problems in Hong Kong and their solutions!",
+                instruction: "You have 20 seconds! Tap to flip the cards and match the modern social problem with the correct APSS community solution."
             },
-            interstitials: {
-                swYear2: { title: "Years 2 & 3: Trust Building", story: "You chose Social Work! 🤝<br><br>As a social worker, your workload requires balance. You must dedicate time to community programs and case follow-ups, while managing administrative tasks." },
-                swYear4: { title: "Year 4: Professional Boundaries", story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must support distressed clients empathetically while strictly maintaining professional boundaries and emotional balance." },
-                spseYear2: { title: "Years 2 & 3: Social Innovator", story: "You chose SPSE! 💡<br><br>To build a successful social enterprise, you need the right team. You must gather positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors." },
-                spseYear4: { title: "Year 4: ESG Leadership", story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG Decision Maker. Balance corporate profit with ethical social impact to graduate successfully." }
+            majorSelect: {
+                title: "Choose Your Major",
+                img: "public/image/story_major.png",
+                fallbackColor: "919395",
+                story: "You have successfully completed the Year 1 common curriculum! <br><br>You must now choose your major for the rest of your APSS journey. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
             },
             sw: {
-                mission4: {
+                y2: { 
+                    title: "Years 2 & 3: Social Work", 
+                    img: "public/image/story_sw_y2.png", 
+                    fallbackColor: "3b82f6",
+                    story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach. Let's discover your natural tendency! Catch the traits and work styles you instinctively gravitate toward to find your best fit."
+                },
+                y4: { 
+                    title: "Year 4: Social Work", 
+                    img: "public/image/story_sw_y4.png", 
+                    fallbackColor: "2563eb",
+                    story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases. Your final challenge is to support a distressed client empathetically while strictly maintaining professional boundaries and emotional balance.",
+                    instruction: "Read the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional boundary. Avoid inappropriate personal requests."
+                },
+                grad: {
+                    title: "Registered Social Worker!",
                     img: "public/image/result_m4_sw_prof.png",
-                    desc: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
+                    fallbackColor: "4bb747",
+                    story: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
                 }
             },
             spse: {
-                mission4: { 
+                y2: { 
+                    title: "Years 2 & 3: SPSE", 
+                    img: "public/image/story_spse_y2.png", 
+                    fallbackColor: "a855f7",
+                    story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team. You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.",
+                    instruction: "Drag your backpack left and right. Catch GREEN positive traits (Shared Vision, Empathy) to build a strong startup team. Dodge RED toxic traits (Micromanagement, Selfishness)!"
+                },
+                y4: { 
+                    title: "Year 4: SPSE", 
+                    img: "public/image/story_spse_y4.png", 
+                    fallbackColor: "7e22ce",
+                    story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation. You must balance corporate profit with ethical social impact to graduate successfully.",
+                    instruction: "Act as an ESG manager. Read the corporate scenario cards and choose to Approve (Ethical choices) or Reject (Unethical choices). Make 3 correct choices to maximize your ESG Reputation!"
+                },
+                grad: { 
+                    title: "ESG & Innovation Mastered!",
                     img: "public/image/result_m4_spse_innov.png",
-                    desc: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
+                    fallbackColor: "4bb747",
+                    story: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
                 }
             }
         };
@@ -461,11 +478,9 @@
             story: document.getElementById('view-story'),
             swingGame: document.getElementById('view-swing-game'),
             year1Memory: document.getElementById('view-year1-memory'),
-            majorSelect: document.getElementById('view-major-select'),
             catcher: document.getElementById('view-catcher'),
             swChat: document.getElementById('view-sw-chat'),
             spseEsg: document.getElementById('view-spse-esg'),
-            result: document.getElementById('view-result'),
             quit: document.getElementById('view-quit'),
             camera: document.getElementById('view-camera'),
             end: document.getElementById('view-end')
@@ -476,6 +491,7 @@
             views[viewName].classList.add('active');
         }
         
+        // --- MODALS & MESSAGES ---
         function showMessage(text, callback) {
             const modal = document.getElementById('msg-modal');
             const content = document.getElementById('msg-modal-content');
@@ -488,46 +504,43 @@
             };
         }
 
-        function showTeacherHint(text) {
-            const modal = document.getElementById('teacher-modal');
-            const content = document.getElementById('teacher-modal-content');
-            document.getElementById('teacher-modal-text').innerText = text;
+        function showInstruction(text, startCallback) {
+            const modal = document.getElementById('instruction-modal');
+            const content = document.getElementById('instruction-modal-content');
+            document.getElementById('instruction-modal-text').innerText = text;
             modal.classList.remove('hidden');
             setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            
+            document.getElementById('instruction-modal-btn').onclick = () => {
+                modal.classList.add('opacity-0'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); startCallback(); }, 200);
+            };
         }
 
-        function closeTeacherHint() {
-            const modal = document.getElementById('teacher-modal');
-            const content = document.getElementById('teacher-modal-content');
-            modal.classList.add('opacity-0'); content.classList.add('scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 200);
-        }
-
-        function injectHintButton(viewId, hintText) {
-            const header = document.querySelector(`#${viewId} > div:first-child`);
-            if (header && !header.querySelector('.hint-btn')) {
-                const btn = document.createElement('button');
-                btn.className = "hint-btn text-theme font-bold text-sm bg-green-50 px-3 py-1 rounded-full border border-green-200 active:bg-green-100 flex items-center gap-1 shadow-sm transition-colors";
-                btn.innerHTML = "💡 Hint";
-                btn.onclick = () => showTeacherHint(hintText);
-                header.appendChild(btn);
-            } else if (header && header.querySelector('.hint-btn')) {
-                header.querySelector('.hint-btn').onclick = () => showTeacherHint(hintText);
-            }
-        }
-
-        function renderStory(title, text, buttonAction) {
-            document.getElementById('story-title').innerHTML = title;
-            document.getElementById('story-text').innerHTML = text;
+        // --- STORY/TRANSITION ENGINE ---
+        // Handles ALL intermediate screens (stories, results, major selection)
+        function renderStoryWithImage(dataObj, buttonsConfig) {
+            document.getElementById('story-title').innerHTML = dataObj.title;
+            // Inject player name into story if it exists
+            let safeStory = dataObj.story.replace("Hello, ", `Hello, <strong>${playerName}</strong>! `);
+            document.getElementById('story-text').innerHTML = safeStory;
+            
+            const imgEl = document.getElementById('story-img');
+            imgEl.src = dataObj.img;
+            imgEl.onerror = () => {
+                imgEl.src = `https://placehold.co/1080x1080/${dataObj.fallbackColor}/ffffff?text=${encodeURIComponent(dataObj.title)}`;
+            };
             
             const btnContainer = document.getElementById('story-btn-container');
             btnContainer.innerHTML = '';
             
-            const btn = document.createElement('button');
-            btn.className = "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
-            btn.innerText = "Continue";
-            btn.onclick = buttonAction;
-            btnContainer.appendChild(btn);
+            buttonsConfig.forEach(btnInfo => {
+                const btn = document.createElement('button');
+                btn.className = btnInfo.className || "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
+                btn.innerText = btnInfo.text;
+                btn.onclick = btnInfo.onClick;
+                btnContainer.appendChild(btn);
+            });
             
             showView('story');
         }
@@ -536,9 +549,11 @@
             const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
                 playerName = nameInput;
-                renderStory(gameData.preU.title, `Hello, <strong>${playerName}</strong>!<br><br>` + gameData.preU.story, () => {
-                    initSwingGame(1);
-                });
+                // Flow: Pre-U Story -> Pre-U Instruction over Game
+                renderStoryWithImage(gameData.preU, [{
+                    text: "Next ➔",
+                    onClick: () => initSwingGame(1, true)
+                }]);
             } else {
                 const inputEl = document.getElementById('player-name');
                 inputEl.style.transform = 'translateX(-10px)';
@@ -547,29 +562,16 @@
             }
         }
 
-        function renderResult(imgUrl, descText, buttons) {
-            document.getElementById('result-img').src = imgUrl; 
-            document.getElementById('result-desc').innerHTML = descText;
-            const btnContainer = document.getElementById('result-btn-container');
-            btnContainer.innerHTML = ''; 
-            buttons.forEach(btnInfo => {
-                const btn = document.createElement('button');
-                btn.innerText = btnInfo.text;
-                btn.className = btnInfo.className;
-                btn.onclick = btnInfo.onClick;
-                btnContainer.appendChild(btn);
-            });
-            showView('result');
-        }
-
         /* --- MISSION 1: SWING METER --- */
         let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
 
-        function initSwingGame(stage) {
+        function initSwingGame(stage, showInst = false) {
             swingState.stage = stage;
-            swingState.active = true;
             swingState.pos = 0;
             swingState.dir = 1;
+            swingState.active = false; // Start inactive
+
+            document.getElementById('btn-swing-retry').classList.add('hidden');
 
             const hint = document.getElementById('swing-hint');
             const scoreTitle = document.getElementById('swing-score-title');
@@ -606,10 +608,20 @@
             const btn = document.getElementById('btn-swing-stop');
             btn.textContent = "STOP!";
             btn.onclick = stopSwing;
-            btn.className = "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-2xl tracking-wider uppercase mt-4";
+            btn.classList.remove('hidden');
             
+            document.getElementById('swing-needle').style.left = `0%`;
             showView('swingGame');
-            swingLoop();
+
+            if (showInst) {
+                showInstruction(gameData.preU.instruction, () => {
+                    swingState.active = true;
+                    swingLoop();
+                });
+            } else {
+                swingState.active = true;
+                swingLoop();
+            }
         }
 
         function swingLoop() {
@@ -629,6 +641,7 @@
             const isSuccess = swingState.pos >= swingState.min && swingState.pos <= swingState.max;
             const scoreDisplay = document.getElementById('swing-score-display');
             const btn = document.getElementById('btn-swing-stop');
+            const retryBtn = document.getElementById('btn-swing-retry');
             
             if (isSuccess) {
                 scoreDisplay.textContent = "Great! 🎉";
@@ -637,23 +650,32 @@
                 btn.className = "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
                 btn.onclick = () => {
                     if(swingState.stage < 3) initSwingGame(swingState.stage + 1);
-                    else showJupasResult();
+                    else showJupasResult(); // Transition 1
                 };
             } else {
                 scoreDisplay.textContent = "Missed it... Try again!";
                 scoreDisplay.classList.add('text-present');
-                btn.textContent = "RETRY";
-                btn.className = "w-full bg-present text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
-                btn.onclick = () => initSwingGame(swingState.stage);
+                btn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
             }
         }
 
+        function retrySwing() {
+            initSwingGame(swingState.stage);
+        }
+
         function showJupasResult() {
-            renderResult(gameData.jupasSuccess.img, gameData.jupasSuccess.desc, [
+            renderStoryWithImage(gameData.jupasSuccess, [
                 {
                     text: "✅ Enter APSS (Year 1)",
                     className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
-                    onClick: () => renderStory(gameData.year1.title, gameData.year1.story, initMemoryGame)
+                    onClick: () => {
+                        // Flow: Year 1 Story -> Memory Game with Instruction
+                        renderStoryWithImage(gameData.year1, [{
+                            text: "Next ➔",
+                            onClick: initMemoryGame
+                        }]);
+                    }
                 },
                 {
                     text: "❌ Quit & Explore Elsewhere",
@@ -670,6 +692,7 @@
         let memoryTimer = 20;
         let memoryInterval = null;
         let lockBoard = false;
+        let memoryGameStarted = false;
 
         const memoryPairs = [
             { id: 0, text: "Intergeneration Poverty", type: "issue" },
@@ -681,16 +704,15 @@
         ];
 
         function initMemoryGame() {
-            injectHintButton('view-year1-memory', "Match the social problem to the correct community program designed to solve it!");
             const grid = document.getElementById('memory-grid');
             grid.innerHTML = '';
             
-            // Shuffle cards
             memoryCards = [...memoryPairs].sort(() => Math.random() - 0.5);
             flippedIndices = [];
             matchesFound = 0;
             memoryTimer = 20;
             lockBoard = false;
+            memoryGameStarted = false;
             
             document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
 
@@ -711,20 +733,23 @@
             });
 
             clearInterval(memoryInterval);
-            memoryInterval = setInterval(() => {
-                memoryTimer--;
-                document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
-                if(memoryTimer <= 0) {
-                    clearInterval(memoryInterval);
-                    showMessage("Time's up! Let's try matching them again.", initMemoryGame);
-                }
-            }, 1000);
-            
             showView('year1Memory');
+            
+            showInstruction(gameData.year1.instruction, () => {
+                memoryGameStarted = true;
+                memoryInterval = setInterval(() => {
+                    memoryTimer--;
+                    document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
+                    if(memoryTimer <= 0) {
+                        clearInterval(memoryInterval);
+                        showMessage("Time's up! A social worker needs to think fast. Let's try again.", initMemoryGame);
+                    }
+                }, 1000);
+            });
         }
 
         function flipMemoryCard(index, element) {
-            if (lockBoard || element.classList.contains('flipped') || element.classList.contains('matched')) return;
+            if (!memoryGameStarted || lockBoard || element.classList.contains('flipped') || element.classList.contains('matched')) return;
 
             element.classList.add('flipped');
             flippedIndices.push(index);
@@ -743,7 +768,6 @@
             const elements = document.querySelectorAll('.memory-card');
 
             if (card1.id === card2.id) {
-                // Match
                 matchesFound++;
                 setTimeout(() => {
                     elements[idx1].classList.add('matched');
@@ -751,11 +775,10 @@
                     resetMemoryBoard();
                     if (matchesFound === 3) {
                         clearInterval(memoryInterval);
-                        setTimeout(() => showView('majorSelect'), 800);
+                        setTimeout(() => showMajorSelect(), 800);
                     }
                 }, 500);
             } else {
-                // No match
                 setTimeout(() => {
                     elements[idx1].classList.remove('flipped');
                     elements[idx2].classList.remove('flipped');
@@ -770,62 +793,120 @@
         }
 
         /* --- MAJOR SELECT --- */
-        function startMajor(major) {
-            currentMajor = major;
-            if(major === 'sw') renderStory(gameData.interstitials.swYear2.title, gameData.interstitials.swYear2.story, () => initCatcher('sw'));
-            else renderStory(gameData.interstitials.spseYear2.title, gameData.interstitials.spseYear2.story, () => initCatcher('spse'));
+        function showMajorSelect() {
+            renderStoryWithImage(gameData.majorSelect, [
+                {
+                    text: "🤝 Social Work (SW)",
+                    className: "w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex justify-center items-center gap-2",
+                    onClick: () => startMajor('sw')
+                },
+                {
+                    text: "💡 SPSE",
+                    className: "w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex justify-center items-center gap-2 mt-3",
+                    onClick: () => startMajor('spse')
+                }
+            ]);
         }
 
-        /* --- YEARS 2-3: CATCHER GAME (Unified for SW and SPSE) --- */
-        let catcherState = { score: 0, active: false, animId: null, items: [], lastSpawn: 0, playerX: 150, config: null };
+        function startMajor(major) {
+            currentMajor = major;
+            const data = gameData[major].y2;
+            renderStoryWithImage(data, [{
+                text: "Next ➔",
+                onClick: () => initCatcher(major)
+            }]);
+        }
+
+        /* --- YEAR 2/3: CATCHER GAME (DUAL MODE) --- */
+        let catcherState = { 
+            score: 0, totalCaught: 0, scores: {}, 
+            spseStats: { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() },
+            timer: 60, timerInterval: null, baseSpeed: 5.25, // 1.5x faster than original 3.5
+            active: false, animId: null, items: [], lastSpawn: 0, playerX: 150, config: null, moveHandler: null 
+        };
         
         const catcherConfigs = {
             sw: {
-                title: "Years 2-3: Workload Balance",
-                instruction: "Catch Direct Work, Dodge Admin!",
-                hint: "Balance your work! Catch Green items (Community programs, Cases) and dodge Red items (Heavy admin) to prioritize your clients.",
+                title: "Years 2-3: Discover Your SW Path",
+                instruction: "Catch 10 traits that appeal to you! Everything looks the same, so read carefully and choose your instinct.",
+                mode: 'fit',
                 words: [
-                    { t: "Community Prog.", g: true }, { t: "Case Follow-up", g: true },
-                    { t: "Proposal Writing", g: false }, { t: "Endless Budgeting", g: false }, { t: "Heavy Eval", g: false }
+                    { t: "Guidance", c: "school" }, { t: "School Support", c: "school" }, { t: "Parent Liaison", c: "school" }, { t: "Preventive Prog.", c: "school" },
+                    { t: "Discharge Planning", c: "medical" }, { t: "Crisis Support", c: "medical" }, { t: "Care Coordination", c: "medical" }, { t: "Patient Support", c: "medical" },
+                    { t: "Child Protection", c: "family" }, { t: "Family Support", c: "family" }, { t: "Risk Assessment", c: "family" }, { t: "Conflict Mediation", c: "family" },
+                    { t: "Outreach", c: "youth" }, { t: "Flexibility", c: "youth" }, { t: "Rapport Building", c: "youth" }, { t: "Street Engagement", c: "youth" },
+                    { t: "Empathy", c: "shared" }, { t: "Active Listening", c: "shared" }, { t: "Teamwork", c: "shared" }, { t: "Advocacy", c: "shared" },
+                    { t: "Impatience", c: "penalty" }, { t: "Rigidity", c: "penalty" }, { t: "Boundary Problems", c: "penalty" }, { t: "Poor Listening", c: "penalty" }
                 ],
-                nextTitle: gameData.interstitials.swYear4.title,
-                nextStory: gameData.interstitials.swYear4.story,
-                nextInit: initSwChat
+                nextStage: 'y4'
             },
             spse: {
-                title: "Years 2-3: Social Innovator Team",
-                instruction: "Catch Positive Traits!",
-                hint: "Build a strong social enterprise team! Catch green positive traits (Empathy, Shared Vision) and avoid red toxic traits.",
+                title: "Years 2-3: Social Innovator",
+                instruction: "You have 60s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
+                mode: 'spse_innovator',
                 words: [
-                    { t: "Shared Vision", g: true }, { t: "Active Listening", g: true }, { t: "Empathy", g: true },
-                    { t: "Micromanagement", g: false }, { t: "Blaming", g: false }, { t: "Selfishness", g: false }
+                    // Good (Mission)
+                    { t: "Shared mission", type: "good", dim: "mission" }, { t: "Mission alignment", type: "good", dim: "mission" },
+                    // Good (Capability)
+                    { t: "Complementary skills", type: "good", dim: "capability" }, { t: "Clear responsibilities", type: "good", dim: "capability" },
+                    // Good (Participation)
+                    { t: "Community involvement", type: "good", dim: "participation" }, { t: "Open communication", type: "good", dim: "participation" },
+                    // Good (Sustainability)
+                    { t: "Social-financial balance", type: "good", dim: "sustainability" }, { t: "Adaptability & learning", type: "good", dim: "sustainability" },
+                    // Good (Accountability)
+                    { t: "Transparent decisions", type: "good", dim: "accountability" }, { t: "Impact measurement", type: "good", dim: "accountability" },
+                    // Gold
+                    { t: "Stakeholder trust", type: "gold" }, { t: "Theory of change", type: "gold" }, { t: "Ethical leadership", type: "gold" }, { t: "Impact learning", type: "gold" },
+                    // Bad (Traps)
+                    { t: "Friendship recruitment", type: "bad" }, { t: "Passion w/o competence", type: "bad" }, { t: "Unresolved conflicts", type: "bad" },
+                    { t: "Skill duplication", type: "bad" }, { t: "Beneficiary exclusion", type: "bad" }, { t: "Founder dependence", type: "bad" },
+                    { t: "Avoid tough talks", type: "bad" }, { t: "Activity = Impact", type: "bad" }, { t: "Financial neglect", type: "bad" },
+                    { t: "Ethical compromise", type: "bad" }, { t: "Fast growth only", type: "bad" }, { t: "Best friend co-founder", type: "bad" },
+                    { t: "Do more activities", type: "bad" }, { t: "Leader decides all", type: "bad" }, { t: "Good intention only", type: "bad" }
                 ],
-                nextTitle: gameData.interstitials.spseYear4.title,
-                nextStory: gameData.interstitials.spseYear4.story,
-                nextInit: initSpseEsg
+                nextStage: 'y4'
             }
         };
 
         function initCatcher(mode) {
             catcherState.config = catcherConfigs[mode];
             document.getElementById('catcher-title').innerText = catcherState.config.title;
-            document.getElementById('catcher-instruction').innerText = catcherState.config.instruction;
-            injectHintButton('view-catcher', catcherState.config.hint);
             
             catcherState.score = 0;
-            catcherState.active = true;
+            catcherState.totalCaught = 0;
+            catcherState.scores = { school: 0, medical: 0, family: 0, youth: 0, penaltyCount: 0 };
+            catcherState.spseStats = { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() };
+            catcherState.timer = 60;
+            clearInterval(catcherState.timerInterval);
+
+            catcherState.active = false; 
             catcherState.items.forEach(item => item.el.remove());
             catcherState.items = [];
-            document.getElementById('catcher-score').innerText = `0/5`;
-            showView('catcher');
             
+            if (catcherState.config.mode === 'fit') {
+                document.getElementById('catcher-score').innerText = `0/10`;
+            } else {
+                document.getElementById('catcher-score').innerText = `Time: 60s | Score: 0`;
+            }
+            
+            showView('catcher');
             const container = document.getElementById('catcher-area');
             const player = document.getElementById('catcher-player');
             
+            // Show view first so offsetWidth calculates correctly
+            showView('catcher');
+
             catcherState.playerX = container.offsetWidth / 2;
             player.style.left = `${catcherState.playerX}px`;
 
-            const moveHandler = (e) => {
+            // Clean up old event listener if it exists
+            if (catcherState.moveHandler) {
+                container.removeEventListener('touchmove', catcherState.moveHandler);
+                container.removeEventListener('mousemove', catcherState.moveHandler);
+            }
+
+            // Create new event listener mapped to the active container and player
+            catcherState.moveHandler = (e) => {
                 if (!catcherState.active) return;
                 const rect = container.getBoundingClientRect();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -835,16 +916,36 @@
                 player.style.left = `${catcherState.playerX}px`;
             };
             
-            container.addEventListener('touchmove', moveHandler, {passive: true});
-            container.addEventListener('mousemove', moveHandler);
+            container.addEventListener('touchmove', catcherState.moveHandler, {passive: true});
+            container.addEventListener('mousemove', catcherState.moveHandler);
 
-            catcherLoop();
+            showInstruction(catcherState.config.instruction, () => {
+                catcherState.active = true;
+                catcherState.lastSpawn = performance.now();
+                
+                if (catcherState.config.mode === 'spse_innovator') {
+                    catcherState.timerInterval = setInterval(() => {
+                        catcherState.timer--;
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${catcherState.spseStats.score}`;
+                        if (catcherState.timer <= 0) {
+                            clearInterval(catcherState.timerInterval);
+                            catcherState.active = false;
+                            cancelAnimationFrame(catcherState.animId);
+                            evaluateSPSEFit();
+                        }
+                    }, 1000);
+                }
+                
+                catcherLoop(performance.now());
+            });
         }
 
         function spawnCatcherItem(container) {
             const word = catcherState.config.words[Math.floor(Math.random() * catcherState.config.words.length)];
             const el = document.createElement('div');
-            el.className = `falling-item ${word.g ? 'bg-green-100 border-2 border-correct text-green-800' : 'bg-red-100 border-2 border-absent text-red-800'}`;
+            
+            // All items use the exact same neutral styling so players must read
+            el.className = `falling-item bg-white border-2 border-gray-300 text-gray-800`;
             el.innerText = word.t;
             
             const startX = Math.random() * (container.offsetWidth - 80) + 40;
@@ -852,7 +953,13 @@
             el.style.top = `-40px`;
             
             container.appendChild(el);
-            catcherState.items.push({ el: el, y: -40, g: word.g });
+            catcherState.items.push({ el: el, y: -40, word: word });
+
+            // Track totals for SPSE percentage formula
+            if (catcherState.config.mode === 'spse_innovator') {
+                if (word.type === 'good' || word.type === 'gold') catcherState.spseStats.greenTotal++;
+                else if (word.type === 'bad') catcherState.spseStats.redTotal++;
+            }
         }
 
         function catcherLoop(timestamp) {
@@ -861,7 +968,15 @@
             const container = document.getElementById('catcher-area');
             const player = document.getElementById('catcher-player');
             
-            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > 900) {
+            // Calculate dynamic speed (SPSE increases every 20s)
+            let currentSpeed = catcherState.baseSpeed;
+            if (catcherState.config.mode === 'spse_innovator') {
+                const timePassed = 60 - catcherState.timer;
+                if (timePassed >= 40) currentSpeed += 2.0;
+                else if (timePassed >= 20) currentSpeed += 1.0;
+            }
+            
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > (900 - (currentSpeed * 20))) {
                 spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
@@ -871,7 +986,7 @@
 
             for (let i = catcherState.items.length - 1; i >= 0; i--) {
                 let item = catcherState.items[i];
-                item.y += 3.5; 
+                item.y += currentSpeed; 
                 item.el.style.top = `${item.y}px`;
 
                 const itemRect = item.el.getBoundingClientRect();
@@ -879,27 +994,76 @@
                 if (itemRect.bottom > playerRect.top + 10 && itemRect.top < playerRect.bottom &&
                     itemRect.right > playerRect.left + 10 && itemRect.left < playerRect.right - 10) {
                     
-                    if (item.g) {
-                        catcherState.score++;
+                    if (catcherState.config.mode === 'fit') {
+                        // Fit Mode (SW) Scoring Logic
+                        catcherState.totalCaught++;
+                        const c = item.word.c;
+                        if (c === 'school') catcherState.scores.school += 3;
+                        if (c === 'medical') catcherState.scores.medical += 3;
+                        if (c === 'family') catcherState.scores.family += 3;
+                        if (c === 'youth') catcherState.scores.youth += 3;
+                        if (c === 'shared') {
+                            catcherState.scores.school += 1; catcherState.scores.medical += 1;
+                            catcherState.scores.family += 1; catcherState.scores.youth += 1;
+                        }
+                        if (c === 'penalty') {
+                            catcherState.scores.penaltyCount++;
+                            catcherState.scores.school -= 2; catcherState.scores.medical -= 2;
+                            catcherState.scores.family -= 2; catcherState.scores.youth -= 2;
+                        }
+
                         player.style.transform = 'translate(-50%, -50%) scale(1.2)';
                         setTimeout(() => player.style.transform = 'translate(-50%, -50%) scale(1)', 150);
+                        document.getElementById('catcher-score').innerText = `${catcherState.totalCaught}/10`;
+                        
+                        item.el.remove();
+                        catcherState.items.splice(i, 1);
+
+                        if (catcherState.totalCaught >= 10) {
+                            catcherState.active = false;
+                            cancelAnimationFrame(catcherState.animId);
+                            evaluateSWFit();
+                            return;
+                        }
                     } else {
-                        catcherState.score = Math.max(0, catcherState.score - 1);
-                        player.style.backgroundColor = '#ef4444';
-                        setTimeout(() => player.style.backgroundColor = '#4bb747', 150);
-                    }
-                    
-                    document.getElementById('catcher-score').innerText = `${catcherState.score}/5`;
-                    item.el.remove();
-                    catcherState.items.splice(i, 1);
-                    
-                    if (catcherState.score >= 5) {
-                        catcherState.active = false;
-                        cancelAnimationFrame(catcherState.animId);
-                        renderStory(catcherState.config.nextTitle, catcherState.config.nextStory, catcherState.config.nextInit);
-                        return;
+                        // SPSE Innovator Scoring Logic (Catching)
+                        const st = catcherState.spseStats;
+                        if (item.word.type === 'good' || item.word.type === 'gold') {
+                            st.score += (item.word.type === 'gold' ? 20 : 10);
+                            st.greenCaught++;
+                            st.combo++;
+                            if (item.word.dim) st.dimensions.add(item.word.dim);
+                            
+                            // Combo bonuses
+                            if (st.combo === 3) st.score += 5;
+                            if (st.combo === 5) st.score += 10;
+                            
+                            player.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                            setTimeout(() => player.style.transform = 'translate(-50%, -50%) scale(1)', 150);
+                        } else if (item.word.type === 'bad') {
+                            st.score -= 12;
+                            st.combo = 0;
+                            player.style.backgroundColor = '#ef4444';
+                            setTimeout(() => player.style.backgroundColor = '#4bb747', 150);
+                        }
+                        
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${st.score}`;
+                        item.el.remove();
+                        catcherState.items.splice(i, 1);
                     }
                 } else if (item.y > containerRect.height) {
+                    // Missed item Logic
+                    if (catcherState.config.mode === 'spse_innovator') {
+                        const st = catcherState.spseStats;
+                        if (item.word.type === 'good' || item.word.type === 'gold') {
+                            st.score -= 5;
+                            st.combo = 0; // Miss breaks combo
+                        } else if (item.word.type === 'bad') {
+                            st.score += 4; // Reward for dodging red
+                            st.redAvoided++;
+                        }
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${st.score}`;
+                    }
                     item.el.remove();
                     catcherState.items.splice(i, 1);
                 }
@@ -907,35 +1071,136 @@
             catcherState.animId = requestAnimationFrame(catcherLoop);
         }
 
+        function evaluateSWFit() {
+            const s = catcherState.scores;
+            const scoresArr = [
+                { name: 'School Social Worker', val: s.school, msg: "You preferred guidance, prevention, and school-family liaison." },
+                { name: 'Medical Social Worker', val: s.medical, msg: "You responded well to crisis support and patient-family needs." },
+                { name: 'Family & Child Welfare Worker', val: s.family, msg: "You prioritized protection, risk assessment, and family support." },
+                { name: 'Youth/Outreach Social Worker', val: s.youth, msg: "You valued outreach, flexibility, and building rapport in the community." }
+            ];
+            // Sort highest score first
+            scoresArr.sort((a, b) => b.val - a.val);
+
+            let resultMsg = "";
+
+            if (s.penaltyCount >= 3) {
+                 resultMsg = "Needs Reflection!\n\nYou caught several negative traits. Social work requires strong ethics, boundaries, and responsibility.";
+            } else if (scoresArr[0].val - scoresArr[1].val < 3) {
+                 resultMsg = "Unlimited Potential!\n\nYour pattern shows broad adaptability across multiple fields rather than one narrow preference. You can handle any role!";
+            } else {
+                 resultMsg = `You may fit: ${scoresArr[0].name}!\n\n${scoresArr[0].msg}`;
+            }
+
+            showMessage(resultMsg, () => {
+                const nextStageData = gameData['sw'].y4;
+                renderStoryWithImage(nextStageData, [{
+                    text: "Next ➔",
+                    onClick: initSwChat
+                }]);
+            });
+        }
+
+        function evaluateSPSEFit() {
+            const st = catcherState.spseStats;
+            const greenRate = st.greenTotal > 0 ? st.greenCaught / st.greenTotal : 0;
+            const redRate = st.redTotal > 0 ? st.redAvoided / st.redTotal : 0;
+            const dimCoverage = st.dimensions.size / 5;
+
+            // Apply dimension bonus
+            if (st.dimensions.size >= 5) st.score += 20;
+
+            // Success Percentage Formula
+            let successPercentage = Math.round(((greenRate * 0.5) + (redRate * 0.3) + (dimCoverage * 0.2)) * 100);
+            successPercentage = Math.max(0, Math.min(100, successPercentage)); // Clamp 0-100
+
+            let label = "";
+            let msg = "";
+
+            if (successPercentage >= 85) {
+                label = "Strong Social Innovator";
+                msg = "You build teams with mission clarity, accountability, and sustainability in mind. Your choices suggest strong potential for social enterprise leadership.";
+            } else if (successPercentage >= 70) {
+                label = "Emerging Social Innovator";
+                msg = "You recognise many strong team traits, but some of your choices suggest risks around balance, communication, or capability. A stronger team needs both social purpose and disciplined execution.";
+            } else if (successPercentage >= 50) {
+                label = "Developing Team Builder";
+                msg = "You understand some key ideas, but missed important risks or balance issues. A stronger team needs both social purpose and disciplined execution.";
+            } else {
+                label = "Needs Rethinking";
+                msg = "Your team-building pattern may lead to mission drift, weak governance, or low impact. Social enterprises need more than passion — they also need structure, ethics, and stakeholder engagement.";
+            }
+
+            const resultMsg = `Potential: ${successPercentage}%\nRating: ${label}\n\n${msg}`;
+
+            showMessage(resultMsg, () => {
+                const nextStageData = gameData['spse'].y4;
+                renderStoryWithImage(nextStageData, [{
+                    text: "Next ➔",
+                    onClick: initSpseEsg
+                }]);
+            });
+        }
+
         /* --- YEAR 4 SW: PROFESSIONAL BOUNDARIES CHAT --- */
         const chatScript = [
-            { client: "I'm having a panic attack, everything is falling apart! You're the only one who cares. Can you come over to my house right now?", opts: [
-                { text: "I'll be right there, hang on!", correct: false, reply: "" },
-                { text: "I hear how overwhelmed you are. I cannot come over, but I am here on the crisis line with you. Let's breathe together.", correct: true, reply: "Okay... okay. I'm listening. Thank you for staying on the line." }
-            ]},
-            { client: "I just feel so alone. Can we exchange personal social media? I want to message you as a friend when I'm sad.", opts: [
-                { text: "Sure, add me on Instagram, I want to support you.", correct: false, reply: "" },
-                { text: "As your social worker, I must keep our relationship professional to help you best. We will use our scheduled sessions to work through this.", correct: true, reply: "I understand. I'll see you at our appointment on Tuesday." }
-            ]}
+            { 
+                client: "Miss, I'm really not okay tonight. I feel like nobody understands me except you. Can you stay online with me until I fall asleep? Please don't tell anyone. I only trust you.", 
+                opts: [
+                    { text: "Of course. I'll stay with you all night. You can message me anytime, even after work. I won't tell anyone.", score: 0, feedback: "This response is over-involved. It creates unhealthy dependence and makes unsafe promises about secrecy." },
+                    { text: "I'm glad you told me you're feeling this overwhelmed. I care about your safety, but I can't stay online with you all night or promise total secrecy. Let's focus on keeping you safe now — are you in immediate danger, and is there a trusted adult or emergency support we need to contact?", score: 2, feedback: "Correct! This validates distress, avoids abandonment, and sets a clear professional limit." },
+                    { text: "You need to calm down first. I'm off duty now, so we can talk during office hours.", score: 0, feedback: "This protects your time but fails to validate distress. A good response combines empathy with clear boundaries." }
+                ]
+            },
+            { 
+                client: "I sent you an Instagram follow request. I post a lot there because it's easier than talking face to face. If you follow me back, you'll understand the real me better.", 
+                opts: [
+                    { text: "Sure, I'll follow you from my personal account so I can understand you better.", score: 0, feedback: "This reply is too personal. It blurs the boundary between professional and personal life, creating confidentiality risks." },
+                    { text: "Thanks for telling me. I can see that sharing online feels easier for you. I can't connect with clients through my personal social media, but we can talk in our sessions about what you've been posting and what it means for you.", score: 2, feedback: "Correct! This acknowledges the client's need, explains the boundary clearly, and redirects to a professional space." },
+                    { text: "No. That is inappropriate. Please do not contact me on social media again.", score: 0, feedback: "This reply is too abrupt. It preserves the boundary but is unnecessarily harsh and risks shaming the client." }
+                ]
+            },
+            { 
+                client: "You've helped me more than my family has. I bought you a very expensive fountain pen to say thank you. Please accept it — you're not like other social workers. I hope we can still keep in touch even after my case ends.", 
+                opts: [
+                    { text: "Thank you so much. I'll accept it this time because I know it comes from gratitude, and yes, we can keep in touch privately after case closure.", score: 0, feedback: "This crosses the line by accepting a costly personal gift and inviting private future contact, leading to ethical conflicts." },
+                    { text: "Thank you for wanting to show appreciation — that means a lot. I'm not able to accept an expensive personal gift or make a private arrangement to stay in touch after service ends, because I need to keep the relationship professional. If you want, we can talk about other appropriate ways to mark your progress.", score: 2, feedback: "Correct! This recognizes gratitude, maintains dignity, and sets a boundary around gifts and post-service private contact." },
+                    { text: "I can't take gifts. Please return it and don't say things like that again.", score: 0, feedback: "This response is boundary-protective but too harsh. A better answer keeps the limit while preserving respect and rapport." }
+                ]
+            }
         ];
         let chatStep = 0;
+        let chatScore = 0;
 
         function initSwChat() {
-            injectHintButton('view-sw-chat', "Validate their feelings, but never agree to non-professional requests (like visiting their home unannounced or adding personal social media).");
             chatStep = 0;
+            chatScore = 0;
             document.getElementById('chat-container').innerHTML = '';
             document.getElementById('chat-options').innerHTML = '';
+            
             showView('swChat');
-            renderChatStep();
+            showInstruction(gameData.sw.y4.instruction, () => {
+                renderChatStep();
+            });
         }
 
         function renderChatStep() {
             if(chatStep >= chatScript.length) {
-                setTimeout(() => {
-                    renderResult(gameData.sw.mission4.img, gameData.sw.mission4.desc, [{
-                        text: "Graduate & Take Photo!", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: startCamera
+                // Debrief and scoring
+                let rating = "";
+                if(chatScore >= 5) rating = "Strong boundary judgment (Boundary Ready)";
+                else if(chatScore >= 3) rating = "Developing practice judgment";
+                else rating = "Needs more work on empathy-boundary balance (Boundary Risk)";
+
+                const debriefText = `Final Score: ${chatScore}/6\nRating: ${rating}\n\nLearning Reminders:\n• Good responses are safe, ethical, and sustainable.\n• Don't promise absolute secrecy when safety limits apply.\n• Don't blur professional/personal lines via gifts or social media.\n• Combine validation, boundaries, and next steps.`;
+
+                showMessage(debriefText, () => {
+                    renderStoryWithImage(gameData.sw.grad, [{
+                        text: "Graduate & Take Photo! 📸",
+                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                        onClick: startCamera
                     }]);
-                }, 1000);
+                });
                 return;
             }
             
@@ -950,7 +1215,11 @@
 
             const optsContainer = document.getElementById('chat-options');
             optsContainer.innerHTML = '';
-            step.opts.forEach(opt => {
+            
+            // Shuffle options so the correct answer isn't always in the same spot
+            const shuffledOpts = [...step.opts].sort(() => Math.random() - 0.5);
+
+            shuffledOpts.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = "bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl shadow-sm text-left active:border-theme active:bg-green-50 transition-colors text-sm";
                 btn.innerText = opt.text;
@@ -960,11 +1229,6 @@
         }
 
         function handleChatReply(opt, prevDiv) {
-            if(!opt.correct) {
-                showMessage("That response crossed a professional boundary. Remember to balance empathy with strict professional limits.", () => initSwChat());
-                return;
-            }
-
             document.getElementById('chat-options').innerHTML = '';
             const container = document.getElementById('chat-container');
             
@@ -972,21 +1236,17 @@
             pDiv.className = "chat-bubble chat-player mt-2 shadow-sm";
             pDiv.innerText = opt.text;
             container.appendChild(pDiv);
+            container.scrollTop = container.scrollHeight;
 
-            if (chatScript[chatStep].reply) {
-                setTimeout(() => {
-                    const rDiv = document.createElement('div');
-                    rDiv.className = "chat-bubble chat-client mt-2 shadow-sm border border-gray-100 opacity-80 text-sm";
-                    rDiv.innerText = chatScript[chatStep].reply;
-                    container.appendChild(rDiv);
-                    container.scrollTop = container.scrollHeight;
-                }, 800);
-            }
+            chatScore += opt.score;
 
+            // Show feedback modal immediately after player answers
             setTimeout(() => {
-                chatStep++;
-                renderChatStep();
-            }, 2000);
+                showMessage(opt.feedback, () => {
+                    chatStep++;
+                    renderChatStep();
+                });
+            }, 600);
         }
 
         /* --- YEAR 4 SPSE: ESG DECISION MAKER --- */
@@ -998,10 +1258,19 @@
         let esgState = { currentIdx: 0, score: 0 };
 
         function initSpseEsg() {
-            injectHintButton('view-spse-esg', "Eco-friendly packaging and CSR initiatives are ethical choices ✅. Cutting mental wellness to save a small budget is a bad choice ❌.");
             esgState = { currentIdx: 0, score: 0 };
-            updateEsgUI();
+            document.getElementById('esg-progress-bar').style.width = `0%`;
+            
+            const card = document.getElementById('esg-card-container');
+            card.style.transform = 'scale(0.8)'; 
+            card.style.opacity = '0';
+            document.getElementById('esg-scenario').innerText = "Loading scenario...";
+
             showView('spseEsg');
+            
+            showInstruction(gameData.spse.y4.instruction, () => {
+                updateEsgUI();
+            });
         }
 
         function updateEsgUI() {
@@ -1015,8 +1284,11 @@
                 }, 150);
             } else {
                 if(esgState.score === esgScenarios.length) {
-                    renderResult(gameData.spse.mission4.img, gameData.spse.mission4.desc, [{
-                        text: "Graduate & Take Photo!", className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: startCamera
+                    // Flow: Graduation Result (Pic + Story) -> Camera
+                    renderStoryWithImage(gameData.spse.grad, [{
+                        text: "Graduate & Take Photo! 📸",
+                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                        onClick: startCamera
                     }]);
                 } else {
                     showMessage("A good ESG Manager balances profit with social impact. Let's try again.", initSpseEsg);
