@@ -323,7 +323,7 @@
         <!-- QUIT / ALTERNATIVE VIEW -->
         <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
             <div class="flex-shrink-0 w-full aspect-square max-h-[40vh] bg-gray-200 overflow-hidden relative shadow-sm">
-                <img src="public/image/quit.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
+                <img src="public/image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
             </div>
             <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between">
                 <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
@@ -404,47 +404,47 @@
         const gameData = {
             preU: {
                 title: "Form 6: Planning for JUPAS",
-                img: "public/image/story_preu.png",
+                img: "public/image/story_01_pre_u.png",
                 fallbackColor: "fc8d1e",
                 story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?",
                 instruction: "Tap 'STOP!' to land the fast-moving needle inside the GREEN zone. You must pass 3 stages of increasing speed representing DSE score requirements."
             },
             jupasSuccess: {
-                img: "public/image/result_m1_ranking.png",
+                img: "public/image/story_02_jupas_success.png",
                 fallbackColor: "4bb747",
                 title: "JUPAS Results",
                 story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                img: "public/image/story_year1.png",
+                img: "public/image/story_03_year1_welcome.png",
                 fallbackColor: "6cba65",
                 story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Let's see how well you understand current social problems in Hong Kong and their solutions!",
                 instruction: "You have 20 seconds! Tap to flip the cards and match the modern social problem with the correct APSS community solution."
             },
             majorSelect: {
                 title: "Choose Your Major",
-                img: "public/image/story_major.png",
+                img: "public/image/story_04_major_selection.png",
                 fallbackColor: "919395",
                 story: "You have successfully completed the Year 1 common curriculum! <br><br>You must now choose your major for the rest of your APSS journey. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
             },
             sw: {
                 y2: { 
                     title: "Years 2 & 3: Social Work", 
-                    img: "public/image/story_sw_y2.png", 
+                    img: "public/image/story_05_sw_year2.png", 
                     fallbackColor: "3b82f6",
                     story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach. Let's discover your natural tendency! Catch the traits and work styles you instinctively gravitate toward to find your best fit."
                 },
                 y4: { 
                     title: "Year 4: Social Work", 
-                    img: "public/image/story_sw_y4.png", 
+                    img: "public/image/story_06_sw_year4.png", 
                     fallbackColor: "2563eb",
                     story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases. Your final challenge is to support a distressed client empathetically while strictly maintaining professional boundaries and emotional balance.",
                     instruction: "Read the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional boundary. Avoid inappropriate personal requests."
                 },
                 grad: {
                     title: "Registered Social Worker!",
-                    img: "public/image/result_m4_sw_prof.png",
+                    img: "public/image/result_sw_graduation.png",
                     fallbackColor: "4bb747",
                     story: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
                 }
@@ -452,21 +452,21 @@
             spse: {
                 y2: { 
                     title: "Years 2 & 3: SPSE", 
-                    img: "public/image/story_spse_y2.png", 
+                    img: "public/image/story_05_spse_year2.png", 
                     fallbackColor: "a855f7",
                     story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team. You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.",
                     instruction: "Drag your backpack left and right. Catch GREEN positive traits (Shared Vision, Empathy) to build a strong startup team. Dodge RED toxic traits (Micromanagement, Selfishness)!"
                 },
                 y4: { 
                     title: "Year 4: SPSE", 
-                    img: "public/image/story_spse_y4.png", 
+                    img: "public/image/story_06_spse_year4.png", 
                     fallbackColor: "7e22ce",
                     story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation. You must balance corporate profit with ethical social impact to graduate successfully.",
                     instruction: "Act as an ESG manager. Read the corporate scenario cards and choose to Approve (Ethical choices) or Reject (Unethical choices). Make 3 correct choices to maximize your ESG Reputation!"
                 },
                 grad: { 
                     title: "ESG & Innovation Mastered!",
-                    img: "public/image/result_m4_spse_innov.png",
+                    img: "public/image/result_spse_graduation.png",
                     fallbackColor: "4bb747",
                     story: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
                 }
