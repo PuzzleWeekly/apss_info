@@ -323,7 +323,7 @@
         <!-- QUIT / ALTERNATIVE VIEW -->
         <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
             <div class="flex-shrink-0 w-full aspect-square max-h-[40vh] bg-gray-200 overflow-hidden relative shadow-sm">
-                <img src="public/image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
+                <img src="image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
             </div>
             <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between">
                 <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
@@ -343,6 +343,7 @@
             <h2 class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Graduation Photo!</h2>
             <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
                 <video id="camera-feed" class="absolute min-w-full min-h-full object-cover z-0" autoplay playsinline></video>
+                <!-- Image source is set via Javascript in startCamera() -->
                 <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='"> 
                 <canvas id="camera-canvas" class="hidden"></canvas>
             </div>
@@ -404,47 +405,47 @@
         const gameData = {
             preU: {
                 title: "Form 6: Planning for JUPAS",
-                img: "public/image/story_01_pre_u.png",
+                img: "image/story_01_pre_u.png",
                 fallbackColor: "fc8d1e",
                 story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?",
                 instruction: "Tap 'STOP!' to land the fast-moving needle inside the GREEN zone. You must pass 3 stages of increasing speed representing DSE score requirements."
             },
             jupasSuccess: {
-                img: "public/image/story_02_jupas_success.png",
+                img: "image/story_02_jupas_success.png",
                 fallbackColor: "4bb747",
                 title: "JUPAS Results",
                 story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                img: "public/image/story_03_year1_welcome.png",
+                img: "image/story_03_year1_welcome.png",
                 fallbackColor: "6cba65",
                 story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Let's see how well you understand current social problems in Hong Kong and their solutions!",
                 instruction: "You have 20 seconds! Tap to flip the cards and match the modern social problem with the correct APSS community solution."
             },
             majorSelect: {
                 title: "Choose Your Major",
-                img: "public/image/story_04_major_selection.png",
+                img: "image/story_04_major_selection.png",
                 fallbackColor: "919395",
                 story: "You have successfully completed the Year 1 common curriculum! <br><br>You must now choose your major for the rest of your APSS journey. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
             },
             sw: {
                 y2: { 
                     title: "Years 2 & 3: Social Work", 
-                    img: "public/image/story_05_sw_year2.png", 
+                    img: "image/story_05_sw_year2.png", 
                     fallbackColor: "3b82f6",
                     story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach. Let's discover your natural tendency! Catch the traits and work styles you instinctively gravitate toward to find your best fit."
                 },
                 y4: { 
                     title: "Year 4: Social Work", 
-                    img: "public/image/story_06_sw_year4.png", 
+                    img: "image/story_06_sw_year4.png", 
                     fallbackColor: "2563eb",
                     story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases. Your final challenge is to support a distressed client empathetically while strictly maintaining professional boundaries and emotional balance.",
                     instruction: "Read the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional boundary. Avoid inappropriate personal requests."
                 },
                 grad: {
                     title: "Registered Social Worker!",
-                    img: "public/image/result_sw_graduation.png",
+                    img: "image/result_sw_graduation.png",
                     fallbackColor: "4bb747",
                     story: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
                 }
@@ -452,21 +453,21 @@
             spse: {
                 y2: { 
                     title: "Years 2 & 3: SPSE", 
-                    img: "public/image/story_05_spse_year2.png", 
+                    img: "image/story_05_spse_year2.png", 
                     fallbackColor: "a855f7",
                     story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team. You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.",
                     instruction: "Drag your backpack left and right. Catch GREEN positive traits (Shared Vision, Empathy) to build a strong startup team. Dodge RED toxic traits (Micromanagement, Selfishness)!"
                 },
                 y4: { 
                     title: "Year 4: SPSE", 
-                    img: "public/image/story_06_spse_year4.png", 
+                    img: "image/story_06_spse_year4.png", 
                     fallbackColor: "7e22ce",
                     story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation. You must balance corporate profit with ethical social impact to graduate successfully.",
                     instruction: "Act as an ESG manager. Read the corporate scenario cards and choose to Approve (Ethical choices) or Reject (Unethical choices). Make 3 correct choices to maximize your ESG Reputation!"
                 },
                 grad: { 
                     title: "ESG & Innovation Mastered!",
-                    img: "public/image/result_spse_graduation.png",
+                    img: "image/result_spse_graduation.png",
                     fallbackColor: "4bb747",
                     story: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
                 }
@@ -518,7 +519,6 @@
         }
 
         // --- STORY/TRANSITION ENGINE ---
-        // Handles ALL intermediate screens (stories, results, major selection)
         function renderStoryWithImage(dataObj, buttonsConfig) {
             document.getElementById('story-title').innerHTML = dataObj.title;
             // Inject player name into story if it exists
@@ -526,7 +526,7 @@
             document.getElementById('story-text').innerHTML = safeStory;
             
             const imgEl = document.getElementById('story-img');
-            imgEl.src = dataObj.img;
+            imgEl.src = dataObj.img; // Pulls from public/image/ correctly
             imgEl.onerror = () => {
                 imgEl.src = `https://placehold.co/1080x1080/${dataObj.fallbackColor}/ffffff?text=${encodeURIComponent(dataObj.title)}`;
             };
@@ -549,7 +549,6 @@
             const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
                 playerName = nameInput;
-                // Flow: Pre-U Story -> Pre-U Instruction over Game
                 renderStoryWithImage(gameData.preU, [{
                     text: "Next ➔",
                     onClick: () => initSwingGame(1, true)
@@ -569,7 +568,7 @@
             swingState.stage = stage;
             swingState.pos = 0;
             swingState.dir = 1;
-            swingState.active = false; // Start inactive
+            swingState.active = false; 
 
             document.getElementById('btn-swing-retry').classList.add('hidden');
 
@@ -650,7 +649,7 @@
                 btn.className = "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
                 btn.onclick = () => {
                     if(swingState.stage < 3) initSwingGame(swingState.stage + 1);
-                    else showJupasResult(); // Transition 1
+                    else showJupasResult();
                 };
             } else {
                 scoreDisplay.textContent = "Missed it... Try again!";
@@ -670,7 +669,6 @@
                     text: "✅ Enter APSS (Year 1)",
                     className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
                     onClick: () => {
-                        // Flow: Year 1 Story -> Memory Game with Instruction
                         renderStoryWithImage(gameData.year1, [{
                             text: "Next ➔",
                             onClick: initMemoryGame
@@ -845,19 +843,12 @@
                 instruction: "You have 30s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
                 mode: 'spse_innovator',
                 words: [
-                    // Good (Mission)
                     { t: "Shared mission", type: "good", dim: "mission" }, { t: "Mission alignment", type: "good", dim: "mission" },
-                    // Good (Capability)
                     { t: "Complementary skills", type: "good", dim: "capability" }, { t: "Clear responsibilities", type: "good", dim: "capability" },
-                    // Good (Participation)
                     { t: "Community involvement", type: "good", dim: "participation" }, { t: "Open communication", type: "good", dim: "participation" },
-                    // Good (Sustainability)
                     { t: "Social-financial balance", type: "good", dim: "sustainability" }, { t: "Adaptability & learning", type: "good", dim: "sustainability" },
-                    // Good (Accountability)
                     { t: "Transparent decisions", type: "good", dim: "accountability" }, { t: "Impact measurement", type: "good", dim: "accountability" },
-                    // Gold
                     { t: "Stakeholder trust", type: "gold" }, { t: "Theory of change", type: "gold" }, { t: "Ethical leadership", type: "gold" }, { t: "Impact learning", type: "gold" },
-                    // Bad (Traps)
                     { t: "Friendship recruitment", type: "bad" }, { t: "Passion w/o competence", type: "bad" }, { t: "Unresolved conflicts", type: "bad" },
                     { t: "Skill duplication", type: "bad" }, { t: "Beneficiary exclusion", type: "bad" }, { t: "Founder dependence", type: "bad" },
                     { t: "Avoid tough talks", type: "bad" }, { t: "Activity = Impact", type: "bad" }, { t: "Financial neglect", type: "bad" },
@@ -893,19 +884,16 @@
             const container = document.getElementById('catcher-area');
             const player = document.getElementById('catcher-player');
             
-            // Show view first so offsetWidth calculates correctly
             showView('catcher');
 
             catcherState.playerX = container.offsetWidth / 2;
             player.style.left = `${catcherState.playerX}px`;
 
-            // Clean up old event listener if it exists
             if (catcherState.moveHandler) {
                 container.removeEventListener('touchmove', catcherState.moveHandler);
                 container.removeEventListener('mousemove', catcherState.moveHandler);
             }
 
-            // Create new event listener mapped to the active container and player
             catcherState.moveHandler = (e) => {
                 if (!catcherState.active) return;
                 const rect = container.getBoundingClientRect();
@@ -941,7 +929,7 @@
         }
 
         function getCatcherIcon(word, mode) {
-            if (mode === 'fit') { // Social Work Categories
+            if (mode === 'fit') { 
                 switch(word.c) {
                     case 'school': return '🏫';
                     case 'medical': return '🏥';
@@ -951,7 +939,7 @@
                     case 'penalty': return '⚠️';
                     default: return '📌';
                 }
-            } else { // SPSE Innovator Categories
+            } else { 
                 if (word.type === 'bad') return '⚠️';
                 if (word.type === 'gold') return '⭐';
                 switch(word.dim) {
@@ -974,26 +962,23 @@
             const icon = getCatcherIcon(word, catcherState.config.mode);
             el.innerHTML = `<span class="bg-gray-100 rounded-full px-1.5 py-0.5 text-xs shadow-inner flex items-center justify-center">${icon}</span><span>${word.t}</span>`;
             
-            // Hide temporarily to measure actual width
             el.style.visibility = 'hidden';
             container.appendChild(el);
             
             const itemWidth = el.offsetWidth;
-            const itemHeight = el.offsetHeight || 30; // Provide fallback height
-            const maxLeft = container.offsetWidth - itemWidth - 10; // Ensure it never spawns outside right boundary
+            const itemHeight = el.offsetHeight || 30; 
+            const maxLeft = container.offsetWidth - itemWidth - 10; 
             
             let startX, startY;
             let valid = false;
             let attempts = 0;
             
-            // Overlap Prevention: Find a clear spot or skip spawning
             while (!valid && attempts < 15) {
                 startX = Math.random() * maxLeft;
-                if (startX < 10) startX = 10; // Ensure it never spawns outside left boundary
-                startY = -60 - Math.random() * 80; // Add random vertical offset
+                if (startX < 10) startX = 10; 
+                startY = -60 - Math.random() * 80; 
                 
                 valid = true;
-                // Check against all currently active falling items
                 for (let i = 0; i < catcherState.items.length; i++) {
                     const other = catcherState.items[i];
                     if (
@@ -1010,20 +995,16 @@
             }
             
             if (!valid) {
-                // Couldn't find a spot that doesn't overlap, cancel spawn for this item
                 el.remove();
                 return;
             }
             
             el.style.left = `${startX}px`;
             el.style.top = `${startY}px`;
-            
-            // Restore visibility after placing inside boundaries
             el.style.visibility = 'visible';
             
             catcherState.items.push({ el: el, y: startY, x: startX, width: itemWidth, height: itemHeight, word: word });
 
-            // Track totals for SPSE percentage formula
             if (catcherState.config.mode === 'spse_innovator') {
                 if (word.type === 'good' || word.type === 'gold') catcherState.spseStats.greenTotal++;
                 else if (word.type === 'bad') catcherState.spseStats.redTotal++;
@@ -1036,7 +1017,6 @@
             const container = document.getElementById('catcher-area');
             const player = document.getElementById('catcher-player');
             
-            // Calculate dynamic speed (SPSE increases every 10s now)
             let currentSpeed = catcherState.baseSpeed;
             if (catcherState.config.mode === 'spse_innovator') {
                 const timePassed = 30 - catcherState.timer;
@@ -1045,7 +1025,7 @@
             }
             
             if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > (900 - (currentSpeed * 20))) {
-                const numItemsToSpawn = Math.floor(Math.random() * 3) + 1; // Randomly spawn 1 to 3 items at the same time
+                const numItemsToSpawn = Math.floor(Math.random() * 3) + 1; 
                 for (let k = 0; k < numItemsToSpawn; k++) {
                     spawnCatcherItem(container);
                 }
@@ -1066,7 +1046,6 @@
                     itemRect.right > playerRect.left + 10 && itemRect.left < playerRect.right - 10) {
                     
                     if (catcherState.config.mode === 'fit') {
-                        // Fit Mode (SW) Scoring Logic
                         catcherState.totalCaught++;
                         const c = item.word.c;
                         if (c === 'school') catcherState.scores.school += 3;
@@ -1097,7 +1076,6 @@
                             return;
                         }
                     } else {
-                        // SPSE Innovator Scoring Logic (Catching)
                         const st = catcherState.spseStats;
                         if (item.word.type === 'good' || item.word.type === 'gold') {
                             st.score += (item.word.type === 'gold' ? 20 : 10);
@@ -1105,7 +1083,6 @@
                             st.combo++;
                             if (item.word.dim) st.dimensions.add(item.word.dim);
                             
-                            // Combo bonuses
                             if (st.combo === 3) st.score += 5;
                             if (st.combo === 5) st.score += 10;
                             
@@ -1123,14 +1100,13 @@
                         catcherState.items.splice(i, 1);
                     }
                 } else if (item.y > containerRect.height) {
-                    // Missed item Logic
                     if (catcherState.config.mode === 'spse_innovator') {
                         const st = catcherState.spseStats;
                         if (item.word.type === 'good' || item.word.type === 'gold') {
                             st.score -= 5;
-                            st.combo = 0; // Miss breaks combo
+                            st.combo = 0; 
                         } else if (item.word.type === 'bad') {
-                            st.score += 4; // Reward for dodging red
+                            st.score += 4; 
                             st.redAvoided++;
                         }
                         document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${st.score}`;
@@ -1150,7 +1126,6 @@
                 { name: 'Family & Child Welfare Worker', val: s.family, msg: "You prioritized protection, risk assessment, and family support." },
                 { name: 'Youth/Outreach Social Worker', val: s.youth, msg: "You valued outreach, flexibility, and building rapport in the community." }
             ];
-            // Sort highest score first
             scoresArr.sort((a, b) => b.val - a.val);
 
             let resultMsg = "";
@@ -1178,12 +1153,10 @@
             const redRate = st.redTotal > 0 ? st.redAvoided / st.redTotal : 0;
             const dimCoverage = st.dimensions.size / 5;
 
-            // Apply dimension bonus
             if (st.dimensions.size >= 5) st.score += 20;
 
-            // Success Percentage Formula
             let successPercentage = Math.round(((greenRate * 0.5) + (redRate * 0.3) + (dimCoverage * 0.2)) * 100);
-            successPercentage = Math.max(0, Math.min(100, successPercentage)); // Clamp 0-100
+            successPercentage = Math.max(0, Math.min(100, successPercentage)); 
 
             let label = "";
             let msg = "";
@@ -1257,7 +1230,6 @@
 
         function renderChatStep() {
             if(chatStep >= chatScript.length) {
-                // Debrief and scoring
                 let rating = "";
                 if(chatScore >= 5) rating = "Strong boundary judgment (Boundary Ready)";
                 else if(chatScore >= 3) rating = "Developing practice judgment";
@@ -1287,7 +1259,6 @@
             const optsContainer = document.getElementById('chat-options');
             optsContainer.innerHTML = '';
             
-            // Shuffle options so the correct answer isn't always in the same spot
             const shuffledOpts = [...step.opts].sort(() => Math.random() - 0.5);
 
             shuffledOpts.forEach(opt => {
@@ -1311,7 +1282,6 @@
 
             chatScore += opt.score;
 
-            // Show feedback modal immediately after player answers
             setTimeout(() => {
                 showMessage(opt.feedback, () => {
                     chatStep++;
@@ -1355,7 +1325,6 @@
                 }, 150);
             } else {
                 if(esgState.score === esgScenarios.length) {
-                    // Flow: Graduation Result (Pic + Story) -> Camera
                     renderStoryWithImage(gameData.spse.grad, [{
                         text: "Graduate & Take Photo! 📸",
                         className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
@@ -1392,7 +1361,7 @@
         async function startCamera() {
             showView('camera');
             const frameImg = document.getElementById('camera-frame');
-            frameImg.src = currentMajor === 'sw' ? 'public/image/camera_frame_sw.png' : 'public/image/camera_frame_spse.png';
+            frameImg.src = currentMajor === 'sw' ? 'image/camera_frame_sw.png' : 'image/camera_frame_spse.png';
 
             const skipBtn = document.getElementById('btn-camera-skip');
             const captureBtn = document.getElementById('btn-capture');
