@@ -821,7 +821,7 @@
         let catcherState = { 
             score: 0, totalCaught: 0, scores: {}, 
             spseStats: { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() },
-            timer: 60, timerInterval: null, baseSpeed: 5.25, // 1.5x faster than original 3.5
+            timer: 30, timerInterval: null, baseSpeed: 5.25, 
             active: false, animId: null, items: [], lastSpawn: 0, playerX: 150, config: null, moveHandler: null 
         };
         
@@ -842,7 +842,7 @@
             },
             spse: {
                 title: "Years 2-3: Social Innovator",
-                instruction: "You have 60s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
+                instruction: "You have 30s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
                 mode: 'spse_innovator',
                 words: [
                     // Good (Mission)
@@ -876,7 +876,7 @@
             catcherState.totalCaught = 0;
             catcherState.scores = { school: 0, medical: 0, family: 0, youth: 0, penaltyCount: 0 };
             catcherState.spseStats = { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() };
-            catcherState.timer = 60;
+            catcherState.timer = 30;
             clearInterval(catcherState.timerInterval);
 
             catcherState.active = false; 
@@ -886,7 +886,7 @@
             if (catcherState.config.mode === 'fit') {
                 document.getElementById('catcher-score').innerText = `0/10`;
             } else {
-                document.getElementById('catcher-score').innerText = `Time: 60s | Score: 0`;
+                document.getElementById('catcher-score').innerText = `Time: 30s | Score: 0`;
             }
             
             showView('catcher');
@@ -979,20 +979,49 @@
             container.appendChild(el);
             
             const itemWidth = el.offsetWidth;
+            const itemHeight = el.offsetHeight || 30; // Provide fallback height
             const maxLeft = container.offsetWidth - itemWidth - 10; // Ensure it never spawns outside right boundary
             
-            let startX = Math.random() * maxLeft;
-            if (startX < 10) startX = 10; // Ensure it never spawns outside left boundary
+            let startX, startY;
+            let valid = false;
+            let attempts = 0;
             
-            const startY = -60 - Math.random() * 60; // Add random vertical offset
+            // Overlap Prevention: Find a clear spot or skip spawning
+            while (!valid && attempts < 15) {
+                startX = Math.random() * maxLeft;
+                if (startX < 10) startX = 10; // Ensure it never spawns outside left boundary
+                startY = -60 - Math.random() * 80; // Add random vertical offset
+                
+                valid = true;
+                // Check against all currently active falling items
+                for (let i = 0; i < catcherState.items.length; i++) {
+                    const other = catcherState.items[i];
+                    if (
+                        startX < other.x + other.width + 10 &&
+                        startX + itemWidth + 10 > other.x &&
+                        startY < other.y + other.height + 10 &&
+                        startY + itemHeight + 10 > other.y
+                    ) {
+                        valid = false;
+                        break;
+                    }
+                }
+                attempts++;
+            }
+            
+            if (!valid) {
+                // Couldn't find a spot that doesn't overlap, cancel spawn for this item
+                el.remove();
+                return;
+            }
+            
             el.style.left = `${startX}px`;
             el.style.top = `${startY}px`;
             
             // Restore visibility after placing inside boundaries
             el.style.visibility = 'visible';
             
-            container.appendChild(el);
-            catcherState.items.push({ el: el, y: startY, word: word });
+            catcherState.items.push({ el: el, y: startY, x: startX, width: itemWidth, height: itemHeight, word: word });
 
             // Track totals for SPSE percentage formula
             if (catcherState.config.mode === 'spse_innovator') {
@@ -1007,12 +1036,12 @@
             const container = document.getElementById('catcher-area');
             const player = document.getElementById('catcher-player');
             
-            // Calculate dynamic speed (SPSE increases every 20s)
+            // Calculate dynamic speed (SPSE increases every 10s now)
             let currentSpeed = catcherState.baseSpeed;
             if (catcherState.config.mode === 'spse_innovator') {
-                const timePassed = 60 - catcherState.timer;
-                if (timePassed >= 40) currentSpeed += 2.0;
-                else if (timePassed >= 20) currentSpeed += 1.0;
+                const timePassed = 30 - catcherState.timer;
+                if (timePassed >= 20) currentSpeed += 2.0;
+                else if (timePassed >= 10) currentSpeed += 1.0;
             }
             
             if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > (900 - (currentSpeed * 20))) {
