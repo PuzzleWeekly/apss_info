@@ -168,7 +168,7 @@
         .chat-player { background-color: #6cba65; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 
         /* Catcher Styles */
-        .falling-item { position: absolute; padding: 8px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; white-space: nowrap; transform: translateX(-50%); }
+        .falling-item { position: absolute; padding: 6px 10px; border-radius: 16px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; white-space: nowrap; }
         .catcher-player { position: absolute; bottom: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
         
         /* ESG Card Styles */
@@ -940,20 +940,59 @@
             });
         }
 
+        function getCatcherIcon(word, mode) {
+            if (mode === 'fit') { // Social Work Categories
+                switch(word.c) {
+                    case 'school': return '🏫';
+                    case 'medical': return '🏥';
+                    case 'family': return '🏡';
+                    case 'youth': return '👟';
+                    case 'shared': return '❤️';
+                    case 'penalty': return '⚠️';
+                    default: return '📌';
+                }
+            } else { // SPSE Innovator Categories
+                if (word.type === 'bad') return '⚠️';
+                if (word.type === 'gold') return '⭐';
+                switch(word.dim) {
+                    case 'mission': return '🎯';
+                    case 'capability': return '🛠️';
+                    case 'participation': return '👥';
+                    case 'sustainability': return '🌱';
+                    case 'accountability': return '📊';
+                    default: return '💡';
+                }
+            }
+        }
+
         function spawnCatcherItem(container) {
             const word = catcherState.config.words[Math.floor(Math.random() * catcherState.config.words.length)];
             const el = document.createElement('div');
             
-            // All items use the exact same neutral styling so players must read
-            el.className = `falling-item bg-white border-2 border-gray-300 text-gray-800`;
-            el.innerText = word.t;
+            el.className = `falling-item bg-white border-2 border-gray-300 text-gray-800 flex items-center gap-1.5`;
             
-            const startX = Math.random() * (container.offsetWidth - 80) + 40;
+            const icon = getCatcherIcon(word, catcherState.config.mode);
+            el.innerHTML = `<span class="bg-gray-100 rounded-full px-1.5 py-0.5 text-xs shadow-inner flex items-center justify-center">${icon}</span><span>${word.t}</span>`;
+            
+            // Hide temporarily to measure actual width
+            el.style.visibility = 'hidden';
+            container.appendChild(el);
+            
+            const itemWidth = el.offsetWidth;
+            const maxLeft = container.offsetWidth - itemWidth - 10; // Ensure it never spawns outside right boundary
+            
+            let startX = Math.random() * maxLeft;
+            if (startX < 10) startX = 10; // Ensure it never spawns outside left boundary
+            
+            const startY = -60 - Math.random() * 60; // Add random vertical offset
             el.style.left = `${startX}px`;
-            el.style.top = `-40px`;
+            el.style.top = `${startY}px`;
+            
+            // Restore visibility after placing inside boundaries
+            el.style.visibility = 'visible';
             
             container.appendChild(el);
-            catcherState.items.push({ el: el, y: -40, word: word });
+            catcherState.items.push({ el: el, y: startY, word: word });
 
             // Track totals for SPSE percentage formula
             if (catcherState.config.mode === 'spse_innovator') {
@@ -977,7 +1016,10 @@
             }
             
             if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > (900 - (currentSpeed * 20))) {
-                spawnCatcherItem(container);
+                const numItemsToSpawn = Math.floor(Math.random() * 3) + 1; // Randomly spawn 1 to 3 items at the same time
+                for (let k = 0; k < numItemsToSpawn; k++) {
+                    spawnCatcherItem(container);
+                }
                 catcherState.lastSpawn = timestamp;
             }
 
