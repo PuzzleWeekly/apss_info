@@ -57,330 +57,430 @@
             display: flex;
         }
 
-        /* Woodle Grid Styles */
-        .grid-container {
-            display: grid;
-            gap: 6px;
-            margin: 0 auto;
-            padding: 10px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .tile {
-            width: 100%;
-            aspect-ratio: 1;
-            border: 2px solid #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 8px;
-            transition: transform 0.1s;
-        }
-
-        .tile[data-state="active"] {
-            border-color: #919395;
-            transform: scale(1.05);
-        }
-
-        /* Flip Animation */
-        .tile.flip {
-            animation: flipIn 0.5s ease-in-out forwards;
-        }
-
-        @keyframes flipIn {
-            0% { transform: rotateX(0); }
-            50% { transform: rotateX(90deg); }
-            100% { transform: rotateX(0); }
-        }
-
-        /* Keyboard Styles */
-        .keyboard {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding: 8px;
-            background: #f1f5f9;
-            padding-bottom: 20px; /* Safe area for modern phones */
-        }
-
-        .key-row {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .key {
-            background-color: #e2e8f0;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #333;
-            cursor: pointer;
-            text-transform: uppercase;
-            flex: 1;
-            max-width: 40px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            user-select: none;
-            touch-action: manipulation; /* Faster tap */
-        }
-
-        .key.wide {
-            flex: 1.5;
-            max-width: 65px;
-            font-size: 0.85rem;
-        }
-
-        .key:active {
-            transform: scale(0.95);
-        }
-
-        /* State Colors */
-        .state-correct { background-color: #4bb747 !important; color: white !important; border-color: #4bb747 !important; }
-        .state-present { background-color: #fc8d1e !important; color: white !important; border-color: #fc8d1e !important; }
-        .state-absent { background-color: #919395 !important; color: white !important; border-color: #919395 !important; }
 
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        /* Swing Meter Styles */
+        .meter-container {
+            width: 100%;
+            height: 48px;
+            background-color: #f1f5f9;
+            border-radius: 24px;
+            position: relative;
+            border: 4px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
+        .meter-target-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background-color: #4bb747;
+            opacity: 0.8;
+        }
+        .meter-needle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* Memory Game Styles */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+            perspective: 1000px;
+        }
+        .memory-card {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .memory-card-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .memory-card.flipped .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+        .memory-card.matched .memory-card-inner {
+            transform: rotateY(180deg) scale(0.95);
+            box-shadow: 0 0 15px rgba(75, 183, 71, 0.5);
+        }
+        .memory-front, .memory-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .memory-front {
+            background: linear-gradient(135deg, #6cba65, #4bb747);
+            color: white;
+            font-size: 24px;
+        }
+        .memory-back {
+            background-color: white;
+            color: #334155;
+            transform: rotateY(180deg);
+            border: 2px solid #e2e8f0;
+        }
+
+        /* Chat Styles (Professional Boundaries) */
+        .chat-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s;
+        }
+        .chat-client { background-color: #f1f5f9; color: #334155; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-player { background-color: #6cba65; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        /* Catcher Styles */
+        .falling-item { position: absolute; padding: 8px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; white-space: nowrap; transform: translateX(-50%); }
+        .catcher-player { position: absolute; bottom: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
+        
+        /* ESG Card Styles */
+        .esg-card { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        
-        <!-- 1. Intro / Name Screen -->
-        <div id="view-intro" class="view-panel active p-6 justify-center items-center text-center bg-lightbg">
-            <div class="w-24 h-24 bg-theme rounded-full flex items-center justify-center mb-6 shadow-lg">
-                <span class="text-4xl">🎓</span>
-            </div>
-            <h1 class="text-3xl font-extrabold text-gray-800 mb-2">APSS Journey</h1>
-            <p class="text-gray-600 mb-8 font-medium">Shape your future, impact the world.</p>
-            
-            <div class="w-full max-w-sm">
-                <input type="text" id="player-name" placeholder="Enter your name to begin..." class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-theme focus:ring-2 focus:ring-theme/20 outline-none transition-all text-center text-lg font-semibold mb-4 shadow-sm">
-                <button onclick="startGame()" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md hover:bg-opacity-90 active:scale-95 transition-transform text-lg">
-                    Start Adventure
-                </button>
+        <!-- INTRO VIEW -->
+        <div id="view-intro" class="view-panel active flex-col items-center justify-center p-6 bg-theme text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+            <div class="relative z-10 w-full max-w-sm flex flex-col items-center text-center">
+                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <span class="text-4xl">🎓</span>
+                </div>
+                <h1 class="text-4xl font-extrabold mb-2 tracking-tight">APSS Journey</h1>
+                <p class="text-green-100 mb-8 font-medium">Shape the Future. Start Here.</p>
+                
+                <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl">
+                    <label class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
+                    <input type="text" id="player-name" class="w-full px-4 py-3 rounded-xl text-gray-800 font-bold mb-4 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all text-center text-lg" placeholder="e.g. Alex" maxlength="15">
+                    <button onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                        Start Journey
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- 2. Story / Narrative Screen -->
-        <div id="view-story" class="view-panel h-full flex-col p-6">
-            <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0 pt-4"></h2>
-            <div class="flex-grow overflow-y-auto hide-scrollbar mb-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+        <!-- STORY/TRANSITION VIEW (WITH PICTURE) -->
+        <div id="view-story" class="view-panel h-full flex-col bg-gray-50">
+            <div class="flex-shrink-0 w-full aspect-square max-h-[35vh] bg-gray-200 overflow-hidden relative shadow-sm">
+                <img id="story-img" src="" alt="Story Image" class="w-full h-full object-cover">
             </div>
-            <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex-shrink-0">
-                Continue
-            </button>
+            <div class="flex-grow p-6 overflow-y-auto hide-scrollbar flex flex-col">
+                <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0"></h2>
+                <div class="flex-grow bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4 overflow-y-auto">
+                    <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+                </div>
+                <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
+                    <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
+                </div>
+            </div>
         </div>
 
-        <!-- 3. Woodle Game Screen -->
-        <div id="view-game" class="view-panel h-full flex-col bg-white">
+        <!-- SWING GAME (MISSION 1) -->
+        <div id="view-swing-game" class="view-panel h-full flex-col bg-white">
             <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
                 <h3 class="font-bold text-gray-700">Pre-U: JUPAS Challenge</h3>
             </div>
             <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
                 <p id="swing-hint" class="text-sm text-blue-800 font-semibold text-center"></p>
             </div>
-
-            <!-- Grid dynamically sized -->
-            <div class="flex-grow flex items-center justify-center overflow-y-auto hide-scrollbar p-2">
-                <div id="woodle-grid" class="grid-container w-full max-w-[320px]"></div>
-            </div>
-
-            <!-- Fixed Keyboard at bottom -->
-            <div id="woodle-keyboard" class="keyboard flex-shrink-0"></div>
-        </div>
-
-        <!-- 4. Result/Success Screen -->
-        <div id="view-result" class="view-panel flex-col h-full p-6 text-center">
-            <h2 class="text-2xl font-bold mb-3 text-correct flex-shrink-0">Mission Accomplished!</h2>
-            
-            <div class="flex-grow overflow-y-auto mb-4 flex flex-col items-center">
-                <div class="w-full max-w-[300px] aspect-square rounded-xl overflow-hidden shadow-md mb-4 bg-gray-200 border-2 border-gray-300">
-                    <img id="result-img" src="" alt="Success Image" class="w-full h-full object-cover">
+            <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8 relative">
+                <div class="w-full flex gap-2 mb-4">
+                    <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-3" class="h-2 flex-1 rounded-full bg-gray-200"></div>
                 </div>
-                <p id="result-desc" class="text-[15px] text-gray-700 leading-relaxed text-left font-medium w-full"></p>
-            </div>
-
-            <!-- Dynamic Buttons Container -->
-            <div id="result-buttons" class="w-full flex flex-col gap-3 flex-shrink-0">
-                <!-- Buttons injected via JS -->
-            </div>
-        </div>
-
-        <!-- 4.5. Quit Screen -->
-        <div id="view-quit" class="view-panel flex-col h-full p-6 text-center justify-center">
-            <h2 class="text-2xl font-bold mb-3 text-present flex-shrink-0">A Different Adventure</h2>
-            <div class="flex-grow overflow-y-auto mb-4 flex flex-col items-center justify-center">
-                <div class="w-full max-w-[300px] aspect-square rounded-xl overflow-hidden shadow-md mb-4 bg-gray-200 border-2 border-gray-300">
-                    <img src="public/image/quit_journey.png" onerror="this.src='https://placehold.co/1080x1080/f3f4f6/919395?text=New+Journey'" alt="New Journey" class="w-full h-full object-cover">
+                <div class="text-center w-full">
+                    <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target</div>
+                    <div id="swing-score-display" class="font-bold text-2xl text-gray-800 transition-colors h-8">Waiting...</div>
                 </div>
-                <p class="text-[15px] text-gray-700 leading-relaxed font-medium w-full">
-                    You chose a different path. Every choice leads to a new adventure, and we wish you a meaningful and successful life journey ahead! The world is vast, go explore it!
-                </p>
-            </div>
-            <button onclick="showView('intro')" class="w-full bg-gray-200 text-gray-700 font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex-shrink-0">
-                🏠 Back to Start
-            </button>
-        </div>
-
-        <!-- 5. Path Selection Screen -->
-        <div id="view-path-select" class="view-panel flex-col h-full p-6 bg-lightbg">
-            <h2 class="text-2xl font-bold mb-2 text-theme flex-shrink-0 pt-4 text-center">Choose Your Path</h2>
-            <p class="text-center text-gray-600 mb-6 font-medium text-sm flex-shrink-0">Year 2 begins. It's time to specialize. Which impact will you make?</p>
-            
-            <div class="flex-grow flex flex-col gap-4 overflow-y-auto hide-scrollbar pb-4">
-                <button onclick="selectPath('sw')" class="flex flex-col items-center bg-white border-2 border-theme rounded-2xl p-6 shadow-sm active:scale-95 transition-transform text-left group">
-                    <div class="w-16 h-16 bg-theme/10 rounded-full flex items-center justify-center mb-3 group-hover:bg-theme transition-colors">
-                        <span class="text-3xl group-hover:text-white">🤝</span>
+                <div class="w-full relative py-4">
+                    <div class="meter-container">
+                        <div id="swing-target-zone" class="meter-target-zone"></div>
+                        <div id="swing-needle" class="meter-needle" style="left: 0%;"></div>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800 w-full text-center mb-2">Social Work (SW)</h3>
-                    <p class="text-sm text-gray-600 text-center">Become a registered social worker. Direct intervention, casework, and community organization to help those in need.</p>
+                </div>
+                <button id="btn-swing-stop" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-2xl tracking-wider uppercase mt-4">
+                    STOP!
                 </button>
-
-                <button onclick="selectPath('spse')" class="flex flex-col items-center bg-white border-2 border-present rounded-2xl p-6 shadow-sm active:scale-95 transition-transform text-left group">
-                    <div class="w-16 h-16 bg-present/10 rounded-full flex items-center justify-center mb-3 group-hover:bg-present transition-colors">
-                        <span class="text-3xl group-hover:text-white">🚀</span>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 w-full text-center mb-2">Social Policy & Entrepreneurship (SPSE)</h3>
-                    <p class="text-sm text-gray-600 text-center">Drive systemic change. Policy analysis, ESG strategy, and founding social enterprises to solve social issues.</p>
+                <button id="btn-swing-retry" onclick="retrySwing()" class="hidden w-full bg-present text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl tracking-wider uppercase mt-2">
+                    RETRY
                 </button>
             </div>
         </div>
 
-        <!-- 6. Camera Screen -->
-        <div id="view-camera" class="view-panel flex-col h-full bg-black text-white relative">
-            <div class="absolute top-4 left-4 z-20">
-                <button onclick="skipCamera()" class="bg-black/50 px-4 py-2 rounded-full text-sm font-bold border border-white/30 backdrop-blur-sm">Skip</button>
+        <!-- MEMORY GAME (YEAR 1) -->
+        <div id="view-year1-memory" class="view-panel h-full flex-col bg-white">
+            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+                <h3 class="font-bold text-gray-700">Year 1: Core Knowledge</h3>
             </div>
-            
-            <div class="flex-grow relative flex items-center justify-center overflow-hidden" id="camera-container">
-                <!-- Video feed -->
-                <video id="camera-feed" class="absolute w-full h-full object-cover z-0" autoplay playsinline></video>
-                
-                <!-- Frame overlay -->
-                <img id="camera-frame" src="" class="absolute w-full h-full object-cover z-10 pointer-events-none" alt="Frame">
-                
-                <!-- Captured Image Canvas (Hidden initially) -->
-                <canvas id="photo-canvas" class="hidden absolute w-full h-full object-cover z-20"></canvas>
+            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100 flex-shrink-0 flex justify-between items-center">
+                <p class="text-sm text-purple-800 font-semibold">Match Issue with Solution!</p>
+                <div class="font-bold text-theme bg-white px-3 py-1 rounded-full shadow-sm border border-purple-100" id="memory-timer">20s</div>
             </div>
+            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-8 bg-gray-50">
+                <div class="memory-grid" id="memory-grid">
+                    <!-- Cards injected via JS -->
+                </div>
+            </div>
+        </div>
 
-            <!-- Controls -->
-            <div id="camera-controls" class="h-32 bg-black flex-shrink-0 flex items-center justify-center z-30 pb-6 px-6 gap-4">
-                <button id="btn-capture" onclick="takePhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-white/20 active:bg-white transition-colors flex-shrink-0"></button>
-                <div id="post-capture-controls" class="hidden w-full flex gap-3">
-                    <button onclick="retakePhoto()" class="flex-1 bg-gray-700 text-white font-bold py-3 rounded-xl">Retake</button>
-                    <button onclick="sharePhoto()" class="flex-1 bg-theme text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
-                        <span>📤 Share</span>
+        <!-- CATCHER GAME (YEAR 2/3 - DUAL MODE) -->
+        <div id="view-catcher" class="view-panel h-full flex-col bg-white">
+            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+                <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
+            </div>
+            <div class="px-4 py-2 bg-yellow-50 flex-shrink-0 flex justify-between items-center border-b border-yellow-100">
+                <span class="text-sm font-bold text-yellow-800" id="catcher-instruction">Catch items!</span>
+                <span id="catcher-score" class="font-bold text-lg text-theme">0/5</span>
+            </div>
+            <div id="catcher-area" class="flex-grow relative overflow-hidden bg-gray-50 touch-none">
+                <div id="catcher-player" class="catcher-player">🎒</div>
+                <!-- Falling items injected here -->
+            </div>
+        </div>
+
+        <!-- CHAT GAME (YEAR 4 SW - BOUNDARIES) -->
+        <div id="view-sw-chat" class="view-panel h-full flex-col bg-white">
+            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+                <h3 class="font-bold text-gray-700">Year 4: Social Work</h3>
+            </div>
+            <div class="flex-grow p-4 overflow-y-auto bg-gray-50 flex flex-col" id="chat-container">
+                <!-- Chat messages injected here -->
+            </div>
+            <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0 flex flex-col gap-2" id="chat-options">
+                <!-- Reply buttons injected here -->
+            </div>
+        </div>
+
+        <!-- ESG DECISION MAKER (YEAR 4 SPSE) -->
+        <div id="view-spse-esg" class="view-panel h-full flex-col bg-white">
+            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+                <h3 class="font-bold text-gray-700">Year 4: SPSE</h3>
+            </div>
+            <div class="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex-shrink-0">
+                <p class="text-sm text-indigo-800 font-semibold text-center">Make ethical corporate choices! Ensure long-term ESG impact.</p>
+            </div>
+            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-6 overflow-hidden relative">
+                <div class="w-full h-8 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300">
+                    <div id="esg-progress-bar" class="h-full bg-theme w-0 transition-all duration-300"></div>
+                </div>
+                <div class="text-xs font-bold text-gray-500 uppercase">ESG Reputation</div>
+                
+                <div id="esg-card-container" class="w-full aspect-square bg-gray-100 rounded-2xl border-2 border-gray-200 shadow-lg flex items-center justify-center p-6 text-center esg-card relative bg-white">
+                    <p id="esg-scenario" class="text-xl font-bold text-gray-800 leading-snug">Loading scenario...</p>
+                </div>
+
+                <div class="flex w-full gap-4 mt-4">
+                    <button onclick="handleEsgChoice(false)" class="flex-1 bg-white border-2 border-red-400 text-red-500 font-bold py-4 rounded-xl shadow-sm active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>❌ Reject</span>
                     </button>
-                    <button onclick="finishCameraAndRestart()" class="flex-1 bg-correct text-white font-bold py-3 rounded-xl">Next ➡️</button>
+                    <button onclick="handleEsgChoice(true)" class="flex-1 bg-white border-2 border-green-500 text-green-600 font-bold py-4 rounded-xl shadow-sm active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>✅ Approve</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- 7. Play Again Screen -->
-        <div id="view-play-again" class="view-panel flex-col h-full p-6 text-center justify-center bg-lightbg">
-            <div class="w-24 h-24 bg-correct rounded-full flex items-center justify-center mb-6 shadow-lg mx-auto">
-                <span class="text-4xl">🌟</span>
+        <!-- QUIT / ALTERNATIVE VIEW -->
+        <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
+            <div class="flex-shrink-0 w-full aspect-square max-h-[40vh] bg-gray-200 overflow-hidden relative shadow-sm">
+                <img src="public/image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
             </div>
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-4">Journey Complete!</h2>
-            <p class="text-gray-600 mb-8 font-medium">You've seen one path, but APSS has so much more to offer. Want to explore the other major?</p>
-            
-            <div class="w-full max-w-sm mx-auto flex flex-col gap-4">
-                <button onclick="showView('pathSelect')" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                    🔄 Try the Other Major
-                </button>
-                <button onclick="showView('intro')" class="w-full bg-gray-200 text-gray-700 font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                    🏠 Back to Start
+            <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between">
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
+                    <h3 class="font-bold text-xl mb-2 text-gray-800">Every Path is Meaningful</h3>
+                    <p class="text-[15px] text-gray-700 leading-relaxed">
+                        Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best on your alternative journey to make an impact on society!
+                    </p>
+                </div>
+                <button onclick="location.reload()" class="w-full bg-absent text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    Back to Start
                 </button>
             </div>
         </div>
 
-        <!-- Toast Notification -->
-        <div id="toast" class="fixed top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full opacity-0 transition-opacity pointer-events-none z-50 font-medium text-sm">
-            Message
+        <!-- CAMERA VIEW -->
+        <div id="view-camera" class="view-panel h-full flex-col bg-black relative">
+            <h2 class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Graduation Photo!</h2>
+            <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
+                <video id="camera-feed" class="absolute min-w-full min-h-full object-cover z-0" autoplay playsinline></video>
+                <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='"> 
+                <canvas id="camera-canvas" class="hidden"></canvas>
+            </div>
+            <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex justify-between items-center z-20 relative">
+                <button id="btn-camera-skip" class="text-white/70 font-semibold px-4 py-2 transition-all">Skip</button>
+                <button id="btn-capture" class="w-16 h-16 bg-white rounded-full border-4 border-gray-300 shadow-lg active:scale-90 transition-transform flex items-center justify-center absolute left-1/2 -translate-x-1/2">
+                    <div class="w-12 h-12 rounded-full border-2 border-gray-800"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- END VIEW -->
+        <div id="view-end" class="view-panel h-full flex-col p-6 bg-theme text-white items-center justify-center text-center relative overflow-hidden">
+             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+             <div class="relative z-10 w-full flex flex-col items-center">
+                <div class="text-6xl mb-6">🎉</div>
+                <h2 class="text-3xl font-bold mb-4">Journey Complete!</h2>
+                <p class="text-green-100 mb-8 font-medium">You have experienced an amazing life as a PolyU APSS student.</p>
+                <div class="w-full flex flex-col gap-4">
+                    <button id="btn-share" class="w-full bg-white text-theme font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden">
+                        Share Photo 📸
+                    </button>
+                    <button onclick="location.reload()" class="w-full bg-gray-800 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                        Play Again (Try other path)
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- INSTRUCTION MODAL (PRE-GAME) -->
+        <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
+                <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">How to Play</h3>
+                <p id="instruction-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
+                <button id="instruction-modal-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    Start Game
+                </button>
+            </div>
+        </div>
+
+        <!-- MESSAGE MODAL (ERROR/FEEDBACK) -->
+        <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
+                <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4">💡</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Notice</h3>
+                <p id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
+                <button id="msg-modal-btn" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Got it</button>
+            </div>
         </div>
 
     </div>
 
     <script>
         let playerName = "";
-        let currentPath = ""; 
+        let currentMajor = "";
         
-        const MAX_GUESSES = 6;
-        let woodleState = {
-            target: "",
-            guesses: [],
-            currentGuess: "",
-            gameOver: false,
-            onSuccess: null
-        };
-
-        // Energetic, Simulation-style Game Data
+        // Data defining the stories, instructions, and images
         const gameData = {
-            mission1: {
-                title: "Mission 1: The Crossroads",
-                story: "You are a Form 6 student planning your JUPAS choices! 🏫 You want a programme that makes a real impact on society. You stumble upon PolyU's BA (Hons) Scheme in Applied Social Sciences (JS3250).<br><br>It has a massive global reputation! In the 2026 Times Higher Education subject rankings, what rank did APSS achieve?",
-                target: "FIFTY",
-                hint: "APSS Ranking: [ _ _ _ _ _ ] TWO",
-                img: "public/image/result_m1_ranking.png",
-                desc: "YES! Ranked 52nd in the world! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is competitive! Applicants usually have strong HKDSE Best 5 scores (low to mid-20s). Top students scoring 26 or above can even join the Fast-track ESG & Sustainability pathway (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
+            preU: {
+                title: "Form 6: Planning for JUPAS",
+                img: "public/image/story_01_pre_u.png",
+                fallbackColor: "fc8d1e",
+                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?",
+                instruction: "Tap 'STOP!' to land the fast-moving needle inside the GREEN zone. You must pass 3 stages of increasing speed representing DSE score requirements."
+            },
+            jupasSuccess: {
+                img: "public/image/story_02_jupas_success.png",
+                fallbackColor: "4bb747",
+                title: "JUPAS Results",
+                story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
-                title: "Year 1: Foundation Built",
-                story: "Welcome to PolyU! 🎉 You've officially entered APSS!<br><br>Year 1 is all about building a rock-solid foundation. You dive into a common social sciences curriculum—exploring core theories, research methods, and diverse social issues. You're making friends and discovering your true passion.<br><br>With this foundation, it's time to choose your exact major..."
+                title: "Welcome to Year 1!",
+                img: "public/image/story_03_year1_welcome.png",
+                fallbackColor: "6cba65",
+                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Let's see how well you understand current social problems in Hong Kong and their solutions!",
+                instruction: "You have 20 seconds! Tap to flip the cards and match the modern social problem with the correct APSS community solution."
             },
-            mission3_sw: {
-                title: "Mission 2: The Core of Social Work (SW)",
-                story: "You chose Social Work! 🤝<br><br>To become a professional registered social worker, theory isn't enough. You need hands-on experience in real agencies, supervised by veterans. What is this crucial 15-credit practical requirement called?",
-                target: "FIELDWORK",
-                hint: "Practical placements: (9 letters)",
-                img: "public/image/result_m3_sw_fieldwork.png", 
-                desc: "Correct! FIELDWORK is the heart of SW! 💼<br><br>Through extensive placements in family services, medical social work, or youth centers, you apply classroom theory to real human lives, earning credentials from the Social Workers Registration Board."
+            majorSelect: {
+                title: "Choose Your Major",
+                img: "public/image/story_04_major_selection.png",
+                fallbackColor: "919395",
+                story: "You have successfully completed the Year 1 common curriculum! <br><br>You must now choose your major for the rest of your APSS journey. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
             },
-            mission3_spse: {
-                title: "Mission 2: Global Perspectives (SPSE)",
-                story: "You chose Social Policy & Social Entrepreneurship! 🚀<br><br>You are learning how to drive systemic change. SPSE offers amazing global opportunities, including a prestigious Dual Degree program. Which European country's capital university partners with PolyU for this degree?",
-                target: "POLAND",
-                hint: "University of Warsaw is in... (6 letters)",
-                img: "public/image/result_m3_spse_poland.png", 
-                desc: "Spot on! POLAND! 🇵🇱<br><br>You can spend 2 years at PolyU and 2 years at the University of Warsaw, earning TWO degrees! Plus, there are departmental scholarships up to HKD 100,000 to cover living costs. A truly global vision!"
+            sw: {
+                y2: { 
+                    title: "Years 2 & 3: Social Work", 
+                    img: "public/image/story_05_sw_year2.png", 
+                    fallbackColor: "3b82f6",
+                    story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach. Let's discover your natural tendency! Catch the traits and work styles you instinctively gravitate toward to find your best fit."
+                },
+                y4: { 
+                    title: "Year 4: Social Work", 
+                    img: "public/image/story_06_sw_year4.png", 
+                    fallbackColor: "2563eb",
+                    story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases. Your final challenge is to support a distressed client empathetically while strictly maintaining professional boundaries and emotional balance.",
+                    instruction: "Read the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional boundary. Avoid inappropriate personal requests."
+                },
+                grad: {
+                    title: "Registered Social Worker!",
+                    img: "public/image/result_sw_graduation.png",
+                    fallbackColor: "4bb747",
+                    story: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
+                }
             },
-            mission4_sw: {
-                title: "Mission 3: Graduation Day (SW)",
-                story: "Flash forward! ⏳ After 4 years of intense study and life-changing fieldwork, graduation day is here.<br><br>You are no longer just a student. You have the official credentials to intervene and help society's most vulnerable. What are you now?",
-                target: "PROFESSIONAL",
-                hint: "A registered... (12 letters)",
-                img: "public/image/result_m4_sw_prof.png", 
-                desc: "Yes! You are a highly respected PROFESSIONAL! 🎓<br><br>As a Registered Social Worker, you step into NGOs, hospitals, or schools, ready to make a profound, direct impact on individuals and communities."
-            },
-            mission4_spse: {
-                title: "Mission 3: Graduation Day (SPSE)",
-                story: "Flash forward! ⏳ Four years of policy analysis, ESG strategies, and social innovation.<br><br>You might have even taken the Fast-track MSc in ESG! You are wearing your graduation gown, ready to disrupt the status quo. What are you driving?",
-                target: "INNOVATION",
-                hint: "Driving social... (10 letters)",
-                img: "public/image/result_m4_spse_innov.png", 
-                desc: "Congratulations! You are a master of INNOVATION! 🚀<br><br>Whether founding your own social enterprise, driving corporate sustainability (CSR/ESG), or shaping government policy, you are a leader of tomorrow!"
+            spse: {
+                y2: { 
+                    title: "Years 2 & 3: SPSE", 
+                    img: "public/image/story_05_spse_year2.png", 
+                    fallbackColor: "a855f7",
+                    story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team. You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.",
+                    instruction: "Drag your backpack left and right. Catch GREEN positive traits (Shared Vision, Empathy) to build a strong startup team. Dodge RED toxic traits (Micromanagement, Selfishness)!"
+                },
+                y4: { 
+                    title: "Year 4: SPSE", 
+                    img: "public/image/story_06_spse_year4.png", 
+                    fallbackColor: "7e22ce",
+                    story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation. You must balance corporate profit with ethical social impact to graduate successfully.",
+                    instruction: "Act as an ESG manager. Read the corporate scenario cards and choose to Approve (Ethical choices) or Reject (Unethical choices). Make 3 correct choices to maximize your ESG Reputation!"
+                },
+                grad: { 
+                    title: "ESG & Innovation Mastered!",
+                    img: "public/image/result_spse_graduation.png",
+                    fallbackColor: "4bb747",
+                    story: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
+                }
             }
         };
 
         const views = {
             intro: document.getElementById('view-intro'),
             story: document.getElementById('view-story'),
-            game: document.getElementById('view-game'),
-            result: document.getElementById('view-result'),
+            swingGame: document.getElementById('view-swing-game'),
+            year1Memory: document.getElementById('view-year1-memory'),
+            catcher: document.getElementById('view-catcher'),
+            swChat: document.getElementById('view-sw-chat'),
+            spseEsg: document.getElementById('view-spse-esg'),
             quit: document.getElementById('view-quit'),
             camera: document.getElementById('view-camera'),
             end: document.getElementById('view-end')
@@ -390,313 +490,816 @@
             Object.values(views).forEach(v => v.classList.remove('active'));
             views[viewName].classList.add('active');
         }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        
+        // --- MODALS & MESSAGES ---
+        function showMessage(text, callback) {
+            const modal = document.getElementById('msg-modal');
+            const content = document.getElementById('msg-modal-content');
+            document.getElementById('msg-modal-text').innerText = text;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            document.getElementById('msg-modal-btn').onclick = () => {
+                modal.classList.add('opacity-0'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); if(callback) callback(); }, 200);
+            };
         }
 
-        // --- Game Flow Logic ---
-        function startGame() {
-            const nameInput = document.getElementById('player-name').value.trim();
-            if(!nameInput) {
-                showToast("Please enter your name!");
-                return;
-            }
-            playerName = nameInput;
-            playMission1();
+        function showInstruction(text, startCallback) {
+            const modal = document.getElementById('instruction-modal');
+            const content = document.getElementById('instruction-modal-content');
+            document.getElementById('instruction-modal-text').innerText = text;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            
+            document.getElementById('instruction-modal-btn').onclick = () => {
+                modal.classList.add('opacity-0'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); startCallback(); }, 200);
+            };
         }
 
-        function playMission1() {
-            renderStory(
-                gameData.mission1.title,
-                `Hello, <strong>${playerName}</strong>!<br><br>` + gameData.mission1.story,
-                () => {
-                    initWoodle(gameData.mission1.target, gameData.mission1.hint, () => {
-                        renderResult(gameData.mission1.img, gameData.mission1.desc, [
-                            {
-                                text: "✅ Enter APSS",
-                                className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
-                                onClick: playYear1
-                            },
-                            {
-                                text: "❌ Quit & Explore Elsewhere",
-                                className: "w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base",
-                                onClick: playQuit
-                            }
-                        ]);
-                    });
-                }
-            );
-        }
-
-        function playQuit() {
-            showView('quit');
-        }
-
-        function playYear1() {
-            renderStory(gameData.year1.title, gameData.year1.story, () => showView('pathSelect'));
-        }
-
-        function selectPath(path) {
-            currentPath = path;
-            const data = path === 'sw' ? gameData.mission3_sw : gameData.mission3_spse;
-            renderStory(data.title, data.story, () => {
-                initWoodle(data.target, data.hint, () => {
-                    renderResult(data.img, data.desc, [{
-                        text: "Next Mission",
-                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
-                        onClick: () => playMission4(path)
-                    }]);
-                });
-            });
-        }
-
-        function playMission4(path) {
-            const data = path === 'sw' ? gameData.mission4_sw : gameData.mission4_spse;
-            renderStory(data.title, data.story, () => {
-                initWoodle(data.target, data.hint, () => {
-                    renderResult(data.img, data.desc, [{
-                        text: "Continue to Graduation",
-                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
-                        onClick: playEnding
-                    }]);
-                });
-            });
-        }
-
-        function playEnding() {
-            // Setup dynamic frame based on chosen path
-            const frameImg = document.getElementById('camera-frame');
-            if(currentPath === 'sw') {
-                frameImg.src = 'public/image/camera_frame_sw.png';
-            } else {
-                frameImg.src = 'public/image/camera_frame_spse.png';
-            }
-            // Add a fallback in case image is missing so it doesn't show broken icon
-            frameImg.onerror = function() {
-                this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='transparent' border='5px solid %236cba65'/%3E%3C/svg%3E";
+        // --- STORY/TRANSITION ENGINE ---
+        // Handles ALL intermediate screens (stories, results, major selection)
+        function renderStoryWithImage(dataObj, buttonsConfig) {
+            document.getElementById('story-title').innerHTML = dataObj.title;
+            // Inject player name into story if it exists
+            let safeStory = dataObj.story.replace("Hello, ", `Hello, <strong>${playerName}</strong>! `);
+            document.getElementById('story-text').innerHTML = safeStory;
+            
+            const imgEl = document.getElementById('story-img');
+            imgEl.src = dataObj.img;
+            imgEl.onerror = () => {
+                imgEl.src = `https://placehold.co/1080x1080/${dataObj.fallbackColor}/ffffff?text=${encodeURIComponent(dataObj.title)}`;
             };
             
-            startCamera();
-        }
-
-        function renderStory(title, text, onContinue) {
-            document.getElementById('story-title').innerHTML = title;
-            document.getElementById('story-text').innerHTML = text;
-            const btn = document.getElementById('story-btn');
-            btn.textContent = "Continue";
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', onContinue);
-            showView('story');
-        }
-
-        function renderResult(imgUrl, descText, buttons) {
-            const imgEl = document.getElementById('result-img');
-            imgEl.src = imgUrl;
-            imgEl.onerror = function() {
-                this.src = `https://placehold.co/1080x1080/f3f4f6/919395?text=Success`;
-            };
+            const btnContainer = document.getElementById('story-btn-container');
+            btnContainer.innerHTML = '';
             
-            document.getElementById('result-desc').innerHTML = descText;
-            
-            const btnContainer = document.getElementById('result-buttons');
-            btnContainer.innerHTML = ''; // Clear previous buttons
-            
-            // Generate buttons dynamically
-            buttons.forEach(btnConfig => {
+            buttonsConfig.forEach(btnInfo => {
                 const btn = document.createElement('button');
-                btn.className = btnConfig.className;
-                btn.textContent = btnConfig.text;
-                btn.addEventListener('click', btnConfig.onClick);
+                btn.className = btnInfo.className || "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
+                btn.innerText = btnInfo.text;
+                btn.onclick = btnInfo.onClick;
                 btnContainer.appendChild(btn);
             });
             
-            showView('result');
+            showView('story');
         }
 
-        // --- Woodle Engine ---
-        function initWoodle(targetWord, hint, successCallback) {
-            woodleState = {
-                target: targetWord.toUpperCase(),
-                guesses: [],
-                currentGuess: "",
-                gameOver: false,
-                onSuccess: successCallback
-            };
-            
-            document.getElementById('game-hint').textContent = hint;
-            document.getElementById('guess-counter').textContent = `0/${MAX_GUESSES}`;
-            
-            createGrid();
-            createKeyboard();
-            showView('game');
-            
-            // Bind physical keyboard
-            document.onkeydown = (e) => {
-                if(woodleState.gameOver) return;
-                const key = e.key.toUpperCase();
-                if (key === 'ENTER') handleInput('ENTER');
-                else if (key === 'BACKSPACE') handleInput('DEL');
-                else if (/^[A-Z]$/.test(key)) handleInput(key);
-            };
-        }
-
-        function createGrid() {
-            const grid = document.getElementById('woodle-grid');
-            grid.innerHTML = '';
-            
-            // Adjust grid columns based on word length
-            const wordLength = woodleState.target.length;
-            grid.style.gridTemplateColumns = `repeat(${wordLength}, minmax(0, 1fr))`;
-            
-            // Limit max width based on word length to keep tiles square-ish
-            if(wordLength > 7) {
-                grid.classList.remove('max-w-[320px]');
-                grid.classList.add('max-w-[400px]');
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if(nameInput) {
+                playerName = nameInput;
+                // Flow: Pre-U Story -> Pre-U Instruction over Game
+                renderStoryWithImage(gameData.preU, [{
+                    text: "Next ➔",
+                    onClick: () => initSwingGame(1, true)
+                }]);
             } else {
-                grid.classList.remove('max-w-[400px]');
-                grid.classList.add('max-w-[320px]');
-            }
-
-            for (let i = 0; i < MAX_GUESSES; i++) {
-                for (let j = 0; j < wordLength; j++) {
-                    const tile = document.createElement('div');
-                    tile.className = 'tile';
-                    tile.id = `tile-${i}-${j}`;
-                    grid.appendChild(tile);
-                }
+                const inputEl = document.getElementById('player-name');
+                inputEl.style.transform = 'translateX(-10px)';
+                setTimeout(() => inputEl.style.transform = 'translateX(10px)', 100);
+                setTimeout(() => inputEl.style.transform = 'translateX(0)', 200);
             }
         }
 
-        const keyboardLayout = [
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-            ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL']
+        /* --- MISSION 1: SWING METER --- */
+        let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
+
+        function initSwingGame(stage, showInst = false) {
+            swingState.stage = stage;
+            swingState.pos = 0;
+            swingState.dir = 1;
+            swingState.active = false; // Start inactive
+
+            document.getElementById('btn-swing-retry').classList.add('hidden');
+
+            const hint = document.getElementById('swing-hint');
+            const scoreTitle = document.getElementById('swing-score-title');
+            
+            if(stage === 1) {
+                hint.innerText = "Stage 1: DSE Chinese requires Level 3! Stop the needle in the green zone.";
+                scoreTitle.innerText = "Target: Chinese Level 3";
+                swingState.speed = 2.5; swingState.min = 40; swingState.max = 70;
+            } else if(stage === 2) {
+                hint.innerText = "Stage 2: DSE English requires Level 3! It's moving slightly faster!";
+                scoreTitle.innerText = "Target: English Level 3";
+                swingState.speed = 3.5; swingState.min = 55; swingState.max = 80;
+            } else {
+                hint.innerText = "Stage 3: APSS is highly competitive! Aim for Best 5 (Mid-20s)!";
+                scoreTitle.innerText = "Target Best 5: Mid-20s";
+                swingState.speed = 4.5; swingState.min = 70; swingState.max = 85;
+            }
+
+            [1,2,3].forEach(i => {
+                const step = document.getElementById(`swing-step-${i}`);
+                if (i < stage) step.className = "h-2 flex-1 rounded-full bg-correct";
+                else if (i === stage) step.className = "h-2 flex-1 rounded-full bg-present";
+                else step.className = "h-2 flex-1 rounded-full bg-gray-200";
+            });
+
+            const targetZone = document.getElementById('swing-target-zone');
+            targetZone.style.left = `${swingState.min}%`;
+            targetZone.style.width = `${swingState.max - swingState.min}%`;
+
+            const scoreDisplay = document.getElementById('swing-score-display');
+            scoreDisplay.textContent = "Waiting...";
+            scoreDisplay.className = "font-bold text-2xl text-gray-800 transition-colors h-8";
+            
+            const btn = document.getElementById('btn-swing-stop');
+            btn.textContent = "STOP!";
+            btn.onclick = stopSwing;
+            btn.classList.remove('hidden');
+            
+            document.getElementById('swing-needle').style.left = `0%`;
+            showView('swingGame');
+
+            if (showInst) {
+                showInstruction(gameData.preU.instruction, () => {
+                    swingState.active = true;
+                    swingLoop();
+                });
+            } else {
+                swingState.active = true;
+                swingLoop();
+            }
+        }
+
+        function swingLoop() {
+            if (!swingState.active) return;
+            swingState.pos += swingState.speed * swingState.dir;
+            if (swingState.pos >= 100) { swingState.pos = 100; swingState.dir = -1; } 
+            else if (swingState.pos <= 0) { swingState.pos = 0; swingState.dir = 1; }
+            document.getElementById('swing-needle').style.left = `${swingState.pos}%`;
+            swingState.animId = requestAnimationFrame(swingLoop);
+        }
+
+        function stopSwing() {
+            if (!swingState.active) return;
+            swingState.active = false;
+            cancelAnimationFrame(swingState.animId);
+            
+            const isSuccess = swingState.pos >= swingState.min && swingState.pos <= swingState.max;
+            const scoreDisplay = document.getElementById('swing-score-display');
+            const btn = document.getElementById('btn-swing-stop');
+            const retryBtn = document.getElementById('btn-swing-retry');
+            
+            if (isSuccess) {
+                scoreDisplay.textContent = "Great! 🎉";
+                scoreDisplay.classList.add('text-correct');
+                btn.textContent = swingState.stage === 3 ? "View Results" : "Next Subject";
+                btn.className = "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
+                btn.onclick = () => {
+                    if(swingState.stage < 3) initSwingGame(swingState.stage + 1);
+                    else showJupasResult(); // Transition 1
+                };
+            } else {
+                scoreDisplay.textContent = "Missed it... Try again!";
+                scoreDisplay.classList.add('text-present');
+                btn.classList.add('hidden');
+                retryBtn.classList.remove('hidden');
+            }
+        }
+
+        function retrySwing() {
+            initSwingGame(swingState.stage);
+        }
+
+        function showJupasResult() {
+            renderStoryWithImage(gameData.jupasSuccess, [
+                {
+                    text: "✅ Enter APSS (Year 1)",
+                    className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                    onClick: () => {
+                        // Flow: Year 1 Story -> Memory Game with Instruction
+                        renderStoryWithImage(gameData.year1, [{
+                            text: "Next ➔",
+                            onClick: initMemoryGame
+                        }]);
+                    }
+                },
+                {
+                    text: "❌ Quit & Explore Elsewhere",
+                    className: "w-full bg-absent text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base mt-3",
+                    onClick: () => showView('quit')
+                }
+            ]);
+        }
+
+        /* --- YEAR 1: MEMORY MATCHING --- */
+        let memoryCards = [];
+        let flippedIndices = [];
+        let matchesFound = 0;
+        let memoryTimer = 20;
+        let memoryInterval = null;
+        let lockBoard = false;
+        let memoryGameStarted = false;
+
+        const memoryPairs = [
+            { id: 0, text: "Intergeneration Poverty", type: "issue" },
+            { id: 0, text: "Strive & Rise Programme", type: "solution" },
+            { id: 1, text: "Sub-divided Unit", type: "issue" },
+            { id: 1, text: "Community Living Room", type: "solution" },
+            { id: 2, text: "Digital Exclusion", type: "issue" },
+            { id: 2, text: "Smart Silver Programme", type: "solution" }
         ];
 
-        function createKeyboard() {
-            const kb = document.getElementById('woodle-keyboard');
-            kb.innerHTML = '';
+        function initMemoryGame() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
             
-            keyboardLayout.forEach(row => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'key-row';
-                row.forEach(key => {
-                    const btn = document.createElement('button');
-                    btn.className = `key ${key === 'ENTER' || key === 'DEL' ? 'wide' : ''}`;
-                    btn.textContent = key;
-                    btn.id = `key-${key}`;
-                    btn.onclick = () => handleInput(key);
-                    rowDiv.appendChild(btn);
-                });
-                kb.appendChild(rowDiv);
+            memoryCards = [...memoryPairs].sort(() => Math.random() - 0.5);
+            flippedIndices = [];
+            matchesFound = 0;
+            memoryTimer = 20;
+            lockBoard = false;
+            memoryGameStarted = false;
+            
+            document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
+
+            memoryCards.forEach((card, index) => {
+                const el = document.createElement('div');
+                el.className = 'memory-card';
+                el.innerHTML = `
+                    <div class="memory-card-inner">
+                        <div class="memory-front">?</div>
+                        <div class="memory-back text-[12px] p-2 leading-tight flex flex-col justify-center items-center text-center">
+                            <span class="text-[10px] text-gray-400 uppercase mb-1">${card.type}</span>
+                            ${card.text}
+                        </div>
+                    </div>
+                `;
+                el.onclick = () => flipMemoryCard(index, el);
+                grid.appendChild(el);
+            });
+
+            clearInterval(memoryInterval);
+            showView('year1Memory');
+            
+            showInstruction(gameData.year1.instruction, () => {
+                memoryGameStarted = true;
+                memoryInterval = setInterval(() => {
+                    memoryTimer--;
+                    document.getElementById('memory-timer').innerText = `${memoryTimer}s`;
+                    if(memoryTimer <= 0) {
+                        clearInterval(memoryInterval);
+                        showMessage("Time's up! A social worker needs to think fast. Let's try again.", initMemoryGame);
+                    }
+                }, 1000);
             });
         }
 
-        function handleInput(key) {
-            if (woodleState.gameOver) return;
-            const wordLength = woodleState.target.length;
+        function flipMemoryCard(index, element) {
+            if (!memoryGameStarted || lockBoard || element.classList.contains('flipped') || element.classList.contains('matched')) return;
 
-            if (key === 'DEL') {
-                woodleState.currentGuess = woodleState.currentGuess.slice(0, -1);
-            } else if (key === 'ENTER') {
-                if (woodleState.currentGuess.length !== wordLength) {
-                    showToast(`Word must be ${wordLength} letters`);
-                    return;
-                }
-                submitGuess();
-                return; // submitGuess handles grid update
-            } else if (woodleState.currentGuess.length < wordLength) {
-                woodleState.currentGuess += key;
-            }
-            updateGrid();
-        }
+            element.classList.add('flipped');
+            flippedIndices.push(index);
 
-        function updateGrid() {
-            const row = woodleState.guesses.length;
-            const wordLength = woodleState.target.length;
-            
-            for (let i = 0; i < wordLength; i++) {
-                const tile = document.getElementById(`tile-${row}-${i}`);
-                tile.textContent = woodleState.currentGuess[i] || '';
-                if (woodleState.currentGuess[i]) {
-                    tile.setAttribute('data-state', 'active');
-                } else {
-                    tile.removeAttribute('data-state');
-                }
+            if (flippedIndices.length === 2) {
+                lockBoard = true;
+                checkForMatch();
             }
         }
 
-        function submitGuess() {
-            const guess = woodleState.currentGuess;
-            const target = woodleState.target;
-            const row = woodleState.guesses.length;
-            const wordLength = target.length;
+        function checkForMatch() {
+            const idx1 = flippedIndices[0];
+            const idx2 = flippedIndices[1];
+            const card1 = memoryCards[idx1];
+            const card2 = memoryCards[idx2];
+            const elements = document.querySelectorAll('.memory-card');
 
-            woodleState.guesses.push(guess);
-            document.getElementById('guess-counter').textContent = `${woodleState.guesses.length}/${MAX_GUESSES}`;
-            woodleState.currentGuess = "";
-            
-            // Logic for checking letters (accounting for duplicates)
-            let targetLetters = target.split('');
-            let guessStates = new Array(wordLength).fill('absent');
-
-            // Pass 1: Correct
-            for (let i = 0; i < wordLength; i++) {
-                if (guess[i] === target[i]) {
-                    guessStates[i] = 'correct';
-                    targetLetters[i] = null;
-                }
-            }
-
-            // Pass 2: Present
-            for (let i = 0; i < wordLength; i++) {
-                if (guessStates[i] === 'correct') continue;
-                const letterIndex = targetLetters.indexOf(guess[i]);
-                if (letterIndex !== -1) {
-                    guessStates[i] = 'present';
-                    targetLetters[letterIndex] = null;
-                }
-            }
-
-            // Animate and update colors
-            for (let i = 0; i < wordLength; i++) {
+            if (card1.id === card2.id) {
+                matchesFound++;
                 setTimeout(() => {
-                    const tile = document.getElementById(`tile-${row}-${i}`);
-                    tile.classList.add('flip');
-                    setTimeout(() => {
-                        tile.classList.add(`state-${guessStates[i]}`);
-                        tile.style.borderColor = 'transparent';
-                    }, 250); // Color changes halfway through flip
-                    
-                    updateKeyboard(guess[i], guessStates[i]);
-                }, i * 150);
+                    elements[idx1].classList.add('matched');
+                    elements[idx2].classList.add('matched');
+                    resetMemoryBoard();
+                    if (matchesFound === 3) {
+                        clearInterval(memoryInterval);
+                        setTimeout(() => showMajorSelect(), 800);
+                    }
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    elements[idx1].classList.remove('flipped');
+                    elements[idx2].classList.remove('flipped');
+                    resetMemoryBoard();
+                }, 1000);
             }
-
-            // Check End Game
-            setTimeout(() => {
-                if (guess === target) {
-                    woodleState.gameOver = true;
-                    setTimeout(() => woodleState.onSuccess(), 500);
-                } else if (woodleState.guesses.length >= MAX_GUESSES) {
-                    woodleState.gameOver = true;
-                    showToast(`Game Over! The word was ${target}`);
-                    setTimeout(() => woodleState.onSuccess(), 2000); // Let them pass anyway for the story
-                }
-            }, wordLength * 150 + 500);
         }
 
-        function updateKeyboard(letter, state) {
-            const key = document.getElementById(`key-${letter}`);
-            if (!key) return;
+        function resetMemoryBoard() {
+            flippedIndices = [];
+            lockBoard = false;
+        }
+
+        /* --- MAJOR SELECT --- */
+        function showMajorSelect() {
+            renderStoryWithImage(gameData.majorSelect, [
+                {
+                    text: "🤝 Social Work (SW)",
+                    className: "w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex justify-center items-center gap-2",
+                    onClick: () => startMajor('sw')
+                },
+                {
+                    text: "💡 SPSE",
+                    className: "w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex justify-center items-center gap-2 mt-3",
+                    onClick: () => startMajor('spse')
+                }
+            ]);
+        }
+
+        function startMajor(major) {
+            currentMajor = major;
+            const data = gameData[major].y2;
+            renderStoryWithImage(data, [{
+                text: "Next ➔",
+                onClick: () => initCatcher(major)
+            }]);
+        }
+
+        /* --- YEAR 2/3: CATCHER GAME (DUAL MODE) --- */
+        let catcherState = { 
+            score: 0, totalCaught: 0, scores: {}, 
+            spseStats: { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() },
+            timer: 60, timerInterval: null, baseSpeed: 5.25, // 1.5x faster than original 3.5
+            active: false, animId: null, items: [], lastSpawn: 0, playerX: 150, config: null, moveHandler: null 
+        };
+        
+        const catcherConfigs = {
+            sw: {
+                title: "Years 2-3: Discover Your SW Path",
+                instruction: "Catch 10 traits that appeal to you! Everything looks the same, so read carefully and choose your instinct.",
+                mode: 'fit',
+                words: [
+                    { t: "Guidance", c: "school" }, { t: "School Support", c: "school" }, { t: "Parent Liaison", c: "school" }, { t: "Preventive Prog.", c: "school" },
+                    { t: "Discharge Planning", c: "medical" }, { t: "Crisis Support", c: "medical" }, { t: "Care Coordination", c: "medical" }, { t: "Patient Support", c: "medical" },
+                    { t: "Child Protection", c: "family" }, { t: "Family Support", c: "family" }, { t: "Risk Assessment", c: "family" }, { t: "Conflict Mediation", c: "family" },
+                    { t: "Outreach", c: "youth" }, { t: "Flexibility", c: "youth" }, { t: "Rapport Building", c: "youth" }, { t: "Street Engagement", c: "youth" },
+                    { t: "Empathy", c: "shared" }, { t: "Active Listening", c: "shared" }, { t: "Teamwork", c: "shared" }, { t: "Advocacy", c: "shared" },
+                    { t: "Impatience", c: "penalty" }, { t: "Rigidity", c: "penalty" }, { t: "Boundary Problems", c: "penalty" }, { t: "Poor Listening", c: "penalty" }
+                ],
+                nextStage: 'y4'
+            },
+            spse: {
+                title: "Years 2-3: Social Innovator",
+                instruction: "You have 60s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
+                mode: 'spse_innovator',
+                words: [
+                    // Good (Mission)
+                    { t: "Shared mission", type: "good", dim: "mission" }, { t: "Mission alignment", type: "good", dim: "mission" },
+                    // Good (Capability)
+                    { t: "Complementary skills", type: "good", dim: "capability" }, { t: "Clear responsibilities", type: "good", dim: "capability" },
+                    // Good (Participation)
+                    { t: "Community involvement", type: "good", dim: "participation" }, { t: "Open communication", type: "good", dim: "participation" },
+                    // Good (Sustainability)
+                    { t: "Social-financial balance", type: "good", dim: "sustainability" }, { t: "Adaptability & learning", type: "good", dim: "sustainability" },
+                    // Good (Accountability)
+                    { t: "Transparent decisions", type: "good", dim: "accountability" }, { t: "Impact measurement", type: "good", dim: "accountability" },
+                    // Gold
+                    { t: "Stakeholder trust", type: "gold" }, { t: "Theory of change", type: "gold" }, { t: "Ethical leadership", type: "gold" }, { t: "Impact learning", type: "gold" },
+                    // Bad (Traps)
+                    { t: "Friendship recruitment", type: "bad" }, { t: "Passion w/o competence", type: "bad" }, { t: "Unresolved conflicts", type: "bad" },
+                    { t: "Skill duplication", type: "bad" }, { t: "Beneficiary exclusion", type: "bad" }, { t: "Founder dependence", type: "bad" },
+                    { t: "Avoid tough talks", type: "bad" }, { t: "Activity = Impact", type: "bad" }, { t: "Financial neglect", type: "bad" },
+                    { t: "Ethical compromise", type: "bad" }, { t: "Fast growth only", type: "bad" }, { t: "Best friend co-founder", type: "bad" },
+                    { t: "Do more activities", type: "bad" }, { t: "Leader decides all", type: "bad" }, { t: "Good intention only", type: "bad" }
+                ],
+                nextStage: 'y4'
+            }
+        };
+
+        function initCatcher(mode) {
+            catcherState.config = catcherConfigs[mode];
+            document.getElementById('catcher-title').innerText = catcherState.config.title;
             
-            // Only upgrade state (absent -> present -> correct)
-            const isCorrect = key.classList.contains('state-correct');
-            const isPresent = key.classList.contains('state-present');
+            catcherState.score = 0;
+            catcherState.totalCaught = 0;
+            catcherState.scores = { school: 0, medical: 0, family: 0, youth: 0, penaltyCount: 0 };
+            catcherState.spseStats = { score: 0, combo: 0, greenCaught: 0, greenTotal: 0, redAvoided: 0, redTotal: 0, dimensions: new Set() };
+            catcherState.timer = 60;
+            clearInterval(catcherState.timerInterval);
+
+            catcherState.active = false; 
+            catcherState.items.forEach(item => item.el.remove());
+            catcherState.items = [];
+            
+            if (catcherState.config.mode === 'fit') {
+                document.getElementById('catcher-score').innerText = `0/10`;
+            } else {
+                document.getElementById('catcher-score').innerText = `Time: 60s | Score: 0`;
+            }
+            
+            showView('catcher');
+            const container = document.getElementById('catcher-area');
+            const player = document.getElementById('catcher-player');
+            
+            // Show view first so offsetWidth calculates correctly
+            showView('catcher');
+
+            catcherState.playerX = container.offsetWidth / 2;
+            player.style.left = `${catcherState.playerX}px`;
+
+            // Clean up old event listener if it exists
+            if (catcherState.moveHandler) {
+                container.removeEventListener('touchmove', catcherState.moveHandler);
+                container.removeEventListener('mousemove', catcherState.moveHandler);
+            }
+
+            // Create new event listener mapped to the active container and player
+            catcherState.moveHandler = (e) => {
+                if (!catcherState.active) return;
+                const rect = container.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                let targetX = clientX - rect.left;
+                targetX = Math.max(30, Math.min(container.offsetWidth - 30, targetX));
+                catcherState.playerX = targetX;
+                player.style.left = `${catcherState.playerX}px`;
+            };
+            
+            container.addEventListener('touchmove', catcherState.moveHandler, {passive: true});
+            container.addEventListener('mousemove', catcherState.moveHandler);
+
+            showInstruction(catcherState.config.instruction, () => {
+                catcherState.active = true;
+                catcherState.lastSpawn = performance.now();
+                
+                if (catcherState.config.mode === 'spse_innovator') {
+                    catcherState.timerInterval = setInterval(() => {
+                        catcherState.timer--;
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${catcherState.spseStats.score}`;
+                        if (catcherState.timer <= 0) {
+                            clearInterval(catcherState.timerInterval);
+                            catcherState.active = false;
+                            cancelAnimationFrame(catcherState.animId);
+                            evaluateSPSEFit();
+                        }
+                    }, 1000);
+                }
+                
+                catcherLoop(performance.now());
+            });
+        }
+
+        function spawnCatcherItem(container) {
+            const word = catcherState.config.words[Math.floor(Math.random() * catcherState.config.words.length)];
+            const el = document.createElement('div');
+            
+            // All items use the exact same neutral styling so players must read
+            el.className = `falling-item bg-white border-2 border-gray-300 text-gray-800`;
+            el.innerText = word.t;
+            
+            const startX = Math.random() * (container.offsetWidth - 80) + 40;
+            el.style.left = `${startX}px`;
+            el.style.top = `-40px`;
+            
+            container.appendChild(el);
+            catcherState.items.push({ el: el, y: -40, word: word });
+
+            // Track totals for SPSE percentage formula
+            if (catcherState.config.mode === 'spse_innovator') {
+                if (word.type === 'good' || word.type === 'gold') catcherState.spseStats.greenTotal++;
+                else if (word.type === 'bad') catcherState.spseStats.redTotal++;
+            }
+        }
+
+        function catcherLoop(timestamp) {
+            if (!catcherState.active) return;
+            
+            const container = document.getElementById('catcher-area');
+            const player = document.getElementById('catcher-player');
+            
+            // Calculate dynamic speed (SPSE increases every 20s)
+            let currentSpeed = catcherState.baseSpeed;
+            if (catcherState.config.mode === 'spse_innovator') {
+                const timePassed = 60 - catcherState.timer;
+                if (timePassed >= 40) currentSpeed += 2.0;
+                else if (timePassed >= 20) currentSpeed += 1.0;
+            }
+            
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > (900 - (currentSpeed * 20))) {
+                spawnCatcherItem(container);
+                catcherState.lastSpawn = timestamp;
+            }
+
+            const playerRect = player.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            for (let i = catcherState.items.length - 1; i >= 0; i--) {
+                let item = catcherState.items[i];
+                item.y += currentSpeed; 
+                item.el.style.top = `${item.y}px`;
+
+                const itemRect = item.el.getBoundingClientRect();
+
+                if (itemRect.bottom > playerRect.top + 10 && itemRect.top < playerRect.bottom &&
+                    itemRect.right > playerRect.left + 10 && itemRect.left < playerRect.right - 10) {
+                    
+                    if (catcherState.config.mode === 'fit') {
+                        // Fit Mode (SW) Scoring Logic
+                        catcherState.totalCaught++;
+                        const c = item.word.c;
+                        if (c === 'school') catcherState.scores.school += 3;
+                        if (c === 'medical') catcherState.scores.medical += 3;
+                        if (c === 'family') catcherState.scores.family += 3;
+                        if (c === 'youth') catcherState.scores.youth += 3;
+                        if (c === 'shared') {
+                            catcherState.scores.school += 1; catcherState.scores.medical += 1;
+                            catcherState.scores.family += 1; catcherState.scores.youth += 1;
+                        }
+                        if (c === 'penalty') {
+                            catcherState.scores.penaltyCount++;
+                            catcherState.scores.school -= 2; catcherState.scores.medical -= 2;
+                            catcherState.scores.family -= 2; catcherState.scores.youth -= 2;
+                        }
+
+                        player.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                        setTimeout(() => player.style.transform = 'translate(-50%, -50%) scale(1)', 150);
+                        document.getElementById('catcher-score').innerText = `${catcherState.totalCaught}/10`;
+                        
+                        item.el.remove();
+                        catcherState.items.splice(i, 1);
+
+                        if (catcherState.totalCaught >= 10) {
+                            catcherState.active = false;
+                            cancelAnimationFrame(catcherState.animId);
+                            evaluateSWFit();
+                            return;
+                        }
+                    } else {
+                        // SPSE Innovator Scoring Logic (Catching)
+                        const st = catcherState.spseStats;
+                        if (item.word.type === 'good' || item.word.type === 'gold') {
+                            st.score += (item.word.type === 'gold' ? 20 : 10);
+                            st.greenCaught++;
+                            st.combo++;
+                            if (item.word.dim) st.dimensions.add(item.word.dim);
+                            
+                            // Combo bonuses
+                            if (st.combo === 3) st.score += 5;
+                            if (st.combo === 5) st.score += 10;
+                            
+                            player.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                            setTimeout(() => player.style.transform = 'translate(-50%, -50%) scale(1)', 150);
+                        } else if (item.word.type === 'bad') {
+                            st.score -= 12;
+                            st.combo = 0;
+                            player.style.backgroundColor = '#ef4444';
+                            setTimeout(() => player.style.backgroundColor = '#4bb747', 150);
+                        }
+                        
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${st.score}`;
+                        item.el.remove();
+                        catcherState.items.splice(i, 1);
+                    }
+                } else if (item.y > containerRect.height) {
+                    // Missed item Logic
+                    if (catcherState.config.mode === 'spse_innovator') {
+                        const st = catcherState.spseStats;
+                        if (item.word.type === 'good' || item.word.type === 'gold') {
+                            st.score -= 5;
+                            st.combo = 0; // Miss breaks combo
+                        } else if (item.word.type === 'bad') {
+                            st.score += 4; // Reward for dodging red
+                            st.redAvoided++;
+                        }
+                        document.getElementById('catcher-score').innerText = `Time: ${catcherState.timer}s | Score: ${st.score}`;
+                    }
+                    item.el.remove();
+                    catcherState.items.splice(i, 1);
+                }
+            }
+            catcherState.animId = requestAnimationFrame(catcherLoop);
+        }
+
+        function evaluateSWFit() {
+            const s = catcherState.scores;
+            const scoresArr = [
+                { name: 'School Social Worker', val: s.school, msg: "You preferred guidance, prevention, and school-family liaison." },
+                { name: 'Medical Social Worker', val: s.medical, msg: "You responded well to crisis support and patient-family needs." },
+                { name: 'Family & Child Welfare Worker', val: s.family, msg: "You prioritized protection, risk assessment, and family support." },
+                { name: 'Youth/Outreach Social Worker', val: s.youth, msg: "You valued outreach, flexibility, and building rapport in the community." }
+            ];
+            // Sort highest score first
+            scoresArr.sort((a, b) => b.val - a.val);
+
+            let resultMsg = "";
+
+            if (s.penaltyCount >= 3) {
+                 resultMsg = "Needs Reflection!\n\nYou caught several negative traits. Social work requires strong ethics, boundaries, and responsibility.";
+            } else if (scoresArr[0].val - scoresArr[1].val < 3) {
+                 resultMsg = "Unlimited Potential!\n\nYour pattern shows broad adaptability across multiple fields rather than one narrow preference. You can handle any role!";
+            } else {
+                 resultMsg = `You may fit: ${scoresArr[0].name}!\n\n${scoresArr[0].msg}`;
+            }
+
+            showMessage(resultMsg, () => {
+                const nextStageData = gameData['sw'].y4;
+                renderStoryWithImage(nextStageData, [{
+                    text: "Next ➔",
+                    onClick: initSwChat
+                }]);
+            });
+        }
+
+        function evaluateSPSEFit() {
+            const st = catcherState.spseStats;
+            const greenRate = st.greenTotal > 0 ? st.greenCaught / st.greenTotal : 0;
+            const redRate = st.redTotal > 0 ? st.redAvoided / st.redTotal : 0;
+            const dimCoverage = st.dimensions.size / 5;
+
+            // Apply dimension bonus
+            if (st.dimensions.size >= 5) st.score += 20;
+
+            // Success Percentage Formula
+            let successPercentage = Math.round(((greenRate * 0.5) + (redRate * 0.3) + (dimCoverage * 0.2)) * 100);
+            successPercentage = Math.max(0, Math.min(100, successPercentage)); // Clamp 0-100
+
+            let label = "";
+            let msg = "";
+
+            if (successPercentage >= 85) {
+                label = "Strong Social Innovator";
+                msg = "You build teams with mission clarity, accountability, and sustainability in mind. Your choices suggest strong potential for social enterprise leadership.";
+            } else if (successPercentage >= 70) {
+                label = "Emerging Social Innovator";
+                msg = "You recognise many strong team traits, but some of your choices suggest risks around balance, communication, or capability. A stronger team needs both social purpose and disciplined execution.";
+            } else if (successPercentage >= 50) {
+                label = "Developing Team Builder";
+                msg = "You understand some key ideas, but missed important risks or balance issues. A stronger team needs both social purpose and disciplined execution.";
+            } else {
+                label = "Needs Rethinking";
+                msg = "Your team-building pattern may lead to mission drift, weak governance, or low impact. Social enterprises need more than passion — they also need structure, ethics, and stakeholder engagement.";
+            }
+
+            const resultMsg = `Potential: ${successPercentage}%\nRating: ${label}\n\n${msg}`;
+
+            showMessage(resultMsg, () => {
+                const nextStageData = gameData['spse'].y4;
+                renderStoryWithImage(nextStageData, [{
+                    text: "Next ➔",
+                    onClick: initSpseEsg
+                }]);
+            });
+        }
+
+        /* --- YEAR 4 SW: PROFESSIONAL BOUNDARIES CHAT --- */
+        const chatScript = [
+            { 
+                client: "Miss, I'm really not okay tonight. I feel like nobody understands me except you. Can you stay online with me until I fall asleep? Please don't tell anyone. I only trust you.", 
+                opts: [
+                    { text: "Of course. I'll stay with you all night. You can message me anytime, even after work. I won't tell anyone.", score: 0, feedback: "This response is over-involved. It creates unhealthy dependence and makes unsafe promises about secrecy." },
+                    { text: "I'm glad you told me you're feeling this overwhelmed. I care about your safety, but I can't stay online with you all night or promise total secrecy. Let's focus on keeping you safe now — are you in immediate danger, and is there a trusted adult or emergency support we need to contact?", score: 2, feedback: "Correct! This validates distress, avoids abandonment, and sets a clear professional limit." },
+                    { text: "You need to calm down first. I'm off duty now, so we can talk during office hours.", score: 0, feedback: "This protects your time but fails to validate distress. A good response combines empathy with clear boundaries." }
+                ]
+            },
+            { 
+                client: "I sent you an Instagram follow request. I post a lot there because it's easier than talking face to face. If you follow me back, you'll understand the real me better.", 
+                opts: [
+                    { text: "Sure, I'll follow you from my personal account so I can understand you better.", score: 0, feedback: "This reply is too personal. It blurs the boundary between professional and personal life, creating confidentiality risks." },
+                    { text: "Thanks for telling me. I can see that sharing online feels easier for you. I can't connect with clients through my personal social media, but we can talk in our sessions about what you've been posting and what it means for you.", score: 2, feedback: "Correct! This acknowledges the client's need, explains the boundary clearly, and redirects to a professional space." },
+                    { text: "No. That is inappropriate. Please do not contact me on social media again.", score: 0, feedback: "This reply is too abrupt. It preserves the boundary but is unnecessarily harsh and risks shaming the client." }
+                ]
+            },
+            { 
+                client: "You've helped me more than my family has. I bought you a very expensive fountain pen to say thank you. Please accept it — you're not like other social workers. I hope we can still keep in touch even after my case ends.", 
+                opts: [
+                    { text: "Thank you so much. I'll accept it this time because I know it comes from gratitude, and yes, we can keep in touch privately after case closure.", score: 0, feedback: "This crosses the line by accepting a costly personal gift and inviting private future contact, leading to ethical conflicts." },
+                    { text: "Thank you for wanting to show appreciation — that means a lot. I'm not able to accept an expensive personal gift or make a private arrangement to stay in touch after service ends, because I need to keep the relationship professional. If you want, we can talk about other appropriate ways to mark your progress.", score: 2, feedback: "Correct! This recognizes gratitude, maintains dignity, and sets a boundary around gifts and post-service private contact." },
+                    { text: "I can't take gifts. Please return it and don't say things like that again.", score: 0, feedback: "This response is boundary-protective but too harsh. A better answer keeps the limit while preserving respect and rapport." }
+                ]
+            }
+        ];
+        let chatStep = 0;
+        let chatScore = 0;
+
+        function initSwChat() {
+            chatStep = 0;
+            chatScore = 0;
+            document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('chat-options').innerHTML = '';
+            
+            showView('swChat');
+            showInstruction(gameData.sw.y4.instruction, () => {
+                renderChatStep();
+            });
+        }
+
+        function renderChatStep() {
+            if(chatStep >= chatScript.length) {
+                // Debrief and scoring
+                let rating = "";
+                if(chatScore >= 5) rating = "Strong boundary judgment (Boundary Ready)";
+                else if(chatScore >= 3) rating = "Developing practice judgment";
+                else rating = "Needs more work on empathy-boundary balance (Boundary Risk)";
+
+                const debriefText = `Final Score: ${chatScore}/6\nRating: ${rating}\n\nLearning Reminders:\n• Good responses are safe, ethical, and sustainable.\n• Don't promise absolute secrecy when safety limits apply.\n• Don't blur professional/personal lines via gifts or social media.\n• Combine validation, boundaries, and next steps.`;
+
+                showMessage(debriefText, () => {
+                    renderStoryWithImage(gameData.sw.grad, [{
+                        text: "Graduate & Take Photo! 📸",
+                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                        onClick: startCamera
+                    }]);
+                });
+                return;
+            }
+            
+            const step = chatScript[chatStep];
+            const container = document.getElementById('chat-container');
+            
+            const cDiv = document.createElement('div');
+            cDiv.className = "chat-bubble chat-client mt-4 shadow-sm border border-gray-100";
+            cDiv.innerText = step.client;
+            container.appendChild(cDiv);
+            container.scrollTop = container.scrollHeight;
+
+            const optsContainer = document.getElementById('chat-options');
+            optsContainer.innerHTML = '';
+            
+            // Shuffle options so the correct answer isn't always in the same spot
+            const shuffledOpts = [...step.opts].sort(() => Math.random() - 0.5);
+
+            shuffledOpts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl shadow-sm text-left active:border-theme active:bg-green-50 transition-colors text-sm";
+                btn.innerText = opt.text;
+                btn.onclick = () => handleChatReply(opt, cDiv);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function handleChatReply(opt, prevDiv) {
+            document.getElementById('chat-options').innerHTML = '';
+            const container = document.getElementById('chat-container');
+            
+            const pDiv = document.createElement('div');
+            pDiv.className = "chat-bubble chat-player mt-2 shadow-sm";
+            pDiv.innerText = opt.text;
+            container.appendChild(pDiv);
+            container.scrollTop = container.scrollHeight;
+
+            chatScore += opt.score;
+
+            // Show feedback modal immediately after player answers
+            setTimeout(() => {
+                showMessage(opt.feedback, () => {
+                    chatStep++;
+                    renderChatStep();
+                });
+            }, 600);
+        }
+
+        /* --- YEAR 4 SPSE: ESG DECISION MAKER --- */
+        const esgScenarios = [
+            { text: "Switch to eco-friendly but slightly more expensive packaging.", correct: true },
+            { text: "Cut the employee mental wellness program to save 5% budget.", correct: false },
+            { text: "Launch a CSR initiative to train underprivileged youth.", correct: true }
+        ];
+        let esgState = { currentIdx: 0, score: 0 };
+
+        function initSpseEsg() {
+            esgState = { currentIdx: 0, score: 0 };
+            document.getElementById('esg-progress-bar').style.width = `0%`;
+            
+            const card = document.getElementById('esg-card-container');
+            card.style.transform = 'scale(0.8)'; 
+            card.style.opacity = '0';
+            document.getElementById('esg-scenario').innerText = "Loading scenario...";
+
+            showView('spseEsg');
+            
+            showInstruction(gameData.spse.y4.instruction, () => {
+                updateEsgUI();
+            });
+        }
+
+        function updateEsgUI() {
+            document.getElementById('esg-progress-bar').style.width = `${(esgState.currentIdx / esgScenarios.length) * 100}%`;
+            if(esgState.currentIdx < esgScenarios.length) {
+                const card = document.getElementById('esg-card-container');
+                card.style.transform = 'scale(0.8)'; card.style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('esg-scenario').innerText = esgScenarios[esgState.currentIdx].text;
+                    card.style.transform = 'scale(1)'; card.style.opacity = '1';
+                }, 150);
+            } else {
+                if(esgState.score === esgScenarios.length) {
+                    // Flow: Graduation Result (Pic + Story) -> Camera
+                    renderStoryWithImage(gameData.spse.grad, [{
+                        text: "Graduate & Take Photo! 📸",
+                        className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
+                        onClick: startCamera
+                    }]);
+                } else {
+                    showMessage("A good ESG Manager balances profit with social impact. Let's try again.", initSpseEsg);
+                }
+            }
+        }
+
+        function handleEsgChoice(isApprove) {
+            const scenario = esgScenarios[esgState.currentIdx];
+            const isCorrect = (isApprove === scenario.correct);
+            const card = document.getElementById('esg-card-container');
             
             if(isApprove) card.style.transform = 'translateX(100px) rotate(15deg)';
             else card.style.transform = 'translateX(-100px) rotate(-15deg)';
@@ -711,8 +1314,9 @@
             }, 300);
         }
 
-        // --- Camera & Photo Logic ---
-        let videoStream = null;
+        /* --- CAMERA & SHARING --- */
+        let stream = null;
+        let capturedPhotoBlob = null;
 
         async function startCamera() {
             showView('camera');
