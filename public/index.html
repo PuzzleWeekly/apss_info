@@ -182,7 +182,7 @@
 
     <div id="app-container">
         <!-- INTRO VIEW -->
-        <div id="view-intro" class="view-panel active flex-col items-center justify-center p-4 bg-black/60 z-50">
+        <div id="view-intro" class="view-panel active flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                 <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
                 <div class="relative z-10 w-full flex flex-col items-center">
@@ -204,7 +204,7 @@
         </div>
 
         <!-- STORY/TRANSITION VIEW (WITH PICTURE) -->
-        <div id="view-story" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+        <div id="view-story" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
                     <img id="story-img" src="" alt="Story Image" class="w-full h-full object-cover">
@@ -230,6 +230,10 @@
                 <p id="swing-hint" class="text-sm text-blue-800 font-semibold text-center"></p>
             </div>
             <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8 relative bg-transparent">
+                <div class="w-full flex gap-2 mb-4">
+                    <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+                    <div id="swing-step-3" class="h-2 flex-1 rounded-full bg-gray-200"></div>
                 </div>
                 <div class="text-center w-full">
                     <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target</div>
@@ -324,7 +328,7 @@
         </div>
 
         <!-- QUIT / ALTERNATIVE VIEW -->
-        <div id="view-quit" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+        <div id="view-quit" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
                     <img src="image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
@@ -361,7 +365,7 @@
         </div>
 
         <!-- END VIEW -->
-        <div id="view-end" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+        <div id="view-end" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-50">
              <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-8 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
                  <div class="relative z-10 w-full flex flex-col items-center">
@@ -392,24 +396,25 @@
             </div>
         </div>
 
+        <!-- HOOK MODAL (CHALLENGE) -->
+        <div id="hook-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="hook-modal-content">
+                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-3xl mb-4">✨</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Challenge</h3>
+                <p id="hook-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap text-center w-full"></p>
+                <button id="hook-modal-btn" class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    Next ➔
+                </button>
+            </div>
+        </div>
+
         <!-- MESSAGE MODAL (ERROR/FEEDBACK) -->
         <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
                 <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4">💡</div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Notice</h3>
-                <p id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
+                <p id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap"></p>
                 <button id="msg-modal-btn" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Got it</button>
-            </div>
-        </div>
-
-        <!-- HOOK MODAL -->
-        <div id="hook-modal" class="fixed inset-0 bg-black/70 hidden z-[55] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="hook-modal-content">
-                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-3xl mb-4">✨</div>
-                <p id="hook-modal-text" class="text-gray-800 text-lg font-bold mb-6 leading-relaxed"></p>
-                <button id="hook-modal-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                    Next ➔
-                </button>
             </div>
         </div>
 
@@ -582,11 +587,6 @@
             });
             
             showView('story');
-            
-            // Trigger hook toast if it exists for this stage
-            if(dataObj.hook) {
-                setTimeout(() => { showToast(dataObj.hook); }, 600);
-            }
         }
 
         function startGame() {
@@ -1377,10 +1377,10 @@
             { text: "Cut the employee mental wellness program to save 5% budget.", correct: false },
             { text: "Launch a CSR initiative to train underprivileged youth.", correct: true }
         ];
-        let esgState = { currentIdx: 0, score: 0 };
+        let esgState = { currentIdx: 0, score: 0, mistakes: [] };
 
         function initSpseEsg() {
-            esgState = { currentIdx: 0, score: 0 };
+            esgState = { currentIdx: 0, score: 0, mistakes: [] };
             document.getElementById('esg-progress-bar').style.width = `0%`;
             
             const card = document.getElementById('esg-card-container');
@@ -1405,15 +1405,24 @@
                     card.style.transform = 'scale(1)'; card.style.opacity = '1';
                 }, 150);
             } else {
-                if(esgState.score === esgScenarios.length) {
+                let resultText = `Score: ${esgState.score} / ${esgScenarios.length}\n\n`;
+                
+                if (esgState.mistakes.length === 0) {
+                    resultText += "Perfect! You successfully balanced corporate profit with ethical impact.";
+                } else {
+                    resultText += "Corrections:\n";
+                    esgState.mistakes.forEach(m => {
+                        resultText += `• ${m.text}\n(Correct answer: ${m.correctAction})\n\n`;
+                    });
+                }
+
+                showMessage(resultText, () => {
                     renderStoryWithImage(gameData.spse.grad, [{
                         text: "Graduate & Take Photo! 📸",
                         className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg",
                         onClick: startCamera
                     }]);
-                } else {
-                    showMessage("A good ESG Manager balances profit with social impact. Let's try again.", initSpseEsg);
-                }
+                });
             }
         }
 
@@ -1426,7 +1435,14 @@
             else card.style.transform = 'translateX(-100px) rotate(-15deg)';
             card.style.opacity = '0';
 
-            if(isCorrect) esgState.score++;
+            if(isCorrect) {
+                esgState.score++;
+            } else {
+                esgState.mistakes.push({
+                    text: scenario.text,
+                    correctAction: scenario.correct ? "Approve ✅" : "Reject ❌"
+                });
+            }
             esgState.currentIdx++;
             
             setTimeout(() => {
