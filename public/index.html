@@ -27,22 +27,24 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9;
+            background-image: url('image/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             margin: 0;
             padding: 0;
             overflow: hidden;
             height: 100dvh;
             display: flex;
             justify-content: center;
-            transition: background-color 0.3s ease;
         }
 
         #app-container {
             width: 100%;
             max-width: 480px;
             height: 100dvh;
-            background-color: white;
+            background-color: transparent;
             position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
         }
@@ -63,18 +65,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Toast Notification Animation */
-        @keyframes slideUpFade {
-            0% { opacity: 0; transform: translate(-50%, 20px) scale(0.95); }
-            10% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-            90% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -20px) scale(0.95); }
-        }
-
-        .toast-animate {
-            animation: slideUpFade 4.5s ease-in-out forwards;
-        }
-
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -192,54 +182,54 @@
 
     <div id="app-container">
         <!-- INTRO VIEW -->
-        <div id="view-intro" class="view-panel active flex-col items-center justify-center p-6 bg-theme text-white relative overflow-hidden">
-            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
-            <div class="relative z-10 w-full max-w-sm flex flex-col items-center text-center">
-                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-lg">
-                    <span class="text-4xl">🎓</span>
-                </div>
-                <h1 class="text-4xl font-extrabold mb-2 tracking-tight">APSS Journey</h1>
-                <p class="text-green-100 mb-8 font-medium">Shape the Future. Start Here.</p>
-                
-                <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl">
-                    <label class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
-                    <input type="text" id="player-name" class="w-full px-4 py-3 rounded-xl text-gray-800 font-bold mb-4 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all text-center text-lg" placeholder="e.g. Alex" maxlength="15">
-                    <button onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                        Start Journey
-                    </button>
+        <div id="view-intro" class="view-panel active flex-col items-center justify-center p-4 bg-black/60 z-50">
+            <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+                <div class="relative z-10 w-full flex flex-col items-center">
+                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <span class="text-4xl">🎓</span>
+                    </div>
+                    <h1 class="text-4xl font-extrabold mb-2 tracking-tight">APSS Journey</h1>
+                    <p class="text-green-100 mb-8 font-medium">Shape the Future. Start Here.</p>
+                    
+                    <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl">
+                        <label class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
+                        <input type="text" id="player-name" class="w-full px-4 py-3 rounded-xl text-gray-800 font-bold mb-4 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all text-center text-lg" placeholder="e.g. Alex" maxlength="15">
+                        <button onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                            Start Journey
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- STORY/TRANSITION VIEW (WITH PICTURE) -->
-        <div id="view-story" class="view-panel h-full flex-col bg-gray-50">
-            <div class="flex-shrink-0 w-full aspect-square max-h-[35vh] bg-gray-200 overflow-hidden relative shadow-sm">
-                <img id="story-img" src="" alt="Story Image" class="w-full h-full object-cover">
-            </div>
-            <div class="flex-grow p-6 overflow-y-auto hide-scrollbar flex flex-col">
-                <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0"></h2>
-                <div class="flex-grow bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4 overflow-y-auto">
-                    <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+        <div id="view-story" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
+                <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
+                    <img id="story-img" src="" alt="Story Image" class="w-full h-full object-cover">
                 </div>
-                <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
-                    <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
+                <div class="flex-grow p-6 overflow-y-auto hide-scrollbar flex flex-col bg-gray-50">
+                    <h2 id="story-title" class="text-2xl font-bold mb-4 text-theme flex-shrink-0"></h2>
+                    <div class="flex-grow bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4 overflow-y-auto">
+                        <p id="story-text" class="text-[15px] text-gray-700 leading-relaxed font-medium"></p>
+                    </div>
+                    <div id="story-btn-container" class="flex-shrink-0 flex flex-col gap-3">
+                        <button id="story-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- SWING GAME (MISSION 1) -->
-        <div id="view-swing-game" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+        <div id="view-swing-game" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
+            <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 class="font-bold text-gray-700">Pre-U: JUPAS Challenge</h3>
             </div>
-            <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
+            <div class="px-4 py-3 bg-blue-50/90 border-b border-blue-100 flex-shrink-0">
                 <p id="swing-hint" class="text-sm text-blue-800 font-semibold text-center"></p>
             </div>
-            <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8 relative">
-                <div class="w-full flex gap-2 mb-4">
-                    <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
-                    <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
-                    <div id="swing-step-3" class="h-2 flex-1 rounded-full bg-gray-200"></div>
+            <div class="flex-grow flex flex-col items-center justify-center p-6 gap-8 relative bg-transparent">
                 </div>
                 <div class="text-center w-full">
                     <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target</div>
@@ -261,15 +251,15 @@
         </div>
 
         <!-- MEMORY GAME (YEAR 1) -->
-        <div id="view-year1-memory" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+        <div id="view-year1-memory" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
+            <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 class="font-bold text-gray-700">Year 1: Core Knowledge</h3>
             </div>
-            <div class="px-4 py-3 bg-purple-50 border-b border-purple-100 flex-shrink-0 flex justify-between items-center">
+            <div class="px-4 py-3 bg-purple-50/90 border-b border-purple-100 flex-shrink-0 flex justify-between items-center">
                 <p class="text-sm text-purple-800 font-semibold">Match Issue with Solution!</p>
                 <div class="font-bold text-theme bg-white px-3 py-1 rounded-full shadow-sm border border-purple-100" id="memory-timer">20s</div>
             </div>
-            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-8 bg-gray-50">
+            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-8 bg-transparent">
                 <div class="memory-grid" id="memory-grid">
                     <!-- Cards injected via JS -->
                 </div>
@@ -277,43 +267,43 @@
         </div>
 
         <!-- CATCHER GAME (YEAR 2/3 - DUAL MODE) -->
-        <div id="view-catcher" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+        <div id="view-catcher" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
+            <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
             </div>
-            <div class="px-4 py-2 bg-yellow-50 flex-shrink-0 flex justify-between items-center border-b border-yellow-100">
+            <div class="px-4 py-2 bg-yellow-50/90 flex-shrink-0 flex justify-between items-center border-b border-yellow-100">
                 <span class="text-sm font-bold text-yellow-800" id="catcher-instruction">Catch items!</span>
                 <span id="catcher-score" class="font-bold text-lg text-theme">0/5</span>
             </div>
-            <div id="catcher-area" class="flex-grow relative overflow-hidden bg-gray-50 touch-none">
+            <div id="catcher-area" class="flex-grow relative overflow-hidden bg-transparent touch-none">
                 <div id="catcher-player" class="catcher-player">🎒</div>
                 <!-- Falling items injected here -->
             </div>
         </div>
 
         <!-- CHAT GAME (YEAR 4 SW - BOUNDARIES) -->
-        <div id="view-sw-chat" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+        <div id="view-sw-chat" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
+            <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 class="font-bold text-gray-700">Year 4: Social Work</h3>
             </div>
-            <div class="flex-grow p-4 overflow-y-auto bg-gray-50 flex flex-col" id="chat-container">
+            <div class="flex-grow p-4 overflow-y-auto bg-transparent flex flex-col" id="chat-container">
                 <!-- Chat messages injected here -->
             </div>
-            <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0 flex flex-col gap-2" id="chat-options">
+            <div class="p-4 bg-white/90 border-t border-gray-200 flex-shrink-0 flex flex-col gap-2" id="chat-options">
                 <!-- Reply buttons injected here -->
             </div>
         </div>
 
         <!-- ESG DECISION MAKER (YEAR 4 SPSE) -->
-        <div id="view-spse-esg" class="view-panel h-full flex-col bg-white">
-            <div class="flex-shrink-0 p-4 border-b border-gray-100 flex justify-between items-center bg-lightbg">
+        <div id="view-spse-esg" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
+            <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 class="font-bold text-gray-700">Year 4: SPSE</h3>
             </div>
-            <div class="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex-shrink-0">
+            <div class="px-4 py-3 bg-indigo-50/90 border-b border-indigo-100 flex-shrink-0">
                 <p class="text-sm text-indigo-800 font-semibold text-center">Make ethical corporate choices! Ensure long-term ESG impact.</p>
             </div>
-            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-6 overflow-hidden relative">
-                <div class="w-full h-8 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300">
+            <div class="flex-grow p-6 flex flex-col items-center justify-center gap-6 overflow-hidden relative bg-transparent">
+                <div class="w-full h-8 bg-gray-200/80 rounded-full overflow-hidden border-2 border-gray-300">
                     <div id="esg-progress-bar" class="h-full bg-theme w-0 transition-all duration-300"></div>
                 </div>
                 <div class="text-xs font-bold text-gray-500 uppercase">ESG Reputation</div>
@@ -334,20 +324,22 @@
         </div>
 
         <!-- QUIT / ALTERNATIVE VIEW -->
-        <div id="view-quit" class="view-panel h-full flex-col bg-gray-50">
-            <div class="flex-shrink-0 w-full aspect-square max-h-[40vh] bg-gray-200 overflow-hidden relative shadow-sm">
-                <img src="image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
-            </div>
-            <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between">
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
-                    <h3 class="font-bold text-xl mb-2 text-gray-800">Every Path is Meaningful</h3>
-                    <p class="text-[15px] text-gray-700 leading-relaxed">
-                        Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best on your alternative journey to make an impact on society!
-                    </p>
+        <div id="view-quit" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
+                <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
+                    <img src="image/result_quit_alternative.png" alt="Alternative Journey" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1080x1080/919395/ffffff?text=Another+Meaningful+Journey'">
                 </div>
-                <button onclick="location.reload()" class="w-full bg-absent text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                    Back to Start
-                </button>
+                <div class="flex-grow p-6 overflow-y-auto flex flex-col justify-between bg-gray-50">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Every Path is Meaningful</h3>
+                        <p class="text-[15px] text-gray-700 leading-relaxed">
+                            Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best on your alternative journey to make an impact on society!
+                        </p>
+                    </div>
+                    <button onclick="location.reload()" class="w-full bg-absent text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                        Back to Start
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -369,19 +361,21 @@
         </div>
 
         <!-- END VIEW -->
-        <div id="view-end" class="view-panel h-full flex-col p-6 bg-theme text-white items-center justify-center text-center relative overflow-hidden">
-             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
-             <div class="relative z-10 w-full flex flex-col items-center">
-                <div class="text-6xl mb-6">🎉</div>
-                <h2 class="text-3xl font-bold mb-4">Journey Complete!</h2>
-                <p class="text-green-100 mb-8 font-medium">You have experienced an amazing life as a PolyU APSS student.</p>
-                <div class="w-full flex flex-col gap-4">
-                    <button id="btn-share" class="w-full bg-white text-theme font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden">
-                        Share Photo 📸
-                    </button>
-                    <button onclick="location.reload()" class="w-full bg-gray-800 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                        Play Again (Try other path)
-                    </button>
+        <div id="view-end" class="view-panel flex-col items-center justify-center p-4 bg-black/60 z-50">
+             <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-8 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                 <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+                 <div class="relative z-10 w-full flex flex-col items-center">
+                    <div class="text-6xl mb-6">🎉</div>
+                    <h2 class="text-3xl font-bold mb-4">Journey Complete!</h2>
+                    <p class="text-green-100 mb-8 font-medium">You have experienced an amazing life as a PolyU APSS student.</p>
+                    <div class="w-full flex flex-col gap-4">
+                        <button id="btn-share" class="w-full bg-white text-theme font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden">
+                            Share Photo 📸
+                        </button>
+                        <button onclick="location.reload()" class="w-full bg-gray-800 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                            Play Again (Try other path)
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -408,10 +402,15 @@
             </div>
         </div>
 
-        <!-- TOAST NOTIFICATION (HOOK MESSAGES) -->
-        <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-white border-l-4 border-theme shadow-2xl rounded-xl p-4 flex items-start gap-3 z-[45] hidden opacity-0 pointer-events-none">
-            <div class="text-2xl mt-0.5">💬</div>
-            <p id="toast-text" class="text-sm font-bold text-gray-800 leading-snug"></p>
+        <!-- HOOK MODAL -->
+        <div id="hook-modal" class="fixed inset-0 bg-black/70 hidden z-[55] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="hook-modal-content">
+                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-3xl mb-4">✨</div>
+                <p id="hook-modal-text" class="text-gray-800 text-lg font-bold mb-6 leading-relaxed"></p>
+                <button id="hook-modal-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                    Next ➔
+                </button>
+            </div>
         </div>
 
     </div>
@@ -424,78 +423,78 @@
         const gameData = {
             preU: {
                 title: "Form 6: Planning for JUPAS",
-                img: "public/image/story_01_pre_u.png",
+                img: "image/story_01_pre_u.png",
                 fallbackColor: "fc8d1e",
-                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!",
+                story: "You want a programme that makes a real impact on society. You stumble upon PolyU APSS (JS3250).",
                 hook: "Interested in JS3250? Let's test if you are eligible to become one of us!",
-                instruction: "Discover the DSE entrance requirements (332A33 & Best 5)!\n\nTap 'STOP!' to land the fast-moving needle inside the GREEN zone across 3 increasingly fast stages."
+                instruction: "Discover the DSE entrance requirements!\n\nTap 'STOP!' to land the needle inside the GREEN zone across 3 stages."
             },
             jupasSuccess: {
-                img: "public/image/story_02_jupas_success.png",
+                img: "image/story_02_jupas_success.png",
                 fallbackColor: "4bb747",
                 title: "JUPAS Results",
-                story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the mid-20s (Average 24.7).<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years with a Year-1 tuition scholarship)!<br><br>You received an offer! Will you enter APSS?"
+                story: "YES! You achieved an excellent DSE score! You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                img: "public/image/story_03_year1_welcome.png",
+                img: "image/story_03_year1_welcome.png",
                 fallbackColor: "6cba65",
-                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into real social issues.",
+                story: "Congratulations! Join a vibrant cohort following a common social sciences curriculum.",
                 hook: "Think you know Hong Kong's social problems? Let's test your community awareness!",
-                instruction: "Learn how APSS theories apply to the real world!\n\nYou have 20 seconds to flip the cards and match the modern social problem with its correct community solution."
+                instruction: "Learn how APSS theories apply to the real world!\n\nMatch the social problem with its correct community solution."
             },
             majorSelect: {
                 title: "Choose Your Major",
                 img: "image/story_04_major_selection.png",
                 fallbackColor: "919395",
-                story: "Year 1 complete! Now, it's time to choose your specialization. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
+                story: "Year 1 complete! Now, choose your specialization. Social Worker or Social Policy & Entrepreneurship expert?"
             },
             sw: {
                 y2: { 
                     title: "Years 2 & 3: Social Work", 
-                    img: "public/image/story_05_sw_year2.png", 
+                    img: "image/story_05_sw_year2.png", 
                     fallbackColor: "3b82f6",
-                    story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach.",
+                    story: "Social work includes multiple service areas like schools, medical, family welfare, and youth outreach.",
                     hook: "Which social work field fits you best? Let's test your natural instincts!",
-                    instruction: "Explore the different social work service areas!\n\nCatch 10 traits that appeal to you. Everything looks the same, so read carefully and choose your instinct."
+                    instruction: "Explore different social work service areas!\n\nCatch 10 traits that appeal to you. Choose your instinct."
                 },
                 y4: { 
                     title: "Year 4: Social Work", 
-                    img: "public/image/story_06_sw_year4.png", 
+                    img: "image/story_06_sw_year4.png", 
                     fallbackColor: "2563eb",
-                    story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases.",
+                    story: "Your Final Year! To become a Registered Social Worker, you must face complex cases.",
                     hook: "Can you handle emotional cases? Let's test your professional boundary judgment!",
-                    instruction: "Learn the vital balance of empathy and professional boundaries.\n\nRead the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional limit."
+                    instruction: "Learn the vital balance of empathy and professional boundaries.\n\nChoose responses that validate feelings but hold professional limits."
                 },
                 grad: {
                     title: "Registered Social Worker!",
                     img: "image/result_sw_graduation.png",
                     fallbackColor: "4bb747",
-                    story: "You did it! 🎓 You are now a Registered Social Worker (RSW), ready to make a direct impact in NGOs, schools, and government departments every single day."
+                    story: "You did it! You are now a Registered Social Worker (RSW), ready to make a direct impact."
                 }
             },
             spse: {
                 y2: { 
                     title: "Years 2 & 3: SPSE", 
-                    img: "public/image/story_05_spse_year2.png", 
+                    img: "image/story_05_spse_year2.png", 
                     fallbackColor: "a855f7",
-                    story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team.<br><br>You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.<br><br><em>(Note: You can also choose the Dual Degree option in Year 2 to study at the University of Warsaw with a HK$100,000 scholarship!)</em>",
+                    story: "To build a successful social enterprise and navigate global policies, you need the right team.",
                     hook: "Can you build a successful startup team? Let's test your social entrepreneurship potential!",
-                    instruction: "Discover the traits of a strong social enterprise team!\n\nYou have 30s! Catch positive team-building items and avoid toxic traps. All items look identical, so read carefully."
+                    instruction: "Discover the traits of a strong social enterprise team!\n\nCatch positive items and avoid toxic traps."
                 },
                 y4: { 
                     title: "Year 4: SPSE", 
-                    img: "public/image/story_06_spse_year4.png", 
+                    img: "image/story_06_spse_year4.png", 
                     fallbackColor: "7e22ce",
-                    story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation.",
+                    story: "Your Final Year! You are now an ESG Decision Maker for a major corporation.",
                     hook: "Can you balance profit with ethics? Let's test your ESG leadership skills!",
-                    instruction: "Understand the ethical choices required of modern corporate ESG leaders.\n\nRead the scenarios and choose to Approve (Ethical) or Reject (Unethical). Make 3 correct choices to maximize your ESG Reputation!"
+                    instruction: "Understand ethical corporate ESG choices.\n\nChoose Approve or Reject. Make 3 correct choices to maximize your ESG Reputation!"
                 },
                 grad: { 
                     title: "ESG & Innovation Mastered!",
                     img: "image/result_spse_graduation.png",
                     fallbackColor: "4bb747",
-                    story: "Perfect balance! 💡 As an SPSE graduate, you are ready to take on high-level roles as a policy analyst, social enterprise founder, or ESG strategist to solve global challenges!"
+                    story: "Perfect balance! You are ready to solve global challenges as a policy analyst or ESG strategist!"
                 }
             }
         };
@@ -515,16 +514,7 @@
 
         function showView(viewName) {
             Object.values(views).forEach(v => v.classList.remove('active'));
-            const activeView = views[viewName];
-            activeView.classList.add('active');
-            
-            // Dynamically change full-screen body background to match the active view
-            const viewBg = window.getComputedStyle(activeView).backgroundColor;
-            if (viewBg && viewBg !== 'rgba(0, 0, 0, 0)' && viewBg !== 'transparent') {
-                document.body.style.backgroundColor = viewBg;
-            } else {
-                document.body.style.backgroundColor = '#f1f5f9';
-            }
+            views[viewName].classList.add('active');
         }
         
         // --- MODALS & MESSAGES ---
@@ -553,20 +543,17 @@
             };
         }
         
-        function showToast(text) {
-            const toast = document.getElementById('toast-notification');
-            document.getElementById('toast-text').innerHTML = text;
-            toast.classList.remove('hidden');
+        function showHook(text, callback) {
+            const modal = document.getElementById('hook-modal');
+            const content = document.getElementById('hook-modal-content');
+            document.getElementById('hook-modal-text').innerText = text;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
             
-            // Re-trigger animation
-            toast.classList.remove('toast-animate');
-            void toast.offsetWidth; // trigger reflow
-            toast.classList.add('toast-animate');
-            
-            // Clean up
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 4500); // Matches the 4.5s animation duration
+            document.getElementById('hook-modal-btn').onclick = () => {
+                modal.classList.add('opacity-0'); content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); callback(); }, 200);
+            };
         }
 
         // --- STORY/TRANSITION ENGINE ---
@@ -608,7 +595,13 @@
                 playerName = nameInput;
                 renderStoryWithImage(gameData.preU, [{
                     text: "Next ➔",
-                    onClick: () => initSwingGame(1, true)
+                    onClick: () => {
+                        if (gameData.preU.hook) {
+                            showHook(gameData.preU.hook, () => initSwingGame(1, true));
+                        } else {
+                            initSwingGame(1, true);
+                        }
+                    }
                 }]);
             } else {
                 const inputEl = document.getElementById('player-name');
@@ -728,7 +721,13 @@
                     onClick: () => {
                         renderStoryWithImage(gameData.year1, [{
                             text: "Next ➔",
-                            onClick: initMemoryGame
+                            onClick: () => {
+                                if (gameData.year1.hook) {
+                                    showHook(gameData.year1.hook, initMemoryGame);
+                                } else {
+                                    initMemoryGame();
+                                }
+                            }
                         }]);
                     }
                 },
@@ -868,7 +867,13 @@
             const data = gameData[major].y2;
             renderStoryWithImage(data, [{
                 text: "Next ➔",
-                onClick: () => initCatcher(major)
+                onClick: () => {
+                    if (data.hook) {
+                        showHook(data.hook, () => initCatcher(major));
+                    } else {
+                        initCatcher(major);
+                    }
+                }
             }]);
         }
 
@@ -1206,7 +1211,13 @@
                 const nextStageData = gameData['sw'].y4;
                 renderStoryWithImage(nextStageData, [{
                     text: "Next ➔",
-                    onClick: initSwChat
+                    onClick: () => {
+                        if (nextStageData.hook) {
+                            showHook(nextStageData.hook, initSwChat);
+                        } else {
+                            initSwChat();
+                        }
+                    }
                 }]);
             });
         }
@@ -1245,7 +1256,13 @@
                 const nextStageData = gameData['spse'].y4;
                 renderStoryWithImage(nextStageData, [{
                     text: "Next ➔",
-                    onClick: initSpseEsg
+                    onClick: () => {
+                        if (nextStageData.hook) {
+                            showHook(nextStageData.hook, initSpseEsg);
+                        } else {
+                            initSpseEsg();
+                        }
+                    }
                 }]);
             });
         }
