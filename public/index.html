@@ -33,6 +33,7 @@
             height: 100dvh;
             display: flex;
             justify-content: center;
+            transition: background-color 0.3s ease;
         }
 
         #app-container {
@@ -60,6 +61,18 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Toast Notification Animation */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translate(-50%, 20px) scale(0.95); }
+            10% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            90% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -20px) scale(0.95); }
+        }
+
+        .toast-animate {
+            animation: slideUpFade 4.5s ease-in-out forwards;
         }
 
         .hide-scrollbar::-webkit-scrollbar {
@@ -168,7 +181,7 @@
         .chat-player { background-color: #6cba65; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 
         /* Catcher Styles */
-        .falling-item { position: absolute; padding: 6px 10px; border-radius: 16px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; max-width: 120px; line-height: 1.2; }
+        .falling-item { position: absolute; padding: 6px 10px; border-radius: 16px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; z-index: 10; max-width: 120px; line-height: 1.2; word-break: break-word; overflow-wrap: break-word; }
         .catcher-player { position: absolute; bottom: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
         
         /* ESG Card Styles */
@@ -378,7 +391,7 @@
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
                 <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">How to Play</h3>
-                <p id="instruction-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed"></p>
+                <p id="instruction-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap text-left w-full"></p>
                 <button id="instruction-modal-btn" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                     Start Game
                 </button>
@@ -395,6 +408,12 @@
             </div>
         </div>
 
+        <!-- TOAST NOTIFICATION (HOOK MESSAGES) -->
+        <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-white border-l-4 border-theme shadow-2xl rounded-xl p-4 flex items-start gap-3 z-[45] hidden opacity-0 pointer-events-none">
+            <div class="text-2xl mt-0.5">💬</div>
+            <p id="toast-text" class="text-sm font-bold text-gray-800 leading-snug"></p>
+        </div>
+
     </div>
 
     <script>
@@ -405,71 +424,78 @@
         const gameData = {
             preU: {
                 title: "Form 6: Planning for JUPAS",
-                img: "image/story_01_pre_u.png",
+                img: "public/image/story_01_pre_u.png",
                 fallbackColor: "fc8d1e",
-                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!<br><br>But first, you need to ace your HKDSE exams. Are you ready for the 3-stage challenge?",
-                instruction: "Tap 'STOP!' to land the fast-moving needle inside the GREEN zone. You must pass 3 stages of increasing speed representing DSE score requirements."
+                story: "You are a Form 6 student planning your JUPAS choices! 🏫<br><br>You want a programme that makes a real impact on society. You stumble upon PolyU's <strong>BA (Hons) Scheme in Applied Social Sciences (JS3250)</strong>.<br><br>It has a massive global reputation! In the Times Higher Education subject rankings, APSS Social Sciences was placed <strong>52nd in the world</strong>!",
+                hook: "Interested in JS3250? Let's test if you are eligible to become one of us!",
+                instruction: "Discover the DSE entrance requirements (332A33 & Best 5)!\n\nTap 'STOP!' to land the fast-moving needle inside the GREEN zone across 3 increasingly fast stages."
             },
             jupasSuccess: {
-                img: "image/story_02_jupas_success.png",
+                img: "public/image/story_02_jupas_success.png",
                 fallbackColor: "4bb747",
                 title: "JUPAS Results",
-                story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the low to mid-20s.<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years)!<br><br>You received an offer! Will you enter APSS?"
+                story: "YES! You achieved an excellent DSE score! 🌍<br><br><strong>Entrance Requirements:</strong> JS3250 is highly regarded. Competitive applicants usually have strong HKDSE Best 5 scores in the mid-20s (Average 24.7).<br><br>Top students scoring 26 or above can even join the <strong>Fast-track ESG & Sustainability pathway</strong> (Master's in 4.5 years with a Year-1 tuition scholarship)!<br><br>You received an offer! Will you enter APSS?"
             },
             year1: {
                 title: "Welcome to Year 1!",
-                img: "image/story_03_year1_welcome.png",
+                img: "public/image/story_03_year1_welcome.png",
                 fallbackColor: "6cba65",
-                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into social issues. Let's see how well you understand current social problems in Hong Kong and their solutions!",
-                instruction: "You have 20 seconds! Tap to flip the cards and match the modern social problem with the correct APSS community solution."
+                story: "Congratulations on entering PolyU APSS! 🎉<br><br>In your first year, you join a vibrant cohort following a <strong>common social sciences curriculum</strong>.<br><br>You learn core theories, research methods, and dive deep into real social issues.",
+                hook: "Think you know Hong Kong's social problems? Let's test your community awareness!",
+                instruction: "Learn how APSS theories apply to the real world!\n\nYou have 20 seconds to flip the cards and match the modern social problem with its correct community solution."
             },
             majorSelect: {
                 title: "Choose Your Major",
                 img: "image/story_04_major_selection.png",
                 fallbackColor: "919395",
-                story: "You have successfully completed the Year 1 common curriculum! <br><br>You must now choose your major for the rest of your APSS journey. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
+                story: "Year 1 complete! Now, it's time to choose your specialization. Will you become a professional Social Worker, or a Social Policy & Entrepreneurship expert?"
             },
             sw: {
                 y2: { 
                     title: "Years 2 & 3: Social Work", 
-                    img: "image/story_05_sw_year2.png", 
+                    img: "public/image/story_05_sw_year2.png", 
                     fallbackColor: "3b82f6",
-                    story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach. Let's discover your natural tendency! Catch the traits and work styles you instinctively gravitate toward to find your best fit."
+                    story: "You chose Social Work! 🤝<br><br>Social work in Hong Kong includes multiple service areas like schools, medical, family welfare, and youth outreach.",
+                    hook: "Which social work field fits you best? Let's test your natural instincts!",
+                    instruction: "Explore the different social work service areas!\n\nCatch 10 traits that appeal to you. Everything looks the same, so read carefully and choose your instinct."
                 },
                 y4: { 
                     title: "Year 4: Social Work", 
-                    img: "image/story_06_sw_year4.png", 
+                    img: "public/image/story_06_sw_year4.png", 
                     fallbackColor: "2563eb",
-                    story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases. Your final challenge is to support a distressed client empathetically while strictly maintaining professional boundaries and emotional balance.",
-                    instruction: "Read the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional boundary. Avoid inappropriate personal requests."
+                    story: "Your Final Year! 🎓<br><br>To become a Registered Social Worker, you must face complex cases.",
+                    hook: "Can you handle emotional cases? Let's test your professional boundary judgment!",
+                    instruction: "Learn the vital balance of empathy and professional boundaries.\n\nRead the text messages from a distressed client. Choose the response that validates their feelings but firmly holds your professional limit."
                 },
                 grad: {
                     title: "Registered Social Worker!",
                     img: "image/result_sw_graduation.png",
                     fallbackColor: "4bb747",
-                    story: "You did it! You demonstrated core empathy and boundary skills and are now a <strong>Registered Social Worker</strong>! 🎓<br><br>As a professional, you now work in youth services, medical social service, or family services. Our graduates take on vital roles in NGOs, government departments, and schools, making a direct, positive impact on society every single day."
+                    story: "You did it! 🎓 You are now a Registered Social Worker (RSW), ready to make a direct impact in NGOs, schools, and government departments every single day."
                 }
             },
             spse: {
                 y2: { 
                     title: "Years 2 & 3: SPSE", 
-                    img: "image/story_05_spse_year2.png", 
+                    img: "public/image/story_05_spse_year2.png", 
                     fallbackColor: "a855f7",
-                    story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team. You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.",
-                    instruction: "Drag your backpack left and right. Catch GREEN positive traits (Shared Vision, Empathy) to build a strong startup team. Dodge RED toxic traits (Micromanagement, Selfishness)!"
+                    story: "You chose SPSE! 💡<br><br>To build a successful social enterprise and navigate global policies, you need the right team.<br><br>You must gather individuals with positive traits like Empathy and Shared Vision, while dodging toxic workplace behaviors that can ruin a project.<br><br><em>(Note: You can also choose the Dual Degree option in Year 2 to study at the University of Warsaw with a HK$100,000 scholarship!)</em>",
+                    hook: "Can you build a successful startup team? Let's test your social entrepreneurship potential!",
+                    instruction: "Discover the traits of a strong social enterprise team!\n\nYou have 30s! Catch positive team-building items and avoid toxic traps. All items look identical, so read carefully."
                 },
                 y4: { 
                     title: "Year 4: SPSE", 
-                    img: "image/story_06_spse_year4.png", 
+                    img: "public/image/story_06_spse_year4.png", 
                     fallbackColor: "7e22ce",
-                    story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation. You must balance corporate profit with ethical social impact to graduate successfully.",
-                    instruction: "Act as an ESG manager. Read the corporate scenario cards and choose to Approve (Ethical choices) or Reject (Unethical choices). Make 3 correct choices to maximize your ESG Reputation!"
+                    story: "Your Final Year! ⚖️<br><br>You step into the role of an ESG (Environmental, Social, Governance) Decision Maker for a major corporation.",
+                    hook: "Can you balance profit with ethics? Let's test your ESG leadership skills!",
+                    instruction: "Understand the ethical choices required of modern corporate ESG leaders.\n\nRead the scenarios and choose to Approve (Ethical) or Reject (Unethical). Make 3 correct choices to maximize your ESG Reputation!"
                 },
                 grad: { 
                     title: "ESG & Innovation Mastered!",
                     img: "image/result_spse_graduation.png",
                     fallbackColor: "4bb747",
-                    story: "Perfect balance! You mastered <strong>ESG & INNOVATION</strong>! 💡<br><br>As an SPSE graduate, you are equipped to be a policy analyst, a social enterprise founder, or an ESG strategist! Many graduates lead corporate sustainability (CSR) initiatives, bringing ethical, innovative solutions to modern global challenges."
+                    story: "Perfect balance! 💡 As an SPSE graduate, you are ready to take on high-level roles as a policy analyst, social enterprise founder, or ESG strategist to solve global challenges!"
                 }
             }
         };
@@ -489,7 +515,16 @@
 
         function showView(viewName) {
             Object.values(views).forEach(v => v.classList.remove('active'));
-            views[viewName].classList.add('active');
+            const activeView = views[viewName];
+            activeView.classList.add('active');
+            
+            // Dynamically change full-screen body background to match the active view
+            const viewBg = window.getComputedStyle(activeView).backgroundColor;
+            if (viewBg && viewBg !== 'rgba(0, 0, 0, 0)' && viewBg !== 'transparent') {
+                document.body.style.backgroundColor = viewBg;
+            } else {
+                document.body.style.backgroundColor = '#f1f5f9';
+            }
         }
         
         // --- MODALS & MESSAGES ---
@@ -517,8 +552,25 @@
                 setTimeout(() => { modal.classList.add('hidden'); startCallback(); }, 200);
             };
         }
+        
+        function showToast(text) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-text').innerHTML = text;
+            toast.classList.remove('hidden');
+            
+            // Re-trigger animation
+            toast.classList.remove('toast-animate');
+            void toast.offsetWidth; // trigger reflow
+            toast.classList.add('toast-animate');
+            
+            // Clean up
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4500); // Matches the 4.5s animation duration
+        }
 
         // --- STORY/TRANSITION ENGINE ---
+        // Handles ALL intermediate screens (stories, results, major selection)
         function renderStoryWithImage(dataObj, buttonsConfig) {
             document.getElementById('story-title').innerHTML = dataObj.title;
             // Inject player name into story if it exists
@@ -526,7 +578,7 @@
             document.getElementById('story-text').innerHTML = safeStory;
             
             const imgEl = document.getElementById('story-img');
-            imgEl.src = dataObj.img; // Pulls from public/image/ correctly
+            imgEl.src = dataObj.img;
             imgEl.onerror = () => {
                 imgEl.src = `https://placehold.co/1080x1080/${dataObj.fallbackColor}/ffffff?text=${encodeURIComponent(dataObj.title)}`;
             };
@@ -543,6 +595,11 @@
             });
             
             showView('story');
+            
+            // Trigger hook toast if it exists for this stage
+            if(dataObj.hook) {
+                setTimeout(() => { showToast(dataObj.hook); }, 600);
+            }
         }
 
         function startGame() {
@@ -576,16 +633,16 @@
             const scoreTitle = document.getElementById('swing-score-title');
             
             if(stage === 1) {
-                hint.innerText = "Stage 1: DSE Chinese requires Level 3! Stop the needle in the green zone.";
-                scoreTitle.innerText = "Target: Chinese Level 3";
+                hint.innerText = "Stage 1: Min Requirement 332A33 (Level 3 English/Chinese). Stop needle in green zone!";
+                scoreTitle.innerText = "Target: Level 3 (Eng/Chin)";
                 swingState.speed = 2.5; swingState.min = 40; swingState.max = 70;
             } else if(stage === 2) {
-                hint.innerText = "Stage 2: DSE English requires Level 3! It's moving slightly faster!";
-                scoreTitle.innerText = "Target: English Level 3";
+                hint.innerText = "Stage 2: Min Requirement includes Level 2 Maths & Attained in Citizenship. Moving faster!";
+                scoreTitle.innerText = "Target: Min Requirements (332A33)";
                 swingState.speed = 3.5; swingState.min = 55; swingState.max = 80;
             } else {
-                hint.innerText = "Stage 3: APSS is highly competitive! Aim for Best 5 (Mid-20s)!";
-                scoreTitle.innerText = "Target Best 5: Mid-20s";
+                hint.innerText = "Stage 3: JS3250 is highly competitive! Aim for the 2025 average Best 5 score!";
+                scoreTitle.innerText = "Target Best 5: 24.7 (23.0-29.0)";
                 swingState.speed = 4.5; swingState.min = 70; swingState.max = 85;
             }
 
@@ -826,7 +883,7 @@
         const catcherConfigs = {
             sw: {
                 title: "Years 2-3: Discover Your SW Path",
-                instruction: "Catch 10 traits that appeal to you! Everything looks the same, so read carefully and choose your instinct.",
+                instruction: "Expected Outcome: Catch 10 traits that match your work style. Your final pattern will evaluate your fit for School, Medical, Family, or Youth social work.",
                 mode: 'fit',
                 words: [
                     { t: "Guidance", c: "school" }, { t: "School Support", c: "school" }, { t: "Parent Liaison", c: "school" }, { t: "Preventive Prog.", c: "school" },
@@ -840,7 +897,7 @@
             },
             spse: {
                 title: "Years 2-3: Social Innovator",
-                instruction: "You have 30s! Catch items that build a strong social enterprise team. Avoid toxic traps! All items look identical, so read carefully.",
+                instruction: "Expected Outcome: Survive 30 seconds. Catch positive team-building traits and dodge toxic traps to achieve a high 'Social Enterpriser Potential' score.",
                 mode: 'spse_innovator',
                 words: [
                     { t: "Shared mission", type: "good", dim: "mission" }, { t: "Mission alignment", type: "good", dim: "mission" },
@@ -873,6 +930,7 @@
             catcherState.active = false; 
             catcherState.items.forEach(item => item.el.remove());
             catcherState.items = [];
+            catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
             if (catcherState.config.mode === 'fit') {
                 document.getElementById('catcher-score').innerText = `0/10`;
@@ -929,7 +987,7 @@
         }
 
         function getCatcherIcon(word, mode) {
-            if (mode === 'fit') { 
+            if (mode === 'fit') { // Social Work Categories
                 switch(word.c) {
                     case 'school': return '🏫';
                     case 'medical': return '🏥';
@@ -939,7 +997,7 @@
                     case 'penalty': return '⚠️';
                     default: return '📌';
                 }
-            } else { 
+            } else { // SPSE Innovator Categories
                 if (word.type === 'bad') return '⚠️';
                 if (word.type === 'gold') return '⭐';
                 switch(word.dim) {
@@ -954,13 +1012,18 @@
         }
 
         function spawnCatcherItem(container) {
-            const word = catcherState.config.words[Math.floor(Math.random() * catcherState.config.words.length)];
+            // Refill the shuffle bag if all unique items have been shown
+            if (!catcherState.availableWords || catcherState.availableWords.length === 0) {
+                catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
+            }
+            
+            const word = catcherState.availableWords.pop();
             const el = document.createElement('div');
             
             el.className = `falling-item bg-white border-2 border-gray-300 text-gray-800 flex items-center gap-1.5`;
             
             const icon = getCatcherIcon(word, catcherState.config.mode);
-            el.innerHTML = `<span class="bg-gray-100 rounded-full px-1.5 py-0.5 text-xs shadow-inner flex items-center justify-center flex-shrink-0">${icon}</span><span class="leading-tight">${word.t}</span>`;
+            el.innerHTML = `<span class="bg-gray-100 rounded-full px-1.5 py-0.5 text-xs shadow-inner flex items-center justify-center flex-shrink-0">${icon}</span><span class="leading-tight break-words">${word.t}</span>`;
             
             // Hide temporarily to measure actual width
             el.style.visibility = 'hidden';
