@@ -176,6 +176,51 @@
         
         /* ESG Card Styles */
         .esg-card { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* Virtual Keyboard Styles */
+        .keyboard-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #d1d5db;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .keyboard-container.active {
+            transform: translateY(0);
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .keyboard-key {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 12px 0;
+            flex-grow: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
+            color: #374151;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            user-select: none;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        .keyboard-key:active {
+            background-color: #e5e7eb;
+        }
+        .keyboard-key.wide {
+            flex-grow: 2;
+        }
     </style>
 </head>
 <body>
@@ -194,12 +239,27 @@
                     
                     <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl">
                         <label class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
-                        <input type="text" id="player-name" class="w-full px-4 py-3 rounded-xl text-gray-800 font-bold mb-4 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all text-center text-lg" placeholder="e.g. Alex" maxlength="15">
+                        <div class="relative w-full mb-4">
+                            <input type="text" id="player-name" class="w-full px-4 py-3 rounded-xl text-gray-800 font-bold focus:outline-none focus:ring-4 focus:ring-green-300 transition-all text-center text-lg pr-12" placeholder="e.g. Alex" maxlength="15">
+                            <button id="kb-toggle-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl opacity-50 hover:opacity-100 transition-opacity">⌨️</button>
+                        </div>
                         <button onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                             Start Journey
                         </button>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Virtual Keyboard -->
+            <div id="virtual-keyboard" class="keyboard-container">
+                <div class="flex justify-between items-center px-2 mb-1">
+                    <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Keyboard</span>
+                    <button id="kb-close-btn" class="text-gray-500 font-bold bg-gray-300 px-3 py-1 rounded-full text-xs">Close</button>
+                </div>
+                <div class="keyboard-row" id="kb-row-1"></div>
+                <div class="keyboard-row" id="kb-row-2"></div>
+                <div class="keyboard-row" id="kb-row-3"></div>
+                <div class="keyboard-row" id="kb-row-4"></div>
             </div>
         </div>
 
@@ -233,7 +293,6 @@
                 <div class="w-full flex gap-2 mb-4">
                     <div id="swing-step-1" class="h-2 flex-1 rounded-full bg-gray-200"></div>
                     <div id="swing-step-2" class="h-2 flex-1 rounded-full bg-gray-200"></div>
-                    <div id="swing-step-3" class="h-2 flex-1 rounded-full bg-gray-200"></div>
                 </div>
                 <div class="text-center w-full">
                     <div id="swing-score-title" class="text-gray-500 font-bold mb-1 uppercase tracking-wide text-sm">Target</div>
@@ -432,7 +491,7 @@
                 fallbackColor: "fc8d1e",
                 story: "You want a programme that makes a real impact on society. You stumble upon PolyU APSS (JS3250).",
                 hook: "Interested in JS3250? Let's test if you are eligible to become one of us!",
-                instruction: "Discover the DSE entrance requirements!\n\nTap 'STOP!' to land the needle inside the GREEN zone across 3 stages."
+                instruction: "Discover the DSE entrance requirements!\n\nTap 'STOP!' to land the needle inside the GREEN zone across 2 stages."
             },
             jupasSuccess: {
                 img: "image/story_02_jupas_success.png",
@@ -593,6 +652,7 @@
             const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
                 playerName = nameInput;
+                document.getElementById('virtual-keyboard').classList.remove('active');
                 renderStoryWithImage(gameData.preU, [{
                     text: "Next ➔",
                     onClick: () => {
@@ -626,20 +686,16 @@
             const scoreTitle = document.getElementById('swing-score-title');
             
             if(stage === 1) {
-                hint.innerText = "Stage 1: Min Requirement 332A33 (Level 3 English/Chinese). Stop needle in green zone!";
+                hint.innerText = "Stage 1 (Warm up): Min Requirement 332A33 (Level 3 English/Chinese). Stop needle in green zone!";
                 scoreTitle.innerText = "Target: Level 3 (Eng/Chin)";
-                swingState.speed = 2.5; swingState.min = 40; swingState.max = 70;
-            } else if(stage === 2) {
-                hint.innerText = "Stage 2: Min Requirement includes Level 2 Maths & Attained in Citizenship. Moving faster!";
-                scoreTitle.innerText = "Target: Min Requirements (332A33)";
                 swingState.speed = 3.5; swingState.min = 55; swingState.max = 80;
             } else {
-                hint.innerText = "Stage 3: JS3250 is highly competitive! Aim for the 2025 average Best 5 score!";
+                hint.innerText = "Stage 2: JS3250 is highly competitive! Aim for the 2025 average Best 5 score!";
                 scoreTitle.innerText = "Target Best 5: 24.7 (23.0-29.0)";
                 swingState.speed = 4.5; swingState.min = 70; swingState.max = 85;
             }
 
-            [1,2,3].forEach(i => {
+            [1,2].forEach(i => {
                 const step = document.getElementById(`swing-step-${i}`);
                 if (i < stage) step.className = "h-2 flex-1 rounded-full bg-correct";
                 else if (i === stage) step.className = "h-2 flex-1 rounded-full bg-present";
@@ -695,10 +751,10 @@
             if (isSuccess) {
                 scoreDisplay.textContent = "Great! 🎉";
                 scoreDisplay.classList.add('text-correct');
-                btn.textContent = swingState.stage === 3 ? "View Results" : "Next Subject";
+                btn.textContent = swingState.stage === 2 ? "View Results" : "Next Subject";
                 btn.className = "w-full bg-correct text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-xl mt-4";
                 btn.onclick = () => {
-                    if(swingState.stage < 3) initSwingGame(swingState.stage + 1);
+                    if(swingState.stage < 2) initSwingGame(swingState.stage + 1);
                     else showJupasResult();
                 };
             } else {
@@ -1528,6 +1584,53 @@
                  };
             }
         }
+        
+        /* --- VIRTUAL KEYBOARD LOGIC --- */
+        const keyboardLayout = [
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+            ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫'],
+            ['SPACE']
+        ];
+        
+        function initKeyboard() {
+            const nameInput = document.getElementById('player-name');
+            const kbContainer = document.getElementById('virtual-keyboard');
+            
+            document.getElementById('kb-toggle-btn').onclick = (e) => {
+                e.preventDefault();
+                kbContainer.classList.toggle('active');
+            };
+            
+            document.getElementById('kb-close-btn').onclick = (e) => {
+                e.preventDefault();
+                kbContainer.classList.remove('active');
+            };
+
+            keyboardLayout.forEach((row, rowIndex) => {
+                const rowEl = document.getElementById(`kb-row-${rowIndex + 1}`);
+                row.forEach(key => {
+                    const btn = document.createElement('button');
+                    btn.className = 'keyboard-key' + (key === 'SPACE' ? ' wide' : '') + (key === '⌫' ? ' bg-gray-200' : '');
+                    btn.innerText = key;
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        if (key === '⌫') {
+                            nameInput.value = nameInput.value.slice(0, -1);
+                        } else if (key === 'SPACE') {
+                            if(nameInput.value.length < nameInput.maxLength) nameInput.value += ' ';
+                        } else {
+                            if(nameInput.value.length < nameInput.maxLength) nameInput.value += key;
+                        }
+                    };
+                    rowEl.appendChild(btn);
+                });
+            });
+        }
+        
+        // Initialize keyboard on load
+        window.addEventListener('DOMContentLoaded', initKeyboard);
+
     </script>
 </body>
 </html>
