@@ -90,6 +90,9 @@
         .meter-target-zone { position: absolute; top: 0; bottom: 0; background-color: #4bb747; opacity: 0.8; }
         .meter-needle { position: absolute; top: 0; bottom: 0; width: 8px; background-color: #333; border-radius: 4px; transform: translateX(-50%); box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 10; }
 
+        /* Catcher Game - Top-Down Bubble Physics Styles */
+        .catcher-player { position: absolute; top: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
+        
         /* Glassy Soap Bubbles */
         .falling-item { 
             position: absolute; 
@@ -155,7 +158,7 @@
                         <label id="intro-label" class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
                         <div class="relative">
                             <input type="text" id="player-name" class="w-full px-4 py-3 pr-10 rounded-xl text-gray-800 font-bold mb-4 bg-white shadow-inner focus:outline-none text-center text-lg" placeholder="e.g. Alex" maxlength="12">
-                            <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer hover:scale-110 active:scale-95 transition-transform" onclick="showKeyboard()">⌨️</span>
+                            <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer hover:scale-110 active:scale-95 transition-transform" onclick="setActiveInput('player-name'); showKeyboard()">⌨️</span>
                         </div>
                         <button id="btn-start" onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                             Start Journey
@@ -165,11 +168,21 @@
             </div>
         </div>
 
+        <!-- DEDICATED VIEWER MODE FOR QR SCANS -->
+        <div id="view-shared-photo" class="view-panel flex-col items-center justify-center p-4 bg-gray-900 z-50 h-full relative">
+            <h2 class="text-white text-2xl font-bold mb-6">Your APSS Journey Photo</h2>
+            <div id="shared-loading" class="text-white animate-pulse mb-4">Loading your photo...</div>
+            <img id="shared-photo-img" src="" class="hidden max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl border-4 border-white/20">
+            <button onclick="location.href = location.pathname" class="mt-8 bg-theme text-white font-bold py-3 px-8 rounded-xl shadow-md active:scale-95 transition-transform text-lg w-full max-w-sm">
+                Create Your Own Journey!
+            </button>
+        </div>
+
         <!-- Virtual Keyboard -->
         <div id="virtual-keyboard">
             <div class="flex justify-between items-center mb-2 px-1">
                 <span class="font-bold text-gray-600 text-sm">Keyboard</span>
-                <button onclick="hideKeyboard()" class="text-blue-500 font-bold text-sm">Done</button>
+                <button onclick="closeKeyboard()" class="text-blue-500 font-bold text-sm">Done</button>
             </div>
             <div class="key-row">
                 <div class="vk-key" onclick="vk('Q')">Q</div><div class="vk-key" onclick="vk('W')">W</div><div class="vk-key" onclick="vk('E')">E</div><div class="vk-key" onclick="vk('R')">R</div><div class="vk-key" onclick="vk('T')">T</div><div class="vk-key" onclick="vk('Y')">Y</div><div class="vk-key" onclick="vk('U')">U</div><div class="vk-key" onclick="vk('I')">I</div><div class="vk-key" onclick="vk('O')">O</div><div class="vk-key" onclick="vk('P')">P</div>
@@ -299,6 +312,7 @@
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
             
             <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
+                <!-- Strict 9:16 Aspect Ratio Container to enforce frame bounds -->
                 <div class="relative w-full max-w-full max-h-full aspect-[9/16] bg-black shadow-2xl flex items-center justify-center overflow-hidden">
                     <video id="camera-feed" class="absolute inset-0 w-full h-full object-cover z-0" autoplay playsinline></video>
                     <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"> 
@@ -435,6 +449,126 @@
         </div>
     </div>
 
+    <!-- FIREBASE MODULE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment Variables Check
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'apss-journey';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db = null;
+        let auth = null;
+        let isFirebaseReady = false;
+
+        async function initFirebase() {
+            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) return false;
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                isFirebaseReady = true;
+                return true;
+            } catch (e) {
+                console.error("Firebase init failed:", e);
+                return false;
+            }
+        }
+
+        // Shared URL logic (Check if we are in Viewer Mode)
+        async function checkSharedPhotoURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const photoId = urlParams.get('photo');
+            
+            if (photoId) {
+                // We are in Viewer Mode! Bypass the game.
+                document.getElementById('view-intro').classList.remove('active');
+                document.getElementById('view-shared-photo').classList.add('active');
+                
+                const success = await initFirebase();
+                if(success && db && auth.currentUser) {
+                    try {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'photos', photoId);
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists()) {
+                            document.getElementById('shared-photo-img').src = docSnap.data().imageData;
+                            document.getElementById('shared-photo-img').classList.remove('hidden');
+                            document.getElementById('shared-loading').classList.add('hidden');
+                        } else {
+                            document.getElementById('shared-loading').innerText = "Photo not found or has been deleted.";
+                        }
+                    } catch (e) {
+                        document.getElementById('shared-loading').innerText = "Failed to load photo.";
+                        console.error(e);
+                    }
+                } else {
+                    document.getElementById('shared-loading').innerText = "Database connection unavailable.";
+                }
+                return true; // We intercepted the load
+            }
+            return false; // Proceed normally
+        }
+
+        // Run the check on load
+        window.addEventListener('load', async () => {
+            const isViewerMode = await checkSharedPhotoURL();
+            if(!isViewerMode) {
+                initFirebase(); // Init for the player taking photos
+            }
+        });
+
+        // Expose Firebase functions globally for the game logic to use
+        window.uploadPhotoToFirebase = async function(base64Data) {
+            if (!isFirebaseReady || !db || !auth.currentUser) return null;
+            try {
+                const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'photos'), {
+                    imageData: base64Data,
+                    timestamp: new Date().getTime(),
+                    userId: auth.currentUser.uid
+                });
+                return docRef.id;
+            } catch(e) {
+                console.error("Upload error:", e);
+                return null;
+            }
+        };
+
+        window.sendPhotoEmail = async function(emailAddress, photoUrl) {
+            if (!isFirebaseReady || !db || !auth.currentUser) return false;
+            try {
+                // This triggers the 'Trigger Email from Firestore' extension
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'mail'), {
+                    to: emailAddress,
+                    message: {
+                        subject: "Your PolyU APSS Journey Photo!",
+                        html: `
+                            <div style="font-family: sans-serif; text-align: center; color: #1e293b;">
+                                <h2>Your APSS Journey is Complete!</h2>
+                                <p>Thank you for exploring the PolyU APSS Information Day app.</p>
+                                <p>You can view and download your unique graduation photo here:</p>
+                                <a href="${photoUrl}" style="display: inline-block; padding: 12px 24px; background-color: #6cba65; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">View Photo</a>
+                            </div>
+                        `
+                    }
+                });
+                return true;
+            } catch(e) {
+                console.error("Email send error:", e);
+                return false;
+            }
+        };
+    </script>
+
+    <!-- CORE GAME LOGIC -->
     <script>
         let playerName = "";
         let currentMajor = "";
@@ -501,7 +635,7 @@
                     title: "Years 2-3: Social Work", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'sw_stats',
                     story: "Social workers engage with people, understand situations, take action, and review whether support is helping.",
                     hook: "Can you build a solid social worker profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Avoid negative blind spots. Meet minimums to reveal your final SW Role!",
+                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Avoid negative blind spots. Meet minimums to reveal your final SW Role!",
                     words: [
                         { t: "+1 Empathy", type: "good", stat: "emp" }, { t: "-1 Empathy", type: "bad", stat: "emp" },
                         { t: "+1 Insight", type: "good", stat: "ins" }, { t: "-1 Insight", type: "bad", stat: "ins" },
@@ -517,7 +651,7 @@
                     title: "Years 2-3: Social Innovator", img: "image/story_05_spse_year2.png", fallbackColor: "a855f7", mode: 'spse_stats',
                     story: "To build a successful social enterprise, you need the right mix of traits.",
                     hook: "Can you build a solid role profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet minimums to reveal your true Social Enterprise role!",
+                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet minimums to reveal your true Social Enterprise role!",
                     words: [
                         { t: "+1 Strength", type: "good", stat: "str" }, { t: "-1 Strength", type: "bad", stat: "str" },
                         { t: "+1 Wisdom", type: "good", stat: "wis" }, { t: "-1 Wisdom", type: "bad", stat: "wis" },
@@ -545,7 +679,7 @@
                     title: "第二至三年：社會工作", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'sw_stats',
                     story: "社工與人接觸，了解情況，採取行動，並檢討支援是否有效。",
                     hook: "你能建立紮實的社工檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。避免負面盲點。達到最低要求，揭曉你的最終社工角色！",
+                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。避免負面盲點。達到最低要求，揭曉你的最終社工角色！",
                     words: [
                         { t: "+1 同理心", type: "good", stat: "emp" }, { t: "-1 同理心", type: "bad", stat: "emp" },
                         { t: "+1 洞察力", type: "good", stat: "ins" }, { t: "-1 洞察力", type: "bad", stat: "ins" },
@@ -561,7 +695,7 @@
                     title: "第二至三年：社會創新者", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "要建立成功的社會企業，你需要適當的特質組合。",
                     hook: "你能建立紮實的角色檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你真正的社會企業角色！",
+                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你真正的社會企業角色！",
                     words: [
                         { t: "+1 力量", type: "good", stat: "str" }, { t: "-1 力量", type: "bad", stat: "str" },
                         { t: "+1 智慧", type: "good", stat: "wis" }, { t: "-1 智慧", type: "bad", stat: "wis" },
@@ -593,10 +727,10 @@
             views[viewName].classList.add('active');
         }
 
-        function toggleLanguage() {
+        window.toggleLanguage = function() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             applyTranslations();
-        }
+        };
 
         function applyTranslations() {
             const t = i18n[currentLang];
@@ -651,25 +785,27 @@
                     'Social Entrepreneurship requires a balanced team:<br><br>💪 <b>Strength:</b> Action & Courage<br>🧠 <b>Wisdom:</b> Strategy & Logic<br>✨ <b>Charm:</b> Trust & Networking<br>⚙️ <b>Discipline:</b> Planning & Execution<br>👁️ <b>Insight:</b> Empathy & Vision' : 
                     '社會創業需要一個均衡的團隊：<br><br>💪 <b>力量：</b> 行動與勇氣<br>🧠 <b>智慧：</b> 策略與邏輯<br>✨ <b>魅力：</b> 信任與網絡<br>⚙️ <b>紀律：</b> 規劃與執行<br>👁️ <b>洞察力：</b> 同理心與願景';
             }
-            document.getElementById('stats-intro-btn').innerText = currentLang === 'en' ? 'Next ➔' : '下一步 ➔';
+            if (document.getElementById('stats-intro-btn')) {
+                document.getElementById('stats-intro-btn').innerText = currentLang === 'en' ? 'Next ➔' : '下一步 ➔';
+            }
         }
 
         // Virtual Keyboard
-        function setActiveInput(id) { activeInput = id; }
-        function showKeyboard() { document.getElementById('virtual-keyboard').style.display = 'block'; }
-        function hideKeyboard() { document.getElementById('virtual-keyboard').style.display = 'none'; }
+        window.setActiveInput = function(id) { activeInput = id; };
+        window.showKeyboard = function() { document.getElementById('virtual-keyboard').style.display = 'block'; };
+        window.closeKeyboard = function() { document.getElementById('virtual-keyboard').style.display = 'none'; };
         
-        function vk(char) {
+        window.vk = function(char) {
             const input = document.getElementById(activeInput);
             if (!input) return;
             if (char === 'DEL') input.value = input.value.slice(0, -1);
             else if (char === 'CLR') input.value = '';
             else if (input.value.length < 35) input.value += char;
-        }
+        };
 
         applyTranslations();
 
-        function showMessage(text, callback) {
+        window.showMessage = function(text, callback) {
             const modal = document.getElementById('msg-modal');
             const content = document.getElementById('msg-modal-content');
             document.getElementById('msg-modal-text').innerHTML = text;
@@ -679,9 +815,9 @@
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); if(callback) callback(); }, 200);
             };
-        }
+        };
 
-        function showInstruction(text, startCallback) {
+        window.showInstruction = function(text, startCallback) {
             const modal = document.getElementById('instruction-modal');
             const content = document.getElementById('instruction-modal-content');
             document.getElementById('instruction-modal-text').innerText = text;
@@ -691,9 +827,9 @@
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); startCallback(); }, 200);
             };
-        }
+        };
         
-        function showHook(text, callback) {
+        window.showHook = function(text, callback) {
             const modal = document.getElementById('hook-modal');
             const content = document.getElementById('hook-modal-content');
             document.getElementById('hook-modal-text').innerText = text;
@@ -703,9 +839,9 @@
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); callback(); }, 200);
             };
-        }
+        };
 
-        function showStatsIntro(callback) {
+        window.showStatsIntro = function(callback) {
             applyTranslations(); 
             const modal = document.getElementById('stats-intro-modal');
             const content = document.getElementById('stats-intro-modal-content');
@@ -715,9 +851,9 @@
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); callback(); }, 200);
             };
-        }
+        };
 
-        function renderStoryWithImage(dataObj, buttonsConfig) {
+        window.renderStoryWithImage = function(dataObj, buttonsConfig) {
             document.getElementById('story-title').innerHTML = dataObj.title;
             let safeStory = dataObj.story.replace("{name}", `<strong>${playerName}</strong>`);
             document.getElementById('story-text').innerHTML = safeStory;
@@ -737,10 +873,10 @@
                 btnContainer.appendChild(btn);
             });
             showView('story');
-        }
+        };
 
-        function startGame() {
-            hideKeyboard();
+        window.startGame = function() {
+            closeKeyboard();
             const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
                 playerName = nameInput;
@@ -752,12 +888,12 @@
                 setTimeout(() => inputEl.style.transform = 'translateX(10px)', 100);
                 setTimeout(() => inputEl.style.transform = 'translateX(0)', 200);
             }
-        }
+        };
 
         // --- STREAMING_CHUNK:Games Logic ---
         let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
 
-        function initSwingGame(stage, showInst = false) {
+        window.initSwingGame = function(stage, showInst = false) {
             swingState.stage = stage; swingState.pos = 0; swingState.dir = 1; swingState.active = false; 
             document.getElementById('btn-swing-retry').classList.add('hidden');
 
@@ -795,7 +931,7 @@
             if (showInst) {
                 showInstruction(gameData[currentLang].preU.instruction, () => { swingState.active = true; swingLoop(); });
             } else { swingState.active = true; swingLoop(); }
-        }
+        };
 
         function swingLoop() {
             if (!swingState.active) return;
@@ -806,7 +942,7 @@
             swingState.animId = requestAnimationFrame(swingLoop);
         }
 
-        function stopSwing() {
+        window.stopSwing = function() {
             if (!swingState.active) return;
             swingState.active = false; cancelAnimationFrame(swingState.animId);
             
@@ -824,21 +960,22 @@
                 scoreDisplay.textContent = i18n[currentLang].swing_fail; scoreDisplay.classList.add('text-present');
                 btn.classList.add('hidden'); retryBtn.classList.remove('hidden');
             }
-        }
-        function retrySwing() { initSwingGame(swingState.stage); }
+        };
 
-        function showJupasResult() {
+        window.retrySwing = function() { initSwingGame(swingState.stage); };
+
+        window.showJupasResult = function() {
             renderStoryWithImage(gameData[currentLang].jupasSuccess, [
                 { text: i18n[currentLang].jupas_a, className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: () => { startCamera('admission'); } },
                 { text: i18n[currentLang].jupas_b, className: "w-full bg-absent text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base mt-3", onClick: () => showView('quit') }
             ]);
-        }
+        };
 
-        function showMajorSelect() {
+        window.showMajorSelect = function() {
             showView('ms');
-        }
+        };
 
-        function startMajor(major) {
+        window.startMajor = function(major) {
             currentMajor = major;
             const data = gameData[currentLang][major];
             renderStoryWithImage(data, [{
@@ -853,15 +990,15 @@
                     }
                 }
             }]);
-        }
+        };
 
         let catcherState = { 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 },
-            timer: 20, timerInterval: null, 
+            timer: 30, timerInterval: null, 
             active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
         };
 
-        function initCatcher(mode) {
+        window.initCatcher = function(mode) {
             catcherState.config = {
                 mode: mode === 'spse' ? 'spse_stats' : 'sw_stats',
                 instruction: gameData[currentLang][mode].instruction,
@@ -869,7 +1006,7 @@
             };
 
             catcherState.stats = { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 };
-            catcherState.timer = 20; 
+            catcherState.timer = 30; 
             clearInterval(catcherState.timerInterval);
 
             catcherState.active = false; 
@@ -877,7 +1014,7 @@
             catcherState.items = [];
             catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
-            document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}20s | ${i18n[currentLang].catch_score}0`;
+            document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}30s | ${i18n[currentLang].catch_score}0`;
             
             showView('catcher');
             
@@ -921,7 +1058,7 @@
                 
                 catcherLoop(performance.now());
             });
-        }
+        };
 
         function getCatcherIcon(word, mode) {
             if(word.type === 'bad') return '⚠️';
@@ -932,7 +1069,7 @@
             }
         }
 
-        function spawnCatcherItem(container) {
+        window.spawnCatcherItem = function(container) {
             if (!catcherState.availableWords || catcherState.availableWords.length === 0) catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
             const word = catcherState.availableWords.pop(); 
@@ -1000,9 +1137,9 @@
             });
             
             catcherState.items.push(itemObj);
-        }
+        };
 
-        function handleBubbleTap(item) {
+        window.handleBubbleTap = function(item) {
             if (!catcherState.active) return;
             const index = catcherState.items.indexOf(item);
             if (index === -1) return;
@@ -1031,13 +1168,16 @@
             document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}${catcherState.timer}s | ${i18n[currentLang].catch_score}${totalScore}`;
             
             catcherState.items.splice(index, 1);
-        }
+        };
 
-        function catcherLoop(timestamp) {
+        window.catcherLoop = function(timestamp) {
             if (!catcherState.active) return;
             const container = document.getElementById('catcher-area'); 
             
-            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > 400) {
+            let spawnRate = 400;
+            if (catcherState.timer < 15) spawnRate = 300; 
+
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnRate) {
                 for (let k = 0; k < 3; k++) spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
@@ -1076,10 +1216,10 @@
                 }
             }
             catcherState.animId = requestAnimationFrame(catcherLoop);
-        }
+        };
 
         // --- Result Modals for Both Branches ---
-        function renderResultPage(step, best, stats, mode) {
+        window.renderResultPage = function(step, best, stats, mode) {
             const modal = document.getElementById('msg-modal');
             const content = document.getElementById('msg-modal-content');
             const titleEl = document.getElementById('msg-title');
@@ -1185,11 +1325,11 @@
                     setTimeout(() => { modal.classList.add('hidden'); startCamera('graduation'); }, 200);
                 };
             }
-        }
+        };
 
-        function evaluateSWFit() {
+        window.evaluateSWFit = function() {
             const s = catcherState.stats;
-            spseResultRole = null; // Used for Camera pin overlay logic
+            spseResultRole = null; 
             
             const roles = [
                 { id: 'advocate', name_en: 'Client Advocate', name_zh: '受助者倡導者', req: {emp:1, ins:0, com:1, act:1, pro:0}, sig: 'com',
@@ -1235,7 +1375,6 @@
             
             let best = qualified[0];
             
-            // Set the SW character pin for camera later
             spseResultRole = best.id === 'gen' ? null : `sw_${best.id}`;
             if (spseResultRole) {
                 const imgPreloader = new Image();
@@ -1243,9 +1382,9 @@
             }
 
             renderResultPage(1, best, s, 'sw');
-        }
+        };
 
-        function evaluateSPSEFit() {
+        window.evaluateSPSEFit = function() {
             const s = catcherState.stats;
             spseResultRole = null;
             
@@ -1300,17 +1439,14 @@
             }
 
             renderResultPage(1, best, s, 'spse');
-        }
+        };
 
         // --- STREAMING_CHUNK:Camera & Sharing Engine ---
         let stream = null; 
-        let capturedPhotoBlob = null; 
         let currentCamMode = 'admission';
-        let uploadedPhotoDeleteUrl = null;
-        let qrCodeDataUrl = null;
-        let uploadPromise = null;
+        let sharedPhotoDocId = null;
 
-        async function startCamera(mode) {
+        window.startCamera = async function(mode) {
             currentCamMode = mode;
             showView('camera');
             
@@ -1344,22 +1480,20 @@
                 skipBtn.className = "w-full bg-white text-gray-800 font-bold py-3 px-4 rounded-xl shadow-md active:scale-95 transition-all text-center";
             }
             captureBtn.onclick = takePhoto;
-        }
+        };
 
-        function stopCamera() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } }
+        window.stopCamera = function() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } };
 
-        function takePhoto() {
+        window.takePhoto = function() {
             if (!stream) return; 
             const video = document.getElementById('camera-feed'); 
             const canvas = document.getElementById('camera-canvas'); 
             const frameImg = document.getElementById('camera-frame');
             
-            // Constrain final downloaded output to exactly 1080x1920 to prevent distortion
             canvas.width = 1080; 
             canvas.height = 1920;
             const ctx = canvas.getContext('2d');
             
-            // Crop video to 9:16 to fit perfectly into the 1080x1920 canvas
             const videoRatio = video.videoWidth / video.videoHeight;
             const targetRatio = 1080 / 1920;
             let drawWidth, drawHeight, offsetX, offsetY;
@@ -1392,13 +1526,16 @@
             }
             
             video.pause(); stopCamera(); 
-            canvas.toBlob((blob) => { capturedPhotoBlob = blob; showPhotoPreview(); }, 'image/png');
-        }
+            
+            // Compress and get Base64 string directly
+            const base64Data = canvas.toDataURL('image/jpeg', 0.6);
+            showPhotoPreview(base64Data);
+        };
 
-        function showPhotoPreview() {
+        window.showPhotoPreview = async function(base64Data) {
             showView('preview');
             const previewImg = document.getElementById('preview-img');
-            previewImg.src = window.URL.createObjectURL(capturedPhotoBlob);
+            previewImg.src = base64Data;
             
             document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
             
@@ -1409,33 +1546,10 @@
             document.getElementById('qr-panel').classList.remove('flex');
             document.getElementById('email-panel').classList.add('hidden');
             document.getElementById('email-panel').classList.remove('flex');
-            
-            // Clear old QR container and reset states
             document.getElementById('qrcode-container').innerHTML = '';
-            qrCodeDataUrl = null;
-            uploadedPhotoDeleteUrl = null;
             
-            // Auto Upload in Background immediately
-            const formData = new FormData();
-            const safeName = `APSS_Journey_${Date.now()}.png`;
-            formData.append('file', capturedPhotoBlob, safeName);
-            
-            uploadPromise = fetch('https://tmpfiles.org/api/v1/upload', {
-                method: 'POST',
-                body: formData
-            }).then(res => res.json()).then(result => {
-                if (result && result.status === 'success') {
-                    const directUrl = result.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
-                    uploadedPhotoDeleteUrl = result.data.delete_url;
-                    qrCodeDataUrl = directUrl;
-                    return directUrl;
-                }
-                throw new Error("Upload failed");
-            }).catch(err => {
-                console.error("Auto upload failed:", err);
-                qrCodeDataUrl = "https://www.polyu.edu.hk/apss/"; // Fallback URL
-                return qrCodeDataUrl;
-            });
+            // Auto Upload to Firebase
+            sharedPhotoDocId = await window.uploadPhotoToFirebase(base64Data);
             
             // Setup Popups Routing
             document.getElementById('btn-init-share').onclick = () => {
@@ -1448,25 +1562,26 @@
                 document.getElementById('share-choice-panel').classList.remove('flex');
             };
             
-            document.getElementById('btn-choose-qr').onclick = async () => {
+            document.getElementById('btn-choose-qr').onclick = () => {
                 document.getElementById('share-choice-panel').classList.add('hidden');
                 document.getElementById('share-choice-panel').classList.remove('flex');
                 document.getElementById('qr-panel').classList.remove('hidden');
                 document.getElementById('qr-panel').classList.add('flex');
                 
                 const qrContainer = document.getElementById('qrcode-container');
-                if (!qrCodeDataUrl) {
-                    qrContainer.innerHTML = `<div class="animate-spin text-4xl text-gray-300 mb-2">⏳</div><div class="text-sm text-gray-500 font-bold">Uploading...</div>`;
-                    await uploadPromise;
-                }
-                
                 qrContainer.innerHTML = '';
-                new QRCode(qrContainer, {
-                    text: qrCodeDataUrl, 
-                    width: 190, height: 190,
-                    colorDark : "#1f2937", colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                });
+                
+                if (sharedPhotoDocId) {
+                    const link = window.location.href.split('?')[0] + "?photo=" + sharedPhotoDocId;
+                    new QRCode(qrContainer, {
+                        text: link, 
+                        width: 190, height: 190,
+                        colorDark : "#1f2937", colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.L
+                    });
+                } else {
+                    qrContainer.innerHTML = '<div class="text-red-500 font-bold text-center">Database unavailable. Please download directly.</div>';
+                }
             };
             
             document.getElementById('btn-choose-email').onclick = () => {
@@ -1484,33 +1599,40 @@
             };
             
             document.getElementById('btn-email-cancel').onclick = () => {
-                hideKeyboard();
+                closeKeyboard();
                 document.getElementById('email-panel').classList.add('hidden');
                 document.getElementById('email-panel').classList.remove('flex');
             };
             
-            document.getElementById('btn-email-send').onclick = () => {
-                hideKeyboard();
+            document.getElementById('btn-email-send').onclick = async () => {
+                closeKeyboard();
                 const email = document.getElementById('share-email-input').value.trim();
-                if(email) {
-                    showMessage(i18n[currentLang].photo_sent, () => {
-                        document.getElementById('email-panel').classList.add('hidden');
-                        document.getElementById('email-panel').classList.remove('flex');
-                    });
+                if(email && sharedPhotoDocId) {
+                    const link = window.location.href.split('?')[0] + "?photo=" + sharedPhotoDocId;
+                    document.getElementById('btn-email-send').innerText = "Sending...";
+                    const success = await window.sendPhotoEmail(email, link);
+                    
+                    if (success) {
+                        showMessage(i18n[currentLang].photo_sent, () => {
+                            document.getElementById('email-panel').classList.add('hidden');
+                            document.getElementById('email-panel').classList.remove('flex');
+                            document.getElementById('btn-email-send').innerText = i18n[currentLang].btn_send;
+                        });
+                    } else {
+                        showMessage("Failed to send email. Database unavailable.");
+                        document.getElementById('btn-email-send').innerText = i18n[currentLang].btn_send;
+                    }
                 }
             };
 
-            // Continue & Auto Delete File from Temporary Server
+            // Continue
             document.getElementById('btn-preview-next').onclick = () => {
-                // Fire and forget auto-delete to protect privacy
-                if (uploadedPhotoDeleteUrl) fetch(uploadedPhotoDeleteUrl).catch(e => console.log(e));
-                
                 if(currentCamMode === 'admission') showMajorSelect();
                 else showEndScreen();
             };
-        }
+        };
 
-        function showEndScreen() { showView('end'); }
+        window.showEndScreen = function() { showView('end'); };
     </script>
 </body>
 </html>
