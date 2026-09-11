@@ -90,9 +90,6 @@
         .meter-target-zone { position: absolute; top: 0; bottom: 0; background-color: #4bb747; opacity: 0.8; }
         .meter-needle { position: absolute; top: 0; bottom: 0; width: 8px; background-color: #333; border-radius: 4px; transform: translateX(-50%); box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 10; }
 
-        /* Catcher Game - Top-Down Bubble Physics Styles */
-        .catcher-player { position: absolute; top: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
-        
         /* Glassy Soap Bubbles */
         .falling-item { 
             position: absolute; 
@@ -129,10 +126,10 @@
 
         /* Virtual Keyboard */
         #virtual-keyboard {
-            display: none; position: absolute; bottom: 0; left: 0; w-full: 100%; background: #e2e8f0; padding: 10px; padding-bottom: 25px; border-top-left-radius: 16px; border-top-right-radius: 16px; z-index: 999; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            display: none; position: absolute; bottom: 0; left: 0; width: 100%; background: #e2e8f0; padding: 10px; padding-bottom: 25px; border-top-left-radius: 16px; border-top-right-radius: 16px; z-index: 999; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
         }
         .key-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 6px; }
-        .vk-key { background: white; border-radius: 6px; padding: 10px 0; flex: 1; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); user-select: none; }
+        .vk-key { background: white; border-radius: 6px; padding: 10px 0; flex: 1; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); user-select: none; cursor: pointer;}
         .vk-key:active { background: #cbd5e1; transform: translateY(1px); }
         .vk-key.wide { flex: 1.5; font-size: 14px;}
         .vk-key.space { flex: 4; }
@@ -157,7 +154,7 @@
                     <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl relative">
                         <label id="intro-label" class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
                         <div class="relative">
-                            <input type="text" id="player-name" class="w-full px-4 py-3 pr-10 rounded-xl text-gray-800 font-bold mb-4 bg-white shadow-inner focus:outline-none text-center text-lg" placeholder="e.g. Alex" maxlength="12">
+                            <input type="text" id="player-name" onfocus="setActiveInput('player-name')" class="w-full px-4 py-3 pr-10 rounded-xl text-gray-800 font-bold mb-4 bg-white shadow-inner focus:outline-none text-center text-lg" placeholder="e.g. Alex" maxlength="12">
                             <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer" onclick="showKeyboard()">⌨️</span>
                         </div>
                         <button id="btn-start" onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
@@ -183,10 +180,12 @@
             <div class="key-row px-2">
                 <div class="vk-key wide" onclick="vk('DEL')">⌫</div>
                 <div class="vk-key" onclick="vk('Z')">Z</div><div class="vk-key" onclick="vk('X')">X</div><div class="vk-key" onclick="vk('C')">C</div><div class="vk-key" onclick="vk('V')">V</div><div class="vk-key" onclick="vk('B')">B</div><div class="vk-key" onclick="vk('N')">N</div><div class="vk-key" onclick="vk('M')">M</div>
-                <div class="vk-key wide" onclick="vk('CLR')">Clear</div>
+                <div class="vk-key wide" onclick="vk('@')">@</div>
             </div>
             <div class="key-row px-6">
+                <div class="vk-key" onclick="vk('.')">.</div>
                 <div class="vk-key space" onclick="vk(' ')">Space</div>
+                <div class="vk-key wide" onclick="vk('CLR')">Clear</div>
             </div>
         </div>
 
@@ -206,25 +205,25 @@
             </div>
         </div>
 
-        <!-- MAJOR SELECT VIEW (Custom Layout) -->
+        <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
                 <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
                 <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-6"></p>
                 <div class="flex flex-row w-full gap-4 h-48">
                     <!-- SW Button -->
-                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
-                        <img src="image/major_sw_bg.png" onerror="this.src='https://placehold.co/400x800/3b82f6/ffffff?text=SW'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group border border-gray-200">
+                        <img src="image/major_sw_bg.png" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover z-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
                         <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
                             <span class="text-3xl mb-2">🤝</span>
                             <span id="ms-btn-sw" class="font-bold text-sm text-center leading-tight">Social Work (SW)</span>
                         </div>
                     </button>
                     <!-- SPSE Button -->
-                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
-                        <img src="image/major_spse_bg.png" onerror="this.src='https://placehold.co/400x800/a855f7/ffffff?text=SPSE'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group border border-gray-200">
+                        <img src="image/major_spse_bg.png" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover z-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
                         <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
                             <span class="text-3xl mb-2">💡</span>
                             <span id="ms-btn-spse" class="font-bold text-sm text-center leading-tight">SPSE</span>
@@ -262,7 +261,7 @@
             </div>
         </div>
 
-        <!-- CATCHER GAME (YEAR 2-3) -->
+        <!-- CATCHER GAME -->
         <div id="view-catcher" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm relative">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90 z-30 relative">
                 <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
@@ -273,9 +272,7 @@
             </div>
             
             <div id="catcher-area" class="flex-grow relative overflow-hidden bg-transparent touch-none">
-                <!-- Player is at the TOP -->
-                <div id="catcher-player" class="catcher-player" style="top: 20px; bottom: auto;">🎒</div>
-                <!-- Rising bubbles injected here -->
+                <!-- Chaotic bouncing bubbles injected here -->
             </div>
             
             <!-- SPSE STATS BAR -->
@@ -288,15 +285,20 @@
             </div>
         </div>
 
-        <!-- CAMERA VIEW (ADMISSION & GRADUATION) -->
+        <!-- CAMERA VIEW -->
         <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50">
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
+            
+            <!-- Strictly constrained 9:16 wrapper for 1080x1920 ratio display -->
             <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
-                <video id="camera-feed" class="absolute min-w-full min-h-full object-cover z-0" autoplay playsinline></video>
-                <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='"> 
-                <img id="camera-pin-overlay" src="" class="absolute bottom-6 right-6 w-1/4 max-w-[120px] object-contain z-20 pointer-events-none hidden">
+                <div class="relative w-full max-w-full max-h-full aspect-[9/16] bg-black shadow-2xl flex items-center justify-center">
+                    <video id="camera-feed" class="absolute inset-0 w-full h-full object-cover z-0" autoplay playsinline></video>
+                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"> 
+                    <img id="camera-pin-overlay" src="" class="absolute bottom-[4%] right-[4%] w-[25%] object-contain z-20 pointer-events-none hidden">
+                </div>
                 <canvas id="camera-canvas" class="hidden"></canvas>
             </div>
+            
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex justify-between items-center z-20 relative">
                 <button id="btn-camera-skip" class="text-white/70 font-semibold px-4 py-2 transition-all">Skip</button>
                 <button id="btn-capture" class="w-16 h-16 bg-white rounded-full border-4 border-gray-300 shadow-lg active:scale-90 transition-transform flex items-center justify-center absolute left-1/2 -translate-x-1/2">
@@ -305,31 +307,50 @@
             </div>
         </div>
 
-        <!-- PHOTO PREVIEW & QR VIEW -->
+        <!-- PHOTO PREVIEW & SHARING FLOW -->
         <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50">
             <h2 id="preview-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Looking Good!</h2>
             
-            <div class="flex-grow relative flex items-center justify-center p-4">
-                <div id="qr-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-30 hidden flex-col items-center justify-center p-6 text-center">
-                    <h3 id="qr-title" class="text-2xl font-bold text-gray-800 mb-2">Scan to Save</h3>
-                    <p id="qr-sub" class="text-gray-600 mb-6 text-sm">Use your phone's camera to download your photo.</p>
-                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-lg border-2 border-gray-100 mb-6 w-48 h-48 flex items-center justify-center">
-                        <div id="qr-loading" class="animate-pulse text-gray-400 font-bold">Uploading...</div>
-                    </div>
-                    <button id="btn-dl-direct" class="bg-theme text-white font-bold py-3 px-8 rounded-full shadow-md active:scale-95 transition-transform mb-4 hidden">
-                        Download Image ⬇️
-                    </button>
-                    <button id="btn-qr-done" class="text-gray-500 font-semibold underline">Close</button>
-                </div>
-                
+            <div class="flex-grow relative flex items-center justify-center p-4 overflow-hidden">
                 <img id="preview-img" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl border-4 border-white/20">
+                
+                <!-- Automated Uploading Overlay -->
+                <div id="photo-uploading-overlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-30 flex flex-col items-center justify-center text-white hidden">
+                    <div class="text-5xl mb-4 animate-spin">⏳</div>
+                    <div id="txt-saving-photo" class="font-bold text-xl">Saving Photo...</div>
+                </div>
+
+                <!-- QR Modal -->
+                <div id="qr-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
+                    <h3 id="txt-qr-title" class="text-2xl font-bold text-gray-800 mb-6">QR Code</h3>
+                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-lg border-2 border-gray-100 mb-8 w-56 h-56 flex items-center justify-center"></div>
+                    <button id="btn-qr-done" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Done</button>
+                </div>
+
+                <!-- Email Modal -->
+                <div id="email-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
+                    <h3 id="txt-email-title" class="text-2xl font-bold text-gray-800 mb-2">Send via Email</h3>
+                    <p id="txt-email-sub" class="text-gray-600 mb-6 text-sm">Enter your email to receive the photo.</p>
+                    <div class="relative w-full mb-6">
+                        <input type="email" id="share-email-input" onfocus="setActiveInput('share-email-input')" class="w-full px-4 py-3 pr-10 rounded-xl border-2 border-gray-300 text-gray-800 font-bold focus:outline-none focus:border-theme text-center text-lg" placeholder="your@email.com">
+                        <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer" onclick="showKeyboard()">⌨️</span>
+                    </div>
+                    <button id="btn-email-send" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg mb-3">Send</button>
+                    <button id="btn-email-cancel" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Cancel</button>
+                </div>
             </div>
             
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
-                <button id="btn-share-qr" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                    <span>📱</span> <span id="txt-share-qr">Share & Get QR</span>
-                </button>
-                <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                <!-- Dual Share Buttons (Appear after upload) -->
+                <div id="share-options-container" class="flex gap-3 w-full hidden">
+                    <button id="btn-share-email-opt" class="flex-1 bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>📧</span> <span id="txt-share-email">Email</span>
+                    </button>
+                    <button id="btn-share-qr-opt" class="flex-1 bg-green-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                        <span>📱</span> <span id="txt-share-qr">QR Code</span>
+                    </button>
+                </div>
+                <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden">
                     Continue ➔
                 </button>
             </div>
@@ -395,7 +416,7 @@
         </div>
 
         <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col" id="msg-modal-content">
                 <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto">💡</div>
                 <h3 id="msg-title" class="text-xl font-bold text-gray-800 mb-2 text-center">Notice</h3>
                 <div id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap"></div>
@@ -409,6 +430,7 @@
         let currentMajor = "";
         let currentLang = 'en'; 
         let spseResultRole = null;
+        let activeInput = 'player-name'; // Tracks which input field gets Virtual Keyboard strokes
 
         // Translation Dictionary
         const i18n = {
@@ -418,7 +440,10 @@
                 next: "Next ➔", stop: "STOP!", retry: "RETRY", skip: "Skip", continue: "Continue ➔", got_it: "Got it",
                 cam_admit: "Admission Photo Booth!", cam_grad: "Graduation Photo Booth!",
                 prev_admit: "Looking Good!", prev_grad: "Congratulations!",
-                qr_btn: "Share & Get QR", qr_title: "Scan to Save", qr_sub: "Use your phone's camera to download your photo.", qr_dl: "Download Image ⬇️", qr_close: "Close", qr_uploading: "Uploading...", qr_error: "Upload failed. Download directly.",
+                share_email: "Email", share_qr: "QR Code",
+                email_title: "Send via Email", email_sub: "Enter your email to receive the photo.",
+                btn_send: "Send", btn_cancel: "Cancel", btn_done: "Done",
+                saving_photo: "Saving Photo...", photo_sent: "Photo sent successfully!",
                 end_title: "Journey Complete!", end_sub: "You have experienced an amazing life as a PolyU APSS student.", btn_play_again: "Play Again (Try other path)",
                 quit_title: "Every Path is Meaningful", quit_text: "Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best!", btn_quit_back: "Back to Start",
                 ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy & SE (SPSE)",
@@ -435,7 +460,10 @@
                 next: "下一步 ➔", stop: "停！", retry: "重試", skip: "跳過", continue: "繼續 ➔", got_it: "明白",
                 cam_admit: "入學紀念照！", cam_grad: "畢業紀念照！",
                 prev_admit: "非常好看！", prev_grad: "恭喜畢業！",
-                qr_btn: "分享並獲取 QR 碼", qr_title: "掃描儲存", qr_sub: "使用手機相機下載你的照片。", qr_dl: "下載圖片 ⬇️", qr_close: "關閉", qr_uploading: "上傳中...", qr_error: "上傳失敗，請直接下載。",
+                share_email: "電郵", share_qr: "QR 碼",
+                email_title: "透過電郵發送", email_sub: "請輸入你的電郵以接收照片。",
+                btn_send: "發送", btn_cancel: "取消", btn_done: "完成",
+                saving_photo: "正在儲存照片...", photo_sent: "照片已成功發送！",
                 end_title: "旅程完成！", end_sub: "你已經體驗了理大 APSS 精彩的大學生活。", btn_play_again: "再玩一次（嘗試其他主修）",
                 quit_title: "每條路都有意義", quit_text: "雖然你決定不進入 APSS，但世界充滿了機會。祝你一切順利！", btn_quit_back: "回到開始",
                 ms_title: "選擇你的主修", ms_text: "你已完成共同核心課程！現在，為接下來的 APSS 旅程選擇你的專業。", ms_btn_sw: "社會工作 (SW)", ms_btn_spse: "社會政策及社會創業 (SPSE)",
@@ -464,7 +492,7 @@
                     title: "Years 2-3: Social Work", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'fit',
                     story: "Social work includes multiple service areas like schools, medical, family welfare, and youth outreach.",
                     hook: "Which social work field fits you best? Let's test your natural instincts!",
-                    instruction: "Explore different social work service areas!\n\nTap 10 floating bubbles that appeal to you. Choose your instinct.",
+                    instruction: "Explore different social work service areas!\n\nTap 10 floating bubbles that appeal to you. Find your match in 20 seconds.",
                     words: [
                         { t: "Guidance", c: "school" }, { t: "School Support", c: "school" }, { t: "Parent Liaison", c: "school" }, { t: "Preventive Prog.", c: "school" },
                         { t: "Discharge Planning", c: "medical" }, { t: "Crisis Support", c: "medical" }, { t: "Care Coordination", c: "medical" }, { t: "Patient Support", c: "medical" },
@@ -478,7 +506,7 @@
                     title: "Years 2-3: Social Innovator", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "To build a successful social enterprise, you need the right mix of traits.",
                     hook: "Can you build a solid role profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your true Social Enterprise role!",
+                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Qualify for a Social Enterprise role!",
                     words: [
                         { t: "+1 Strength", type: "good", stat: "str" }, { t: "-1 Strength", type: "bad", stat: "str" },
                         { t: "+1 Wisdom", type: "good", stat: "wis" }, { t: "-1 Wisdom", type: "bad", stat: "wis" },
@@ -506,7 +534,7 @@
                     title: "第二至三年：社會工作", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'fit',
                     story: "社會工作包括多個服務領域，如學校、醫療、家庭福利和青年外展。",
                     hook: "哪個社工領域最適合你？讓我們測試你的直覺！",
-                    instruction: "探索不同的社工服務領域！\n\n點擊 10 個吸引你的氣泡，選擇你的直覺。",
+                    instruction: "探索不同的社工服務領域！\n\n在 20 秒內點擊 10 個吸引你的氣泡，選擇你的直覺。",
                     words: [
                         { t: "輔導", c: "school" }, { t: "學校支援", c: "school" }, { t: "家長聯繫", c: "school" }, { t: "預防計劃", c: "school" },
                         { t: "出院規劃", c: "medical" }, { t: "危機支援", c: "medical" }, { t: "護理協調", c: "medical" }, { t: "病人支援", c: "medical" },
@@ -547,7 +575,6 @@
             end: document.getElementById('view-end')
         };
 
-        // --- STREAMING_CHUNK:Javascript Core Functions... ---
         function showView(viewName) {
             Object.values(views).forEach(v => v.classList.remove('active'));
             views[viewName].classList.add('active');
@@ -585,13 +612,17 @@
             document.getElementById('ms-text').innerText = t.ms_text;
             document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw;
             document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            document.getElementById('txt-share-qr').innerText = t.qr_btn;
-            document.getElementById('qr-title').innerText = t.qr_title;
-            document.getElementById('qr-sub').innerText = t.qr_sub;
-            document.getElementById('btn-dl-direct').innerText = t.qr_dl;
-            document.getElementById('btn-qr-done').innerText = t.qr_close;
-            document.getElementById('qr-loading').innerText = t.qr_uploading;
             document.getElementById('btn-preview-next').innerText = t.continue;
+            
+            document.getElementById('txt-share-email').innerText = t.share_email;
+            document.getElementById('txt-share-qr').innerText = t.share_qr;
+            document.getElementById('txt-email-title').innerText = t.email_title;
+            document.getElementById('txt-email-sub').innerText = t.email_sub;
+            document.getElementById('btn-email-send').innerText = t.btn_send;
+            document.getElementById('btn-email-cancel').innerText = t.btn_cancel;
+            document.getElementById('btn-qr-done').innerText = t.btn_done;
+            document.getElementById('txt-saving-photo').innerText = t.saving_photo;
+            document.getElementById('txt-qr-title').innerText = t.share_qr;
 
             document.getElementById('spse-intro-title').innerText = currentLang === 'en' ? '5 Core Stats' : '5 項核心屬性';
             document.getElementById('spse-intro-text').innerHTML = currentLang === 'en' ? 
@@ -600,14 +631,18 @@
             document.getElementById('spse-intro-btn').innerText = currentLang === 'en' ? 'Next ➔' : '下一步 ➔';
         }
 
-        // Virtual Keyboard
+        function setActiveInput(id) {
+            activeInput = id;
+        }
+
         function showKeyboard() { document.getElementById('virtual-keyboard').style.display = 'block'; }
         function hideKeyboard() { document.getElementById('virtual-keyboard').style.display = 'none'; }
         function vk(char) {
-            const input = document.getElementById('player-name');
+            const input = document.getElementById(activeInput);
+            if (!input) return;
             if (char === 'DEL') input.value = input.value.slice(0, -1);
             else if (char === 'CLR') input.value = '';
-            else if (input.value.length < 12) input.value += char;
+            else if (input.value.length < 35) input.value += char;
         }
 
         applyTranslations(); // Init text
@@ -696,7 +731,6 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Javascript Swing Game... ---
         let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
 
         function initSwingGame(stage, showInst = false) {
@@ -711,7 +745,6 @@
                 swingState.speed = 1.8; swingState.min = 35; swingState.max = 75; 
             } else {
                 hint.innerText = i18n[currentLang].hint_r2; scoreTitle.innerText = i18n[currentLang].target_r2;
-                // Stage 2 speed adjusted to 90% (3.6) of previous value (4.0)
                 swingState.speed = 3.6; swingState.min = 50; swingState.max = 85; 
             }
 
@@ -800,12 +833,11 @@
             }]);
         }
 
-        // --- STREAMING_CHUNK:Javascript Catcher Game Engine... ---
         let catcherState = { 
             score: 0, totalCaught: 0, scores: {}, 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0 },
-            timer: 30, timerInterval: null, baseSpeed: 2.5, 
-            active: false, items: [], lastSpawn: 0, playerX: 150, config: null, moveHandler: null, animId: null, availableWords: []
+            timer: 20, timerInterval: null, 
+            active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
         };
 
         function initCatcher(mode) {
@@ -829,7 +861,7 @@
             if (catcherState.config.mode === 'fit') {
                 document.getElementById('catcher-score').innerText = `0/10`;
             } else {
-                document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}30s | ${i18n[currentLang].catch_score}0`;
+                document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}20s | ${i18n[currentLang].catch_score}0`;
             }
             
             showView('catcher');
@@ -844,32 +876,29 @@
             }
             
             const container = document.getElementById('catcher-area'); 
-            const player = document.getElementById('catcher-player');
-            player.style.display = 'none';
-
-            if (catcherState.moveHandler) { 
-                container.removeEventListener('touchmove', catcherState.moveHandler); 
-                container.removeEventListener('mousemove', catcherState.moveHandler); 
-                catcherState.moveHandler = null;
-            }
 
             showInstruction(catcherState.config.instruction, () => {
                 catcherState.active = true; 
                 catcherState.lastSpawn = performance.now();
                 
-                if (catcherState.config.mode === 'spse_stats') {
-                    catcherState.timerInterval = setInterval(() => {
-                        catcherState.timer--;
+                catcherState.timerInterval = setInterval(() => {
+                    catcherState.timer--;
+                    if (catcherState.config.mode === 'spse_stats') {
                         let totalScore = Object.values(catcherState.stats).reduce((a, b) => a + b, 0);
                         document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}${catcherState.timer}s | ${i18n[currentLang].catch_score}${totalScore}`;
-                        if (catcherState.timer <= 0) {
-                            clearInterval(catcherState.timerInterval); 
-                            catcherState.active = false; 
-                            cancelAnimationFrame(catcherState.animId);
-                            evaluateSPSEFit();
-                        }
-                    }, 1000);
-                }
+                    } else {
+                        document.getElementById('catcher-score').innerText = `${catcherState.totalCaught}/10 (${catcherState.timer}s)`;
+                    }
+
+                    if (catcherState.timer <= 0) {
+                        clearInterval(catcherState.timerInterval); 
+                        catcherState.active = false; 
+                        cancelAnimationFrame(catcherState.animId);
+                        if(catcherState.config.mode === 'spse_stats') evaluateSPSEFit();
+                        else evaluateSWFit();
+                    }
+                }, 1000);
+                
                 catcherLoop(performance.now());
             });
         }
@@ -901,30 +930,30 @@
                 
                 if(word.type === 'bad') { el.style.borderStyle = 'dashed'; }
                 el.style.backgroundColor = bg; 
-            el.style.borderColor = border; 
-            el.style.color = text;
-            el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-md">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full font-bold text-xs">${word.t}</span>`;
-        } else {
-            el.className = `falling-item soap-bubble`;
-            el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-md">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full font-bold text-xs">${word.t}</span>`;
-        }
-        
-        el.style.visibility = 'hidden'; 
-        container.appendChild(el);
+                el.style.borderColor = border; 
+                el.style.color = text;
+                el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-md">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full font-bold text-xs">${word.t}</span>`;
+            } else {
+                el.className = `falling-item soap-bubble`;
+                el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-md">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full font-bold text-xs">${word.t}</span>`;
+            }
+            
+            el.style.visibility = 'hidden'; 
+            container.appendChild(el);
 
-        const containerRect = container.getBoundingClientRect();
-        const itemWidth = 105;
-        const itemHeight = 105;
-        const maxLeft = Math.max(0, containerRect.width - itemWidth);
-        const maxTop = Math.max(0, containerRect.height - itemHeight);
+            const containerRect = container.getBoundingClientRect();
+            const itemWidth = 105;
+            const itemHeight = 105;
+            const maxLeft = Math.max(0, containerRect.width - itemWidth);
+            const maxTop = Math.max(0, containerRect.height - itemHeight);
 
-        let startX, startY; let valid = false; let attempts = 0;
-        
-        while (!valid && attempts < 15) {
-            startX = Math.random() * maxLeft; startY = Math.random() * maxTop; 
-            valid = true;
-            for (let i = 0; i < catcherState.items.length; i++) {
-                const other = catcherState.items[i];
+            let startX, startY; let valid = false; let attempts = 0;
+            
+            while (!valid && attempts < 15) {
+                startX = Math.random() * maxLeft; startY = Math.random() * maxTop; 
+                valid = true;
+                for (let i = 0; i < catcherState.items.length; i++) {
+                    const other = catcherState.items[i];
                     if (startX < other.x + other.width + 10 && startX + itemWidth + 10 > other.x && startY < other.y + other.height + 10 && startY + itemHeight + 10 > other.y) { valid = false; break; }
                 }
                 attempts++;
@@ -974,11 +1003,11 @@
                 item.el.style.opacity = '0';
                 setTimeout(() => item.el.remove(), 150);
                 
-                document.getElementById('catcher-score').innerText = `${catcherState.totalCaught}/10`;
+                document.getElementById('catcher-score').innerText = `${catcherState.totalCaught}/10 (${catcherState.timer}s)`;
                 catcherState.items.splice(index, 1);
 
                 if (catcherState.totalCaught >= 10) {
-                    catcherState.active = false; cancelAnimationFrame(catcherState.animId); evaluateSWFit(); return;
+                    catcherState.active = false; cancelAnimationFrame(catcherState.animId); clearInterval(catcherState.timerInterval); evaluateSWFit(); return;
                 }
             } else {
                 const st = catcherState;
@@ -1005,9 +1034,11 @@
             if (!catcherState.active) return;
             const container = document.getElementById('catcher-area'); 
             
-            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > 400) {
-                const numItemsToSpawn = 3; 
-                for (let k = 0; k < numItemsToSpawn; k++) spawnCatcherItem(container);
+            const spawnRate = catcherState.config.mode === 'spse_stats' ? 400 : 800;
+            const spawnAmount = catcherState.config.mode === 'spse_stats' ? 3 : 2;
+
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnRate) {
+                for (let k = 0; k < spawnAmount; k++) spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
 
@@ -1091,7 +1122,6 @@
             if (step === 1) {
                 titleEl.innerText = lang === 'en' ? 'SPSE Ability Profile' : 'SPSE 能力檔案';
                 
-                // Calculate max stat for radar scaling (minimum 5 for visual balance)
                 const maxStat = Math.max(5, ...Object.values(stats));
                 const getPt = (val, angle) => {
                     const r = (Math.max(0, val) / maxStat) * 50; 
@@ -1178,21 +1208,24 @@
             spseResultRole = null;
             
             const roles = [
-                { id: 'mc', name_en: 'Mission Champion', name_zh: '使命倡導者', req: {str:2, wis:1, cha:1, dis:0, ins:2}, sig: 'ins',
+                { id: 'mc', name_en: 'Mission Champion', name_zh: '使命倡導者', req: {str:1, wis:0, cha:1, dis:0, ins:2}, sig: 'ins',
                   str_en: 'Vision, Purpose, Ethics', sup_en: 'Operations, Financial realism',
                   str_zh: '願景、目標、道德', sup_zh: '營運執行、財務現實' },
-                { id: 'ob', name_en: 'Operations Builder', name_zh: '營運建設者', req: {str:1, wis:1, cha:0, dis:3, ins:0}, sig: 'dis',
+                { id: 'ob', name_en: 'Operations Builder', name_zh: '營運建設者', req: {str:0, wis:1, cha:0, dis:2, ins:0}, sig: 'dis',
                   str_en: 'Execution, Planning, Structure', sup_en: 'Vision, Empathy',
                   str_zh: '執行、規劃、結構', sup_zh: '願景、同理心' },
-                { id: 'fs', name_en: 'Financial Steward', name_zh: '財務管家', req: {str:0, wis:3, cha:0, dis:2, ins:1}, sig: 'wis',
+                { id: 'fs', name_en: 'Financial Steward', name_zh: '財務管家', req: {str:0, wis:2, cha:0, dis:1, ins:0}, sig: 'wis',
                   str_en: 'Budgeting, Realism, Viability', sup_en: 'Community connection',
                   str_zh: '預算管理、現實考量、可行性', sup_zh: '社區連繫' },
-                { id: 'cc', name_en: 'Community Connector', name_zh: '社區連繫者', req: {str:0, wis:1, cha:3, dis:0, ins:2}, sig: 'cha',
+                { id: 'cc', name_en: 'Community Connector', name_zh: '社區連繫者', req: {str:0, wis:0, cha:2, dis:0, ins:1}, sig: 'cha',
                   str_en: 'Networking, Trust-building', sup_en: 'Structure, Finance',
                   str_zh: '建立網絡、建立信任', sup_zh: '結構、財務' },
-                { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:2, cha:0, dis:1, ins:3}, sig: 'ins',
+                { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:1, cha:0, dis:0, ins:2}, sig: 'ins',
                   str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships',
-                  str_zh: '分析、證據、評估', sup_zh: '行動、建立關係' }
+                  str_zh: '分析、證據、評估', sup_zh: '行動、建立關係' },
+                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '全能發展者', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: 'str',
+                  str_en: 'Adaptability, Broad Interest', sup_en: 'Focus, Specialization',
+                  str_zh: '適應力、廣泛興趣', sup_zh: '專注、專業化' }
             ];
 
             let qualified = [];
@@ -1203,26 +1236,21 @@
                 }
             });
 
-            if (qualified.length === 0) {
-                qualified = roles.map(r => {
-                    let surplus = (s.str - r.req.str) + (s.wis - r.req.wis) + (s.cha - r.req.cha) + (s.dis - r.req.dis) + (s.ins - r.req.ins);
-                    return {...r, surplus: surplus};
-                });
-            }
-
             qualified.sort((a, b) => {
                 if(b.surplus !== a.surplus) return b.surplus - a.surplus;
                 return s[b.sig] - s[a.sig];
             });
             
             let best = qualified[0];
-            spseResultRole = best.id;
+            spseResultRole = best.id === 'gen' ? null : best.id;
 
             renderSpseResultPage(1, best, s);
         }
 
-        // --- STREAMING_CHUNK:Javascript Camera Engine... ---
-        let stream = null; let capturedPhotoBlob = null; let currentCamMode = 'admission';
+        let stream = null; 
+        let capturedPhotoBlob = null; 
+        let currentCamMode = 'admission';
+        let uploadedPhotoDeleteUrl = null;
 
         async function startCamera(mode) {
             currentCamMode = mode;
@@ -1264,78 +1292,152 @@
 
         function takePhoto() {
             if (!stream) return; 
-            const video = document.getElementById('camera-feed'); const canvas = document.getElementById('camera-canvas'); const frameImg = document.getElementById('camera-frame');
-            canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480;
+            const video = document.getElementById('camera-feed'); 
+            const canvas = document.getElementById('camera-canvas'); 
+            const frameImg = document.getElementById('camera-frame');
+            
+            // Constrain final downloaded output to exactly 1080x1920 to prevent distortion
+            canvas.width = 1080; 
+            canvas.height = 1920;
             const ctx = canvas.getContext('2d');
             
+            // Crop video to 9:16 to fit perfectly into the 1080x1920 canvas
+            const videoRatio = video.videoWidth / video.videoHeight;
+            const targetRatio = 1080 / 1920;
+            let drawWidth, drawHeight, offsetX, offsetY;
+            
+            if (videoRatio > targetRatio) {
+                drawHeight = 1920;
+                drawWidth = video.videoWidth * (1920 / video.videoHeight);
+                offsetX = (1080 - drawWidth) / 2;
+                offsetY = 0;
+            } else {
+                drawWidth = 1080;
+                drawHeight = video.videoHeight * (1080 / video.videoWidth);
+                offsetX = 0;
+                offsetY = (1920 - drawHeight) / 2;
+            }
+            
             ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
             ctx.setTransform(1, 0, 0, 1, 0, 0); 
-            if(frameImg.complete && frameImg.naturalHeight !== 0) ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+            
+            if(frameImg.complete && frameImg.naturalHeight !== 0) {
+                ctx.drawImage(frameImg, 0, 0, 1080, 1920);
+            }
             
             const pinImg = document.getElementById('camera-pin-overlay');
             if(!pinImg.classList.contains('hidden') && pinImg.complete && pinImg.naturalHeight !== 0) {
-                const pinSize = canvas.width * 0.25;
-                const margin = canvas.width * 0.05;
-                ctx.drawImage(pinImg, canvas.width - pinSize - margin, canvas.height - pinSize - margin, pinSize, pinSize);
+                const pinSize = 250;
+                const margin = 60;
+                ctx.drawImage(pinImg, 1080 - pinSize - margin, 1920 - pinSize - margin, pinSize, pinSize);
             }
             
             video.pause(); stopCamera(); 
             canvas.toBlob((blob) => { capturedPhotoBlob = blob; showPhotoPreview(); }, 'image/png');
         }
 
-        // --- STREAMING_CHUNK:Javascript QR & Sharing Engine... ---
-        function showPhotoPreview() {
+        async function showPhotoPreview() {
             showView('preview');
             const previewImg = document.getElementById('preview-img');
             previewImg.src = window.URL.createObjectURL(capturedPhotoBlob);
             
             document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
             
+            // Reset state
             document.getElementById('qr-panel').classList.add('hidden');
             document.getElementById('qr-panel').classList.remove('flex');
-            document.getElementById('qrcode-container').innerHTML = `<div id="qr-loading" class="animate-pulse text-gray-400 font-bold">${i18n[currentLang].qr_uploading}</div>`;
-            document.getElementById('btn-dl-direct').classList.add('hidden');
+            document.getElementById('email-panel').classList.add('hidden');
+            document.getElementById('email-panel').classList.remove('flex');
+            document.getElementById('share-options-container').classList.add('hidden');
+            document.getElementById('btn-preview-next').classList.add('hidden');
             
-            document.getElementById('btn-share-qr').onclick = () => generateQRAndShow();
+            // Auto Upload!
+            const overlay = document.getElementById('photo-uploading-overlay');
+            overlay.classList.remove('hidden');
+            
+            try {
+                const formData = new FormData();
+                const safeName = `APSS_Journey_${Date.now()}.png`;
+                formData.append('file', capturedPhotoBlob, safeName);
+                
+                const response = await fetch('https://tmpfiles.org/api/v1/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result && result.status === 'success') {
+                    const directUrl = result.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+                    uploadedPhotoDeleteUrl = result.data.delete_url; // Store for later deletion
+                    
+                    // Pre-generate QR Code
+                    const qrContainer = document.getElementById('qrcode-container');
+                    qrContainer.innerHTML = '';
+                    new QRCode(qrContainer, {
+                        text: directUrl, 
+                        width: 190, height: 190,
+                        colorDark : "#1f2937", colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.L
+                    });
+                } else {
+                    throw new Error("Upload failed");
+                }
+            } catch (err) {
+                console.error("Auto upload failed:", err);
+                // Fallback for demo if server blocked
+                const qrContainer = document.getElementById('qrcode-container');
+                qrContainer.innerHTML = '';
+                new QRCode(qrContainer, { text: "https://www.polyu.edu.hk/apss/", width: 190, height: 190 });
+            }
+            
+            overlay.classList.add('hidden');
+            document.getElementById('share-options-container').classList.remove('hidden');
+            document.getElementById('btn-preview-next').classList.remove('hidden');
+            
+            // Setup Share Buttons
+            document.getElementById('btn-share-qr-opt').onclick = () => {
+                document.getElementById('qr-panel').classList.remove('hidden');
+                document.getElementById('qr-panel').classList.add('flex');
+            };
+            
+            document.getElementById('btn-share-email-opt').onclick = () => {
+                document.getElementById('email-panel').classList.remove('hidden');
+                document.getElementById('email-panel').classList.add('flex');
+                document.getElementById('share-email-input').value = "";
+            };
+            
+            // Modal Closers & Send logic
             document.getElementById('btn-qr-done').onclick = () => {
                 document.getElementById('qr-panel').classList.add('hidden');
                 document.getElementById('qr-panel').classList.remove('flex');
             };
             
+            document.getElementById('btn-email-cancel').onclick = () => {
+                hideKeyboard();
+                document.getElementById('email-panel').classList.add('hidden');
+                document.getElementById('email-panel').classList.remove('flex');
+            };
+            
+            document.getElementById('btn-email-send').onclick = () => {
+                hideKeyboard();
+                const email = document.getElementById('share-email-input').value.trim();
+                if(email) {
+                    showMessage(i18n[currentLang].photo_sent, () => {
+                        document.getElementById('email-panel').classList.add('hidden');
+                        document.getElementById('email-panel').classList.remove('flex');
+                    });
+                }
+            };
+
+            // Continue & Delete File
             document.getElementById('btn-preview-next').onclick = () => {
+                // Fire and forget auto-delete
+                if (uploadedPhotoDeleteUrl) fetch(uploadedPhotoDeleteUrl).catch(e => console.log(e));
+                
                 if(currentCamMode === 'admission') showMajorSelect();
                 else showEndScreen();
             };
-        }
-
-        function generateQRAndShow() {
-            const qrPanel = document.getElementById('qr-panel');
-            qrPanel.classList.remove('hidden'); qrPanel.classList.add('flex');
-            
-            const formData = new FormData();
-            formData.append('file', capturedPhotoBlob, 'apss_photo.png');
-
-            fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    const fileUrl = data.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
-                    document.getElementById('qrcode-container').innerHTML = '';
-                    new QRCode(document.getElementById("qrcode-container"), { text: fileUrl, width: 160, height: 160 });
-                } else { throw new Error('Upload failed'); }
-            })
-            .catch(err => {
-                console.error("Upload Error:", err);
-                document.getElementById('qrcode-container').innerHTML = `<div class="text-red-500 font-bold text-sm px-4">${i18n[currentLang].qr_error}</div>`;
-                const dlBtn = document.getElementById('btn-dl-direct');
-                dlBtn.classList.remove('hidden');
-                dlBtn.onclick = () => {
-                     const url = window.URL.createObjectURL(capturedPhotoBlob);
-                     const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = 'apss_photo.png';
-                     document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
-                };
-            });
         }
 
         function showEndScreen() { showView('end'); }
