@@ -128,8 +128,10 @@
 <body>
 
     <div id="app-container">
+        <!-- LANGUAGE TOGGLE -->
         <button id="lang-toggle" onclick="toggleLanguage()">繁 / EN</button>
 
+        <!-- INTRO VIEW -->
         <div id="view-intro" class="view-panel active flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                 <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
@@ -154,6 +156,7 @@
             </div>
         </div>
 
+        <!-- VIRTUAL KEYBOARD -->
         <div id="virtual-keyboard">
             <div class="flex justify-between items-center mb-2 px-1">
                 <span class="font-bold text-gray-600 text-sm">Keyboard</span>
@@ -177,6 +180,7 @@
             </div>
         </div>
 
+        <!-- STORY VIEW -->
         <div id="view-story" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
@@ -192,6 +196,7 @@
             </div>
         </div>
 
+        <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
                 <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
@@ -217,6 +222,7 @@
             </div>
         </div>
 
+        <!-- SWING GAME (PRE-U) -->
         <div id="view-swing-game" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 id="swing-header" class="font-bold text-gray-700">Pre-U: JUPAS Challenge</h3>
@@ -244,13 +250,14 @@
             </div>
         </div>
 
+        <!-- CATCHER GAME (YEAR 2-3) -->
         <div id="view-catcher" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm relative">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90 z-30 relative">
                 <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
             </div>
             <div class="px-4 py-2 bg-yellow-50/90 flex-shrink-0 flex justify-between items-center border-b border-yellow-100 z-30 relative">
                 <span class="text-[13px] font-bold text-yellow-800 flex-1 pr-2 leading-tight" id="catcher-instruction">Catch items!</span>
-                <span id="catcher-score" class="font-bold text-base text-theme flex-shrink-0 whitespace-nowrap">0/10</span>
+                <span id="catcher-score" class="font-bold text-base text-theme flex-shrink-0 whitespace-nowrap">0/20</span>
             </div>
             
             <div id="catcher-area" class="flex-grow relative overflow-hidden bg-transparent touch-none">
@@ -276,6 +283,7 @@
             </div>
         </div>
 
+        <!-- CAMERA VIEW (ADMISSION & GRADUATION) -->
         <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50 overflow-hidden">
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
             <div class="flex-grow relative flex items-center justify-center bg-gray-900 w-full">
@@ -295,6 +303,7 @@
             </div>
         </div>
 
+        <!-- PHOTO PREVIEW & SHARE VIEW -->
         <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50">
             <h2 id="preview-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Looking Good!</h2>
             
@@ -312,6 +321,7 @@
             </div>
         </div>
 
+        <!-- FIREBASE PHOTO VIEWER (FOR QR CODE SCANS) -->
         <div id="view-photo-viewer" class="view-panel flex-col items-center justify-center p-4 bg-gray-900 z-[99]">
             <h2 class="text-white text-center py-4 font-bold absolute top-0 w-full z-20">Your APSS Photo</h2>
             <div class="flex-grow flex items-center justify-center w-full p-4 relative">
@@ -328,6 +338,7 @@
             </div>
         </div>
 
+        <!-- END VIEW -->
         <div id="view-end" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
              <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-8 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
@@ -342,6 +353,7 @@
             </div>
         </div>
 
+        <!-- QUIT VIEW -->
         <div id="view-quit" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
@@ -357,6 +369,7 @@
             </div>
         </div>
         
+        <!-- MODALS -->
         <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
                 <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
@@ -445,7 +458,6 @@
 
     <script>
         // --- FIREBASE CONFIGURATION ---
-        // Insert real config before deployment
         const firebaseConfig = {
             apiKey: "AIzaSy_YOUR_API_KEY",
             authDomain: "your-project.firebaseapp.com",
@@ -505,7 +517,7 @@
                     title: "Years 2-3: Social Work", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "Social workers engage with people, understand situations, take action, and review whether support is helping.",
                     hook: "Can you build a solid social worker profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Meet minimum requirements to reveal your true Social Worker role!",
+                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Meet minimum requirements to reveal your true Social Worker role!",
                     words: [
                         { t: "+1 Empathy", type: "good", stat: "emp" }, { t: "-1 Empathy", type: "bad", stat: "emp" },
                         { t: "+1 Insight", type: "good", stat: "ins" }, { t: "-1 Insight", type: "bad", stat: "ins" },
@@ -521,7 +533,7 @@
                     title: "Years 2-3: Social Innovator", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "To build a successful social enterprise, you need the right mix of traits.",
                     hook: "Can you build a solid role profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your true Social Enterprise role!",
+                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your true Social Enterprise role!",
                     words: [
                         { t: "+1 Strength", type: "good", stat: "str" }, { t: "-1 Strength", type: "bad", stat: "str" },
                         { t: "+1 Wisdom", type: "good", stat: "wis" }, { t: "-1 Wisdom", type: "bad", stat: "wis" },
@@ -546,7 +558,7 @@
                     title: "第二至三年：社會工作", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "社工與人接觸，了解情況，採取行動，並檢討支援是否有效。",
                     hook: "你能建立紮實的社工檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。達到最低要求，揭曉你的最終社工角色！",
+                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。達到最低要求，揭曉你的最終社工角色！",
                     words: [
                         { t: "+1 同理心", type: "good", stat: "emp" }, { t: "-1 同理心", type: "bad", stat: "emp" },
                         { t: "+1 洞察力", type: "good", stat: "ins" }, { t: "-1 洞察力", type: "bad", stat: "ins" },
@@ -562,7 +574,7 @@
                     title: "第二至三年：社會創新者", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "要建立成功的社會企業，你需要適當的特質組合。",
                     hook: "你能建立紮實的角色檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你真正的社會企業角色！",
+                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你真正的社會企業角色！",
                     words: [
                         { t: "+1 力量", type: "good", stat: "str" }, { t: "-1 力量", type: "bad", stat: "str" },
                         { t: "+1 智慧", type: "good", stat: "wis" }, { t: "-1 智慧", type: "bad", stat: "wis" },
@@ -618,6 +630,7 @@
 
         applyTranslations(); // Init text
 
+        // --- STREAMING_CHUNK:Loading View and Helper Logic... ---
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const photoId = urlParams.get('photo');
@@ -714,6 +727,7 @@
             showView('story');
         }
 
+        // --- STREAMING_CHUNK:Interactive Game Initialization... ---
         function startGame() {
             hideKeyboard(); const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
@@ -748,7 +762,7 @@
                 swingState.speed = 1.8; swingState.min = 35; swingState.max = 75; 
             } else {
                 hint.innerText = i18n[currentLang].hint_r2; scoreTitle.innerText = i18n[currentLang].target_r2;
-                swingState.speed = 3.6; swingState.min = 50; swingState.max = 85; // 90% of original 4.0 speed
+                swingState.speed = 3.0; swingState.min = 50; swingState.max = 85; 
             }
 
             [1,2].forEach(i => {
@@ -809,9 +823,10 @@
             ]);
         }
 
+        // --- STREAMING_CHUNK:Catcher Game Engine... ---
         let catcherState = { 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 },
-            timer: 30, timerInterval: null, active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
+            timer: 20, timerInterval: null, active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
         };
 
         function initCatcher(mode) {
@@ -822,13 +837,13 @@
             };
 
             catcherState.stats = { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 };
-            catcherState.timer = 30; clearInterval(catcherState.timerInterval);
+            catcherState.timer = 20; clearInterval(catcherState.timerInterval);
             catcherState.active = false; 
 
             if (catcherState.items) { catcherState.items.forEach(item => item.el.remove()); }
             catcherState.items = []; catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
-            document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}30s | ${i18n[currentLang].catch_score}0`;
+            document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}20s | ${i18n[currentLang].catch_score}0`;
             showView('catcher');
             
             if (mode === 'spse') {
@@ -948,9 +963,9 @@
             if (!catcherState.active) return;
             const container = document.getElementById('catcher-area'); 
             
-            let spawnDelay = catcherState.timer <= 15 ? 300 : 450;
+            let spawnDelay = catcherState.timer <= 10 ? 300 : 450;
             if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnDelay) {
-                const numItemsToSpawn = catcherState.timer <= 15 ? 3 : 2; 
+                const numItemsToSpawn = catcherState.timer <= 10 ? 3 : 2; 
                 for (let k = 0; k < numItemsToSpawn; k++) spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
@@ -985,6 +1000,7 @@
             catcherState.animId = requestAnimationFrame(catcherLoop);
         }
 
+        // --- STREAMING_CHUNK:Evaluation Algorithms... ---
         function evaluateSWFit() {
             const s = catcherState.stats; finalResultRole = null; 
             
@@ -1037,8 +1053,8 @@
                 best = qualified[0];
             }
 
-            finalResultRole = best.id === 'dev' ? null : `sw_${best.id}`;
-            if (finalResultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+            finalResultRole = best.id === 'dev' ? 'gen' : `sw_${best.id}`;
+            if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
             renderResultPage(1, best, s, 'sw');
         }
 
@@ -1084,12 +1100,13 @@
                 best = qualified[0];
             }
             
-            finalResultRole = best.id === 'dev' ? null : best.id;
-            if (finalResultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+            finalResultRole = best.id === 'dev' ? 'gen' : best.id;
+            if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
 
             renderResultPage(1, best, s, 'spse');
         }
 
+        // --- STREAMING_CHUNK:Post-Game Modal & Canvas Flow... ---
         function renderResultPage(step, best, stats, mode) {
             const modal = document.getElementById('msg-modal'); const content = document.getElementById('msg-modal-content');
             const titleEl = document.getElementById('msg-title'); const textEl = document.getElementById('msg-modal-text'); const btnEl = document.getElementById('msg-modal-btn');
@@ -1133,7 +1150,7 @@
                     </svg>
                 </div>`;
 
-                let avatarSrc = best.id === 'dev' ? `https://placehold.co/200x200/${themeColor.replace('#','')}/ffffff?text=?` : `image/character/${mode==='sw'?`sw_${best.id}`:best.id}.png`;
+                let avatarSrc = `image/character/${finalResultRole}.png`;
 
                 textEl.innerHTML = `
                     <div class="flex flex-row items-center justify-between w-full gap-2 mb-2">
@@ -1209,7 +1226,7 @@
             else { frameImg.src = 'image/camera/APSS-Graduated.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; }
             
             const pinImg = document.getElementById('camera-pin-overlay');
-            if (mode === 'graduation' && finalResultRole) { pinImg.src = `image/character/${finalResultRole}.png`; pinImg.classList.remove('hidden'); } 
+            if (mode !== 'admission' && finalResultRole && finalResultRole !== 'gen') { pinImg.src = `image/character/${finalResultRole}.png`; pinImg.classList.remove('hidden'); } 
             else { pinImg.classList.add('hidden'); }
 
             const skipBtn = document.getElementById('btn-camera-skip'); const captureBtn = document.getElementById('btn-capture');
@@ -1237,6 +1254,10 @@
             const targetWidth = 1080; const targetHeight = 1920;
             canvas.width = targetWidth; canvas.height = targetHeight; const ctx = canvas.getContext('2d');
             
+            // Fill background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, targetWidth, targetHeight);
+
             const videoRatio = video.videoWidth / video.videoHeight; const targetRatio = targetWidth / targetHeight;
             let drawWidth = targetWidth; let drawHeight = targetHeight; let offsetX = 0; let offsetY = 0;
 
@@ -1247,7 +1268,7 @@
             ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
             ctx.setTransform(1, 0, 0, 1, 0, 0); 
             
-            if(frameImg.complete && frameImg.naturalHeight !== 0) ctx.drawImage(frameImg, 0, 0, targetWidth, targetHeight);
+            if(frameImg.complete && frameImg.naturalHeight !== 0 && frameImg.style.display !== 'none') ctx.drawImage(frameImg, 0, 0, targetWidth, targetHeight);
             if(!pinImg.classList.contains('hidden') && pinImg.complete && pinImg.naturalHeight !== 0) {
                 const pinSize = targetWidth * 0.25; const margin = targetWidth * 0.05;
                 ctx.drawImage(pinImg, targetWidth - pinSize - margin, targetHeight - pinSize - margin, pinSize, pinSize);
@@ -1272,6 +1293,7 @@
             }, 'image/png', 0.8);
         }
 
+        // --- STREAMING_CHUNK:Sharing and Ending Logic... ---
         document.getElementById('btn-share-options').onclick = () => {
             const modal = document.getElementById('share-modal'); const content = document.getElementById('share-modal-content');
             modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
