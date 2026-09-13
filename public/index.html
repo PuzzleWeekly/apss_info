@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PolyU APSS Journey</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- Firebase Storage -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     
     <script>
         tailwind.config = {
@@ -25,6 +34,7 @@
             }
         }
     </script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
@@ -73,66 +83,43 @@
             display: none;
         }
 
-        /* Lang Toggle */
-        #lang-toggle { position: absolute; top: 16px; right: 16px; z-index: 100; background: rgba(255,255,255,0.9); padding: 6px 12px; border-radius: 20px; font-weight: bold; color: #6cba65; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; border: 2px solid #6cba65; font-size: 14px;}
+        #lang-toggle { 
+            position: absolute; top: 16px; right: 16px; z-index: 100; background: rgba(255,255,255,0.9); 
+            padding: 6px 12px; border-radius: 20px; font-weight: bold; color: #6cba65; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; border: 2px solid #6cba65; font-size: 14px;
+        }
 
-        /* Swing Meter Styles */
         .meter-container {
-            width: 100%;
-            height: 48px;
-            background-color: #f1f5f9;
-            border-radius: 24px;
-            position: relative;
-            border: 4px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%; height: 48px; background-color: #f1f5f9; border-radius: 24px;
+            position: relative; border: 4px solid #e2e8f0; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         .meter-target-zone { position: absolute; top: 0; bottom: 0; background-color: #4bb747; opacity: 0.8; }
-        .meter-needle { position: absolute; top: 0; bottom: 0; width: 8px; background-color: #333; border-radius: 4px; transform: translateX(-50%); box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 10; }
+        .meter-needle { 
+            position: absolute; top: 0; bottom: 0; width: 8px; background-color: #333; 
+            border-radius: 4px; transform: translateX(-50%); box-shadow: 0 0 5px rgba(0,0,0,0.5); z-index: 10; 
+        }
 
-        /* Catcher Game - Top-Down Bubble Physics Styles */
-        .catcher-player { position: absolute; top: 20px; left: 50%; width: 60px; height: 60px; background: #4bb747; border-radius: 16px; transform: translateX(-50%); display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: background 0.2s, transform 0.1s; z-index: 20; }
-        
-        /* Glassy Soap Bubbles */
         .falling-item { 
-            position: absolute; 
-            width: 105px;
-            height: 105px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-weight: 700; 
-            font-size: 12px; 
-            user-select: none; 
-            z-index: 10; 
-            line-height: 1.1; 
-            text-align: center;
-            overflow-wrap: break-word;
-            padding: 4px;
-            box-sizing: border-box;
-            cursor: pointer;
-            pointer-events: auto;
+            position: absolute; width: 105px; height: 105px; border-radius: 50%; display: flex;
+            flex-direction: column; justify-content: center; align-items: center; font-weight: 700; 
+            font-size: 12px; user-select: none; z-index: 10; line-height: 1.1; text-align: center;
+            overflow-wrap: break-word; padding: 4px; box-sizing: border-box; cursor: pointer; pointer-events: auto;
         }
         .soap-bubble {
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1) 60%, transparent 100%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            color: #1e293b;
-            backdrop-filter: blur(3px);
-            box-shadow: 
-                inset 0 0 15px rgba(255,255,255,0.8), 
-                inset 6px 0 12px rgba(255,192,203,0.5), 
-                inset -6px 0 12px rgba(173,216,230,0.5),
-                0 6px 12px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8); color: #1e293b; backdrop-filter: blur(3px);
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.8), inset 6px 0 12px rgba(255,192,203,0.5), inset -6px 0 12px rgba(173,216,230,0.5), 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        /* Virtual Keyboard */
         #virtual-keyboard {
-            display: none; position: absolute; bottom: 0; left: 0; width: 100%; background: #e2e8f0; padding: 10px; padding-bottom: 25px; border-top-left-radius: 16px; border-top-right-radius: 16px; z-index: 999; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            display: none; position: absolute; bottom: 0; left: 0; width: 100%; background: #e2e8f0; 
+            padding: 10px; padding-bottom: 25px; border-top-left-radius: 16px; border-top-right-radius: 16px; z-index: 999; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
         }
         .key-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 6px; }
-        .vk-key { background: white; border-radius: 6px; padding: 10px 0; flex: 1; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); user-select: none; cursor: pointer;}
+        .vk-key { 
+            background: white; border-radius: 6px; padding: 10px 0; flex: 1; text-align: center; 
+            font-weight: bold; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); user-select: none; cursor: pointer;
+        }
         .vk-key:active { background: #cbd5e1; transform: translateY(1px); }
         .vk-key.wide { flex: 1.5; font-size: 14px;}
         .vk-key.space { flex: 4; }
@@ -143,7 +130,6 @@
     <div id="app-container">
         <button id="lang-toggle" onclick="toggleLanguage()">繁 / EN</button>
 
-        <!-- INTRO VIEW -->
         <div id="view-intro" class="view-panel active flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                 <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
@@ -156,9 +142,9 @@
                     
                     <div class="w-full bg-white/20 p-6 rounded-2xl backdrop-blur-sm border border-white/30 shadow-xl relative">
                         <label id="intro-label" class="block text-left text-sm font-bold mb-2">Enter your name to begin:</label>
-                        <div class="relative">
+                        <div class="relative w-full">
                             <input type="text" id="player-name" class="w-full px-4 py-3 pr-10 rounded-xl text-gray-800 font-bold mb-4 bg-white shadow-inner focus:outline-none text-center text-lg" placeholder="e.g. Alex" maxlength="12">
-                            <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer hover:scale-110 active:scale-95 transition-transform" onclick="setActiveInput('player-name'); showKeyboard()">⌨️</span>
+                            <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer" onclick="showKeyboard('player-name')">⌨️</span>
                         </div>
                         <button id="btn-start" onclick="startGame()" class="w-full bg-white text-theme font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                             Start Journey
@@ -168,21 +154,10 @@
             </div>
         </div>
 
-        <!-- DEDICATED VIEWER MODE FOR QR SCANS -->
-        <div id="view-shared-photo" class="view-panel flex-col items-center justify-center p-4 bg-gray-900 z-50 h-full relative">
-            <h2 class="text-white text-2xl font-bold mb-6">Your APSS Journey Photo</h2>
-            <div id="shared-loading" class="text-white animate-pulse mb-4">Loading your photo...</div>
-            <img id="shared-photo-img" src="" class="hidden max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl border-4 border-white/20">
-            <button onclick="location.href = location.pathname" class="mt-8 bg-theme text-white font-bold py-3 px-8 rounded-xl shadow-md active:scale-95 transition-transform text-lg w-full max-w-sm">
-                Create Your Own Journey!
-            </button>
-        </div>
-
-        <!-- Virtual Keyboard -->
         <div id="virtual-keyboard">
             <div class="flex justify-between items-center mb-2 px-1">
                 <span class="font-bold text-gray-600 text-sm">Keyboard</span>
-                <button onclick="closeKeyboard()" class="text-blue-500 font-bold text-sm">Done</button>
+                <button onclick="hideKeyboard()" class="text-blue-500 font-bold text-sm">Done</button>
             </div>
             <div class="key-row">
                 <div class="vk-key" onclick="vk('Q')">Q</div><div class="vk-key" onclick="vk('W')">W</div><div class="vk-key" onclick="vk('E')">E</div><div class="vk-key" onclick="vk('R')">R</div><div class="vk-key" onclick="vk('T')">T</div><div class="vk-key" onclick="vk('Y')">Y</div><div class="vk-key" onclick="vk('U')">U</div><div class="vk-key" onclick="vk('I')">I</div><div class="vk-key" onclick="vk('O')">O</div><div class="vk-key" onclick="vk('P')">P</div>
@@ -193,16 +168,15 @@
             <div class="key-row px-2">
                 <div class="vk-key wide" onclick="vk('DEL')">⌫</div>
                 <div class="vk-key" onclick="vk('Z')">Z</div><div class="vk-key" onclick="vk('X')">X</div><div class="vk-key" onclick="vk('C')">C</div><div class="vk-key" onclick="vk('V')">V</div><div class="vk-key" onclick="vk('B')">B</div><div class="vk-key" onclick="vk('N')">N</div><div class="vk-key" onclick="vk('M')">M</div>
-                <div class="vk-key wide" onclick="vk('@')">@</div>
+                <div class="vk-key wide" onclick="vk('CLR')">Clear</div>
             </div>
             <div class="key-row px-6">
-                <div class="vk-key" onclick="vk('.')">.</div>
+                <div class="vk-key wide" onclick="vk('@')">@</div>
                 <div class="vk-key space" onclick="vk(' ')">Space</div>
-                <div class="vk-key wide" onclick="vk('CLR')">Clear</div>
+                <div class="vk-key wide" onclick="vk('.')">.</div>
             </div>
         </div>
 
-        <!-- STORY VIEW -->
         <div id="view-story" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
@@ -218,25 +192,22 @@
             </div>
         </div>
 
-        <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
                 <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
                 <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-6"></p>
                 <div class="flex flex-row w-full gap-4 h-48">
-                    <!-- SW Button -->
-                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group border border-gray-200">
-                        <img src="image/major_sw_bg.png" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
+                        <img src="image/major_sw_bg.png" onerror="this.src='https://placehold.co/400x800/3b82f6/ffffff?text=SW'" class="absolute inset-0 w-full h-full object-cover z-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
                         <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
                             <span class="text-3xl mb-2">🤝</span>
                             <span id="ms-btn-sw" class="font-bold text-sm text-center leading-tight">Social Work (SW)</span>
                         </div>
                     </button>
-                    <!-- SPSE Button -->
-                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group border border-gray-200">
-                        <img src="image/major_spse_bg.png" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
+                        <img src="image/major_spse_bg.png" onerror="this.src='https://placehold.co/400x800/a855f7/ffffff?text=SPSE'" class="absolute inset-0 w-full h-full object-cover z-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
                         <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
                             <span class="text-3xl mb-2">💡</span>
                             <span id="ms-btn-spse" class="font-bold text-sm text-center leading-tight">SPSE</span>
@@ -246,7 +217,6 @@
             </div>
         </div>
 
-        <!-- SWING GAME (PRE-U) -->
         <div id="view-swing-game" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90">
                 <h3 id="swing-header" class="font-bold text-gray-700">Pre-U: JUPAS Challenge</h3>
@@ -274,53 +244,49 @@
             </div>
         </div>
 
-        <!-- CATCHER GAME -->
         <div id="view-catcher" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm relative">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90 z-30 relative">
                 <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
             </div>
             <div class="px-4 py-2 bg-yellow-50/90 flex-shrink-0 flex justify-between items-center border-b border-yellow-100 z-30 relative">
-                <span class="text-[13px] font-bold text-yellow-800 flex-1 pr-2 leading-tight" id="catcher-instruction">Tap to catch items!</span>
-                <span id="catcher-score" class="font-bold text-base text-theme flex-shrink-0 whitespace-nowrap">Time: 20s | Score: 0</span>
+                <span class="text-[13px] font-bold text-yellow-800 flex-1 pr-2 leading-tight" id="catcher-instruction">Catch items!</span>
+                <span id="catcher-score" class="font-bold text-base text-theme flex-shrink-0 whitespace-nowrap">0/10</span>
             </div>
             
             <div id="catcher-area" class="flex-grow relative overflow-hidden bg-transparent touch-none">
-                <!-- Chaotic bouncing bubbles injected here -->
+                <!-- Bubbles injected here -->
             </div>
             
-            <!-- SPSE STATS BAR -->
-            <div id="catcher-stats-bar-spse" class="hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 justify-between items-center z-30 pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                <div class="flex flex-col items-center"><span class="text-[14px]">💪</span><span id="stat-val-spse-str" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">🧠</span><span id="stat-val-spse-wis" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">✨</span><span id="stat-val-spse-cha" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">⚙️</span><span id="stat-val-spse-dis" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">👁️</span><span id="stat-val-spse-ins" class="text-sm font-bold text-gray-800">0</span></div>
+            <!-- SW STATS BAR -->
+            <div id="catcher-sw-stats-bar" class="hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 justify-between items-center z-30 pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div class="flex flex-col items-center"><span class="text-[14px]">❤️</span><span id="stat-sw-emp" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">👁️</span><span id="stat-sw-ins" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">💬</span><span id="stat-sw-com" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">🚀</span><span id="stat-sw-act" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">⚖️</span><span id="stat-sw-pro" class="text-sm font-bold text-gray-800">0</span></div>
             </div>
 
-            <!-- SW STATS BAR -->
-            <div id="catcher-stats-bar-sw" class="hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 justify-between items-center z-30 pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                <div class="flex flex-col items-center"><span class="text-[14px]">❤️</span><span id="stat-val-sw-emp" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">👁️</span><span id="stat-val-sw-ins" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">💬</span><span id="stat-val-sw-com" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">🚀</span><span id="stat-val-sw-act" class="text-sm font-bold text-gray-800">0</span></div>
-                <div class="flex flex-col items-center"><span class="text-[14px]">⚖️</span><span id="stat-val-sw-pro" class="text-sm font-bold text-gray-800">0</span></div>
+            <!-- SPSE STATS BAR -->
+            <div id="catcher-spse-stats-bar" class="hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 justify-between items-center z-30 pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div class="flex flex-col items-center"><span class="text-[14px]">💪</span><span id="stat-spse-str" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">🧠</span><span id="stat-spse-wis" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">✨</span><span id="stat-spse-cha" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">⚙️</span><span id="stat-spse-dis" class="text-sm font-bold text-gray-800">0</span></div>
+                <div class="flex flex-col items-center"><span class="text-[14px]">👁️</span><span id="stat-spse-ins" class="text-sm font-bold text-gray-800">0</span></div>
             </div>
         </div>
 
-        <!-- CAMERA VIEW -->
-        <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50">
+        <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50 overflow-hidden">
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
-            
-            <div class="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-900">
-                <!-- Strict 9:16 Aspect Ratio Container to enforce frame bounds -->
-                <div class="relative w-full max-w-full max-h-full aspect-[9/16] bg-black shadow-2xl flex items-center justify-center overflow-hidden">
-                    <video id="camera-feed" class="absolute inset-0 w-full h-full object-cover z-0" autoplay playsinline></video>
-                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"> 
-                    <img id="camera-pin-overlay" src="" class="absolute bottom-[4%] right-[4%] w-[25%] object-contain z-20 pointer-events-none hidden">
+            <div class="flex-grow relative flex items-center justify-center bg-gray-900 w-full">
+                <!-- Strict 1080x1920 (9:16) Ratio Container -->
+                <div class="relative w-full max-h-full aspect-[9/16] bg-black overflow-hidden flex justify-center items-center">
+                    <video id="camera-feed" class="absolute w-full h-full object-cover z-0" autoplay playsinline></video>
+                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" onerror="this.style.display='none'"> 
+                    <img id="camera-pin-overlay" src="" class="absolute bottom-[5%] right-[5%] w-[25%] max-w-[150px] object-contain z-20 pointer-events-none hidden">
                 </div>
                 <canvas id="camera-canvas" class="hidden"></canvas>
             </div>
-            
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex justify-between items-center z-20 relative">
                 <button id="btn-camera-skip" class="text-white/70 font-semibold px-4 py-2 transition-all">Skip</button>
                 <button id="btn-capture" class="w-16 h-16 bg-white rounded-full border-4 border-gray-300 shadow-lg active:scale-90 transition-transform flex items-center justify-center absolute left-1/2 -translate-x-1/2">
@@ -329,58 +295,39 @@
             </div>
         </div>
 
-        <!-- PHOTO PREVIEW & SHARING FLOW -->
         <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50">
             <h2 id="preview-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Looking Good!</h2>
             
-            <div class="flex-grow relative flex items-center justify-center p-4 overflow-hidden">
-                <img id="preview-img" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl border-4 border-white/20">
-                
-                <!-- Share Choice Modal -->
-                <div id="share-choice-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
-                    <h3 id="txt-share-choice-title" class="text-2xl font-bold text-gray-800 mb-6">Choose Share Method</h3>
-                    <div class="flex gap-4 w-full mb-6">
-                        <button id="btn-choose-email" class="flex-1 bg-blue-500 text-white font-bold py-6 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex flex-col items-center justify-center gap-3">
-                            <span class="text-4xl">📧</span> <span id="txt-btn-email">Email</span>
-                        </button>
-                        <button id="btn-choose-qr" class="flex-1 bg-green-500 text-white font-bold py-6 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex flex-col items-center justify-center gap-3">
-                            <span class="text-4xl">📱</span> <span id="txt-btn-qr">QR Code</span>
-                        </button>
-                    </div>
-                    <button id="btn-close-share-choice" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Cancel</button>
-                </div>
-
-                <!-- QR Modal -->
-                <div id="qr-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
-                    <h3 id="txt-qr-title" class="text-2xl font-bold text-gray-800 mb-6">QR Code</h3>
-                    <div id="qrcode-container" class="bg-white p-4 rounded-xl shadow-lg border-2 border-gray-100 mb-8 w-56 h-56 flex flex-col items-center justify-center"></div>
-                    <button id="btn-qr-done" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Done</button>
-                </div>
-
-                <!-- Email Modal -->
-                <div id="email-panel" class="absolute inset-0 bg-white/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
-                    <h3 id="txt-email-title" class="text-2xl font-bold text-gray-800 mb-2">Send via Email</h3>
-                    <p id="txt-email-sub" class="text-gray-600 mb-6 text-sm">Enter your email to receive the photo.</p>
-                    <div class="relative w-full mb-6">
-                        <input type="email" id="share-email-input" class="w-full px-4 py-3 pr-10 rounded-xl border-2 border-gray-300 text-gray-800 font-bold focus:outline-none focus:border-theme text-center text-lg" placeholder="your@email.com">
-                        <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer hover:scale-110 active:scale-95 transition-transform" onclick="setActiveInput('share-email-input'); showKeyboard()">⌨️</span>
-                    </div>
-                    <button id="btn-email-send" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg mb-3">Send</button>
-                    <button id="btn-email-cancel" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Cancel</button>
-                </div>
+            <div class="flex-grow relative flex items-center justify-center p-4">
+                <img id="preview-img" src="" class="max-w-full max-h-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20">
             </div>
             
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
-                <button id="btn-init-share" class="w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
-                    Share Photo 📤
+                <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                    <span>📤</span> <span id="txt-share-opt">Share Photo</span>
                 </button>
-                <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
+                <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                     Continue ➔
                 </button>
             </div>
         </div>
 
-        <!-- END VIEW -->
+        <div id="view-photo-viewer" class="view-panel flex-col items-center justify-center p-4 bg-gray-900 z-[99]">
+            <h2 class="text-white text-center py-4 font-bold absolute top-0 w-full z-20">Your APSS Photo</h2>
+            <div class="flex-grow flex items-center justify-center w-full p-4 relative">
+                <div id="viewer-loading" class="absolute text-white/50 text-sm animate-pulse">Loading Photo...</div>
+                <img id="viewer-img" src="" class="max-w-full max-h-[80dvh] object-contain rounded-lg shadow-2xl hidden z-10 border border-white/20">
+            </div>
+            <div class="flex-shrink-0 pb-8 pt-4 w-full max-w-sm z-20">
+                <button id="btn-viewer-dl" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden mb-3">
+                    Download ⬇️
+                </button>
+                <button onclick="window.location.href=window.location.pathname" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">
+                    Start Your Own Journey
+                </button>
+            </div>
+        </div>
+
         <div id="view-end" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
              <div class="bg-theme text-white rounded-3xl w-full max-w-sm p-8 shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
                  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
@@ -395,7 +342,6 @@
             </div>
         </div>
 
-        <!-- QUIT VIEW -->
         <div id="view-quit" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-50">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl max-h-[90dvh]">
                 <div class="flex-shrink-0 w-full aspect-video bg-gray-200 overflow-hidden relative shadow-sm">
@@ -411,7 +357,6 @@
             </div>
         </div>
         
-        <!-- MODALS -->
         <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
                 <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
@@ -430,192 +375,120 @@
             </div>
         </div>
 
-        <div id="stats-intro-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center" id="stats-intro-modal-content">
+        <div id="catcher-intro-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center" id="catcher-intro-modal-content">
                 <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center text-3xl mb-4">📊</div>
-                <h3 id="stats-intro-title" class="text-2xl font-bold text-gray-800 mb-2">5 Core Stats</h3>
-                <div id="stats-intro-text" class="text-gray-600 mb-6 text-sm font-medium leading-relaxed w-full text-left bg-gray-50 p-4 rounded-xl border border-gray-100"></div>
-                <button id="stats-intro-btn" class="w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
+                <h3 id="catcher-intro-title" class="text-2xl font-bold text-gray-800 mb-2">5 Core Stats</h3>
+                <div id="catcher-intro-text" class="text-gray-600 mb-6 text-sm font-medium leading-relaxed w-full text-left bg-gray-50 p-4 rounded-xl border border-gray-100"></div>
+                <button id="catcher-intro-btn" class="w-full bg-purple-500 text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg">Next ➔</button>
             </div>
         </div>
 
-        <div id="msg-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col" id="msg-modal-content">
-                <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto">💡</div>
+        <div id="msg-modal" class="fixed inset-0 bg-black/80 hidden z-[60] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="msg-modal-content">
+                <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4 mx-auto" id="msg-icon">💡</div>
                 <h3 id="msg-title" class="text-xl font-bold text-gray-800 mb-2 text-center">Notice</h3>
-                <div id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap"></div>
+                <div id="msg-modal-text" class="text-gray-600 mb-6 font-medium leading-relaxed whitespace-pre-wrap text-center"></div>
                 <button id="msg-modal-btn" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">Got it</button>
+            </div>
+        </div>
+
+        <!-- SHARE SELECTION MODAL -->
+        <div id="share-modal" class="fixed inset-0 bg-black/80 hidden z-[70] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center" id="share-modal-content">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6" id="sh-title">Share Method</h3>
+                <div class="flex gap-4 w-full">
+                    <button onclick="openEmailModal()" class="flex-1 flex flex-col items-center justify-center bg-blue-50 border border-blue-200 rounded-xl p-4 active:scale-95 transition-transform">
+                        <span class="text-4xl mb-2">📧</span>
+                        <span class="font-bold text-blue-700 text-sm" id="sh-email">Email</span>
+                    </button>
+                    <button onclick="openQRModal()" class="flex-1 flex flex-col items-center justify-center bg-green-50 border border-green-200 rounded-xl p-4 active:scale-95 transition-transform">
+                        <span class="text-4xl mb-2">📱</span>
+                        <span class="font-bold text-green-700 text-sm" id="sh-qr">QR Code</span>
+                    </button>
+                </div>
+                <button onclick="closeShareModal()" class="mt-6 text-gray-500 font-bold underline" id="sh-cancel">Cancel</button>
+            </div>
+        </div>
+
+        <!-- EMAIL ENTRY MODAL -->
+        <div id="email-modal" class="fixed inset-0 bg-black/80 hidden z-[80] flex flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="email-modal-content">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Send via Email</h3>
+                <p class="text-sm text-gray-500 mb-4" id="em-sub">Enter your email to receive the photo.</p>
+                <div class="relative w-full mb-4">
+                    <input type="email" id="email-input" class="w-full px-4 py-3 pr-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="your@email.com">
+                    <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer" onclick="showKeyboard('email-input')">⌨️</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeEmailModal()" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl">Cancel</button>
+                    <button onclick="sendEmail()" class="flex-1 bg-blue-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">
+                        <span id="em-send-txt">Send ➔</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR CODE MODAL -->
+        <div id="qr-modal" class="fixed inset-0 bg-black/80 hidden z-[80] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="qr-modal-content">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Download</h3>
+                <p class="text-sm text-gray-500 mb-6" id="qr-sub">Scan this code with your phone camera.</p>
+                <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6 w-56 h-56 flex items-center justify-center relative">
+                    <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Uploading photo...</div>
+                    <div id="qrcode-container" class="z-10"></div>
+                </div>
+                <button onclick="closeQRModal()" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl active:scale-95 transition-transform" id="qr-close">Done</button>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE MODULE LOGIC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Environment Variables Check
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'apss-journey';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let db = null;
-        let auth = null;
-        let isFirebaseReady = false;
-
-        async function initFirebase() {
-            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) return false;
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                isFirebaseReady = true;
-                return true;
-            } catch (e) {
-                console.error("Firebase init failed:", e);
-                return false;
-            }
-        }
-
-        // Shared URL logic (Check if we are in Viewer Mode)
-        async function checkSharedPhotoURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const photoId = urlParams.get('photo');
-            
-            if (photoId) {
-                // We are in Viewer Mode! Bypass the game.
-                document.getElementById('view-intro').classList.remove('active');
-                document.getElementById('view-shared-photo').classList.add('active');
-                
-                const success = await initFirebase();
-                if(success && db && auth.currentUser) {
-                    try {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'photos', photoId);
-                        const docSnap = await getDoc(docRef);
-                        if (docSnap.exists()) {
-                            document.getElementById('shared-photo-img').src = docSnap.data().imageData;
-                            document.getElementById('shared-photo-img').classList.remove('hidden');
-                            document.getElementById('shared-loading').classList.add('hidden');
-                        } else {
-                            document.getElementById('shared-loading').innerText = "Photo not found or has been deleted.";
-                        }
-                    } catch (e) {
-                        document.getElementById('shared-loading').innerText = "Failed to load photo.";
-                        console.error(e);
-                    }
-                } else {
-                    document.getElementById('shared-loading').innerText = "Database connection unavailable.";
-                }
-                return true; // We intercepted the load
-            }
-            return false; // Proceed normally
-        }
-
-        // Run the check on load
-        window.addEventListener('load', async () => {
-            const isViewerMode = await checkSharedPhotoURL();
-            if(!isViewerMode) {
-                initFirebase(); // Init for the player taking photos
-            }
-        });
-
-        // Expose Firebase functions globally for the game logic to use
-        window.uploadPhotoToFirebase = async function(base64Data) {
-            if (!isFirebaseReady || !db || !auth.currentUser) return null;
-            try {
-                const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'photos'), {
-                    imageData: base64Data,
-                    timestamp: new Date().getTime(),
-                    userId: auth.currentUser.uid
-                });
-                return docRef.id;
-            } catch(e) {
-                console.error("Upload error:", e);
-                return null;
-            }
-        };
-
-        window.sendPhotoEmail = async function(emailAddress, photoUrl) {
-            if (!isFirebaseReady || !db || !auth.currentUser) return false;
-            try {
-                // This triggers the 'Trigger Email from Firestore' extension
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'mail'), {
-                    to: emailAddress,
-                    message: {
-                        subject: "Your PolyU APSS Journey Photo!",
-                        html: `
-                            <div style="font-family: sans-serif; text-align: center; color: #1e293b;">
-                                <h2>Your APSS Journey is Complete!</h2>
-                                <p>Thank you for exploring the PolyU APSS Information Day app.</p>
-                                <p>You can view and download your unique graduation photo here:</p>
-                                <a href="${photoUrl}" style="display: inline-block; padding: 12px 24px; background-color: #6cba65; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">View Photo</a>
-                            </div>
-                        `
-                    }
-                });
-                return true;
-            } catch(e) {
-                console.error("Email send error:", e);
-                return false;
-            }
-        };
-    </script>
-
-    <!-- CORE GAME LOGIC -->
     <script>
-        let playerName = "";
-        let currentMajor = "";
-        let currentLang = 'en'; 
-        let spseResultRole = null;
-        let activeInput = 'player-name'; 
+        // --- FIREBASE CONFIGURATION ---
+        // Insert real config before deployment
+        const firebaseConfig = {
+            apiKey: "AIzaSy_YOUR_API_KEY",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const APP_ID = "apss_journey"; 
 
+        // --- GLOBAL STATE ---
+        let playerName = ""; let currentMajor = ""; let currentLang = 'en'; 
+        let finalResultRole = null; let currentInputTarget = null; 
+        let currentPhotoId = null; let uploadedPhotoUrl = null;
+
+        // Translation Dictionary
         const i18n = {
             en: {
-                toggle: "繁",
-                intro_title: "APSS Journey", intro_sub: "Shape the Future. Start Here.", intro_label: "Enter your name to begin:", btn_start: "Start Journey",
+                toggle: "繁", intro_title: "APSS Journey", intro_sub: "Shape the Future. Start Here.", intro_label: "Enter your name to begin:", btn_start: "Start Journey",
                 next: "Next ➔", stop: "STOP!", retry: "RETRY", skip: "Skip", continue: "Continue ➔", got_it: "Got it",
-                cam_admit: "Admission Photo Booth!", cam_grad: "Graduation Photo Booth!",
-                prev_admit: "Looking Good!", prev_grad: "Congratulations!",
-                share_email: "Email", share_qr: "QR Code", btn_share_init: "Share Photo 📤", share_choice_title: "Choose Share Method", btn_cancel: "Cancel",
-                email_title: "Send via Email", email_sub: "Enter your email to receive the photo.",
-                btn_send: "Send", btn_done: "Done",
-                photo_sent: "Photo sent successfully!",
-                end_title: "Journey Complete!", end_sub: "You have experienced an amazing life as a PolyU APSS student.", btn_play_again: "Play Again (Try other path)",
+                cam_admit: "Admission Photo Booth!", cam_grad: "Graduation Photo Booth!", prev_admit: "Looking Good!", prev_grad: "Congratulations!",
+                end_title: "Journey Complete!", end_sub: "You have experienced an amazing life as a PolyU APSS student.", btn_play_again: "Play Again",
                 quit_title: "Every Path is Meaningful", quit_text: "Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best!", btn_quit_back: "Back to Start",
                 ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy & SE (SPSE)",
-                inst_title: "How to Play", hook_title: "Challenge", msg_title: "Notice",
-                target_r1: "Target: Level 3 (Eng/Chin)", hint_r1: "Stage 1 (Warm Up): Stop needle in the green zone to meet basic English/Chinese DSE requirements!",
+                inst_title: "How to Play", hook_title: "Challenge", msg_title: "Notice", target_r1: "Target: Level 3 (Eng/Chin)", hint_r1: "Stage 1 (Warm Up): Stop needle in the green zone to meet basic English/Chinese DSE requirements!",
                 target_r2: "Target Best 5: 24.7", hint_r2: "Stage 2 (Competitive): JS3250 is highly competitive. Aim for the 2025 average Best 5 score!",
-                swing_wait: "Waiting...", swing_win: "Great! 🎉", swing_fail: "Missed it... Try again!", swing_btn_next: "Next Subject", swing_btn_res: "View Results",
-                jupas_a: "✅ Enter APSS (Take Photo)", jupas_b: "❌ Quit & Explore",
-                catch_time: "Time: ", catch_score: "Score: "
+                swing_wait: "Waiting...", swing_win: "Great! 🎉", swing_fail: "Missed it... Try again!", swing_btn_next: "Next Round", swing_btn_res: "View Results",
+                jupas_a: "✅ Enter APSS (Take Photo)", jupas_b: "❌ Quit & Explore", catch_time: "Time: ", catch_score: "Score: "
             },
             zh: {
-                toggle: "EN",
-                intro_title: "APSS 探索之旅", intro_sub: "塑造未來，從這裡開始。", intro_label: "請輸入你的名字：", btn_start: "開始旅程",
+                toggle: "EN", intro_title: "APSS 探索之旅", intro_sub: "塑造未來，從這裡開始。", intro_label: "請輸入你的名字：", btn_start: "開始旅程",
                 next: "下一步 ➔", stop: "停！", retry: "重試", skip: "跳過", continue: "繼續 ➔", got_it: "明白",
-                cam_admit: "入學紀念照！", cam_grad: "畢業紀念照！",
-                prev_admit: "非常好看！", prev_grad: "恭喜畢業！",
-                share_email: "電郵", share_qr: "QR 碼", btn_share_init: "分享照片 📤", share_choice_title: "選擇分享方式", btn_cancel: "取消",
-                email_title: "透過電郵發送", email_sub: "請輸入你的電郵以接收照片。",
-                btn_send: "發送", btn_done: "完成",
-                photo_sent: "照片已成功發送！",
-                end_title: "旅程完成！", end_sub: "你已經體驗了理大 APSS 精彩的大學生活。", btn_play_again: "再玩一次（嘗試其他主修）",
+                cam_admit: "入學紀念照！", cam_grad: "畢業紀念照！", prev_admit: "非常好看！", prev_grad: "恭喜畢業！",
+                end_title: "旅程完成！", end_sub: "你已經體驗了理大 APSS 精彩的大學生活。", btn_play_again: "再玩一次",
                 quit_title: "每條路都有意義", quit_text: "雖然你決定不進入 APSS，但世界充滿了機會。祝你一切順利！", btn_quit_back: "回到開始",
                 ms_title: "選擇你的主修", ms_text: "你已完成共同核心課程！現在，為接下來的 APSS 旅程選擇你的專業。", ms_btn_sw: "社會工作 (SW)", ms_btn_spse: "社會政策及社會創業 (SPSE)",
-                inst_title: "遊戲玩法", hook_title: "挑戰", msg_title: "提示",
-                target_r1: "目標：第 3 級 (中/英)", hint_r1: "第一階段（熱身）：在綠色區域停止指針，達到 DSE 中英文基本要求！",
+                inst_title: "遊戲玩法", hook_title: "挑戰", msg_title: "提示", target_r1: "目標：第 3 級 (中/英)", hint_r1: "第一階段（熱身）：在綠色區域停止指針，達到 DSE 中英文基本要求！",
                 target_r2: "目標最佳五科：24.7", hint_r2: "第二階段（競爭）：JS3250 競爭激烈。爭取 2025 年最佳五科平均分！",
-                swing_wait: "等待中...", swing_win: "太棒了！🎉", swing_fail: "錯過了... 再試一次！", swing_btn_next: "下一科", swing_btn_res: "查看結果",
-                jupas_a: "✅ 進入 APSS (拍照)", jupas_b: "❌ 離開並探索其他",
-                catch_time: "時間: ", catch_score: "分數: "
+                swing_wait: "等待中...", swing_win: "太棒了！🎉", swing_fail: "錯過了... 再試一次！", swing_btn_next: "下一回合", swing_btn_res: "查看結果",
+                jupas_a: "✅ 進入 APSS (拍照)", jupas_b: "❌ 離開並探索其他", catch_time: "時間: ", catch_score: "分數: "
             }
         };
 
@@ -627,15 +500,12 @@
                     hook: "Interested in JS3250? Let's test if you are eligible to become one of us!",
                     instruction: "Discover the DSE entrance requirements!\n\nTap 'STOP!' to land the needle inside the GREEN zone across 2 stages."
                 },
-                jupasSuccess: {
-                    img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS Results",
-                    story: "YES! You achieved an excellent DSE score! You received an offer! Will you enter APSS?"
-                },
+                jupasSuccess: { img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS Results", story: "YES! You achieved an excellent DSE score! You received an offer! Will you enter APSS?" },
                 sw: {
-                    title: "Years 2-3: Social Work", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'sw_stats',
+                    title: "Years 2-3: Social Work", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "Social workers engage with people, understand situations, take action, and review whether support is helping.",
                     hook: "Can you build a solid social worker profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Avoid negative blind spots. Meet minimums to reveal your final SW Role!",
+                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Meet minimum requirements to reveal your true Social Worker role!",
                     words: [
                         { t: "+1 Empathy", type: "good", stat: "emp" }, { t: "-1 Empathy", type: "bad", stat: "emp" },
                         { t: "+1 Insight", type: "good", stat: "ins" }, { t: "-1 Insight", type: "bad", stat: "ins" },
@@ -648,10 +518,10 @@
                     ]
                 },
                 spse: {
-                    title: "Years 2-3: Social Innovator", img: "image/story_05_spse_year2.png", fallbackColor: "a855f7", mode: 'spse_stats',
+                    title: "Years 2-3: Social Innovator", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "To build a successful social enterprise, you need the right mix of traits.",
                     hook: "Can you build a solid role profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet minimums to reveal your true Social Enterprise role!",
+                    instruction: "Expected Outcome: Survive 30s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your true Social Enterprise role!",
                     words: [
                         { t: "+1 Strength", type: "good", stat: "str" }, { t: "-1 Strength", type: "bad", stat: "str" },
                         { t: "+1 Wisdom", type: "good", stat: "wis" }, { t: "-1 Wisdom", type: "bad", stat: "wis" },
@@ -671,15 +541,12 @@
                     hook: "對 JS3250 感興趣嗎？讓我們測試你是否符合資格成為我們的一份子！",
                     instruction: "探索 DSE 入學要求！\n\n點擊「停！」讓指針停在綠色區域，完成兩個階段。"
                 },
-                jupasSuccess: {
-                    img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS 結果",
-                    story: "太棒了！你取得了優異的 DSE 成績！你收到了錄取通知！你要進入 APSS 嗎？"
-                },
+                jupasSuccess: { img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS 結果", story: "太棒了！你取得了優異的 DSE 成績！你收到了錄取通知！你要進入 APSS 嗎？" },
                 sw: {
-                    title: "第二至三年：社會工作", img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6", mode: 'sw_stats',
+                    title: "第二至三年：社會工作", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "社工與人接觸，了解情況，採取行動，並檢討支援是否有效。",
                     hook: "你能建立紮實的社工檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。避免負面盲點。達到最低要求，揭曉你的最終社工角色！",
+                    instruction: "預期結果：生存 30 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。達到最低要求，揭曉你的最終社工角色！",
                     words: [
                         { t: "+1 同理心", type: "good", stat: "emp" }, { t: "-1 同理心", type: "bad", stat: "emp" },
                         { t: "+1 洞察力", type: "good", stat: "ins" }, { t: "-1 洞察力", type: "bad", stat: "ins" },
@@ -711,149 +578,124 @@
         };
 
         const views = {
-            intro: document.getElementById('view-intro'),
-            story: document.getElementById('view-story'),
-            ms: document.getElementById('view-major-select'),
-            swingGame: document.getElementById('view-swing-game'),
-            catcher: document.getElementById('view-catcher'),
-            camera: document.getElementById('view-camera'),
-            preview: document.getElementById('view-photo-preview'),
-            quit: document.getElementById('view-quit'),
-            end: document.getElementById('view-end')
+            intro: document.getElementById('view-intro'), story: document.getElementById('view-story'), ms: document.getElementById('view-major-select'),
+            swingGame: document.getElementById('view-swing-game'), catcher: document.getElementById('view-catcher'), camera: document.getElementById('view-camera'),
+            preview: document.getElementById('view-photo-preview'), viewer: document.getElementById('view-photo-viewer'), quit: document.getElementById('view-quit'), end: document.getElementById('view-end')
         };
 
-        function showView(viewName) {
-            Object.values(views).forEach(v => v.classList.remove('active'));
-            views[viewName].classList.add('active');
-        }
+        function showView(viewName) { Object.values(views).forEach(v => v.classList.remove('active')); views[viewName].classList.add('active'); }
 
-        window.toggleLanguage = function() {
-            currentLang = currentLang === 'en' ? 'zh' : 'en';
-            applyTranslations();
-        };
+        function toggleLanguage() { currentLang = currentLang === 'en' ? 'zh' : 'en'; applyTranslations(); }
 
         function applyTranslations() {
             const t = i18n[currentLang];
-            document.getElementById('lang-toggle').innerText = t.toggle;
-            document.getElementById('intro-title').innerText = t.intro_title;
-            document.getElementById('intro-sub').innerText = t.intro_sub;
-            document.getElementById('intro-label').innerText = t.intro_label;
-            document.getElementById('btn-start').innerText = t.btn_start;
-            document.getElementById('swing-header').innerText = t.intro_title;
-            document.getElementById('btn-swing-stop').innerText = t.stop;
-            document.getElementById('btn-swing-retry').innerText = t.retry;
-            document.getElementById('btn-camera-skip').innerText = t.skip;
-            document.getElementById('msg-title').innerText = t.msg_title;
-            document.getElementById('msg-modal-btn').innerText = t.got_it;
-            document.getElementById('inst-title').innerText = t.inst_title;
-            document.getElementById('instruction-modal-btn').innerText = t.btn_start;
-            document.getElementById('hook-title').innerText = t.hook_title;
-            document.getElementById('hook-modal-btn').innerText = t.next;
-            document.getElementById('end-title').innerText = t.end_title;
-            document.getElementById('end-sub').innerText = t.end_sub;
-            document.getElementById('btn-play-again').innerText = t.btn_play_again;
-            document.getElementById('quit-title').innerText = t.quit_title;
-            document.getElementById('quit-text').innerText = t.quit_text;
-            document.getElementById('btn-quit-back').innerText = t.btn_quit_back;
-            document.getElementById('ms-title').innerText = t.ms_title;
-            document.getElementById('ms-text').innerText = t.ms_text;
-            document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw;
-            document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            
-            document.getElementById('btn-init-share').innerText = t.btn_share_init;
-            document.getElementById('btn-preview-next').innerText = t.continue;
-            document.getElementById('txt-share-choice-title').innerText = t.share_choice_title;
-            document.getElementById('btn-close-share-choice').innerText = t.btn_cancel;
-            
-            document.getElementById('txt-btn-email').innerText = t.share_email;
-            document.getElementById('txt-btn-qr').innerText = t.share_qr;
-            document.getElementById('txt-email-title').innerText = t.email_title;
-            document.getElementById('txt-email-sub').innerText = t.email_sub;
-            document.getElementById('btn-email-send').innerText = t.btn_send;
-            document.getElementById('btn-email-cancel').innerText = t.btn_cancel;
-            document.getElementById('txt-qr-title').innerText = t.share_qr;
-            document.getElementById('btn-qr-done').innerText = t.btn_done;
-            
-            if (currentMajor === 'sw') {
-                document.getElementById('stats-intro-title').innerText = currentLang === 'en' ? '5 Core Stats' : '5 項核心屬性';
-                document.getElementById('stats-intro-text').innerHTML = currentLang === 'en' ? 
-                    'Social Work capacities:<br><br>❤️ <b>Empathy:</b> Respect & Compassion<br>👁️ <b>Insight:</b> Understanding Risks & Needs<br>💬 <b>Communication:</b> Listening & Trust<br>🚀 <b>Action:</b> Support & Referral<br>⚖️ <b>Professionalism:</b> Ethics & Boundaries' : 
-                    '社會工作能力：<br><br>❤️ <b>同理心：</b> 尊重與同情<br>👁️ <b>洞察力：</b> 了解風險與需求<br>💬 <b>溝通：</b> 聆聽與信任<br>🚀 <b>行動：</b> 支援與轉介<br>⚖️ <b>專業精神：</b> 道德與界線';
-            } else {
-                document.getElementById('stats-intro-title').innerText = currentLang === 'en' ? '5 Core Stats' : '5 項核心屬性';
-                document.getElementById('stats-intro-text').innerHTML = currentLang === 'en' ? 
-                    'Social Entrepreneurship requires a balanced team:<br><br>💪 <b>Strength:</b> Action & Courage<br>🧠 <b>Wisdom:</b> Strategy & Logic<br>✨ <b>Charm:</b> Trust & Networking<br>⚙️ <b>Discipline:</b> Planning & Execution<br>👁️ <b>Insight:</b> Empathy & Vision' : 
-                    '社會創業需要一個均衡的團隊：<br><br>💪 <b>力量：</b> 行動與勇氣<br>🧠 <b>智慧：</b> 策略與邏輯<br>✨ <b>魅力：</b> 信任與網絡<br>⚙️ <b>紀律：</b> 規劃與執行<br>👁️ <b>洞察力：</b> 同理心與願景';
-            }
-            if (document.getElementById('stats-intro-btn')) {
-                document.getElementById('stats-intro-btn').innerText = currentLang === 'en' ? 'Next ➔' : '下一步 ➔';
-            }
+            document.getElementById('lang-toggle').innerText = t.toggle; document.getElementById('intro-title').innerText = t.intro_title;
+            document.getElementById('intro-sub').innerText = t.intro_sub; document.getElementById('intro-label').innerText = t.intro_label; document.getElementById('btn-start').innerText = t.btn_start;
+            document.getElementById('swing-header').innerText = t.intro_title; document.getElementById('btn-swing-stop').innerText = t.stop; document.getElementById('btn-swing-retry').innerText = t.retry;
+            document.getElementById('btn-camera-skip').innerText = t.skip; document.getElementById('msg-title').innerText = t.msg_title; document.getElementById('msg-modal-btn').innerText = t.got_it;
+            document.getElementById('inst-title').innerText = t.inst_title; document.getElementById('instruction-modal-btn').innerText = t.btn_start; document.getElementById('hook-title').innerText = t.hook_title;
+            document.getElementById('hook-modal-btn').innerText = t.next; document.getElementById('end-title').innerText = t.end_title; document.getElementById('end-sub').innerText = t.end_sub;
+            document.getElementById('btn-play-again').innerText = t.btn_play_again; document.getElementById('quit-title').innerText = t.quit_title; document.getElementById('quit-text').innerText = t.quit_text;
+            document.getElementById('btn-quit-back').innerText = t.btn_quit_back; document.getElementById('ms-title').innerText = t.ms_title; document.getElementById('ms-text').innerText = t.ms_text;
+            document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw; document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
+            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Share Photo" : "分享照片"; document.getElementById('btn-preview-next').innerText = t.continue;
+            document.getElementById('sh-title').innerText = currentLang === 'en' ? "Share Method" : "分享方式"; document.getElementById('sh-email').innerText = currentLang === 'en' ? "Email" : "電郵";
+            document.getElementById('sh-qr').innerText = currentLang === 'en' ? "QR Code" : "QR碼"; document.getElementById('sh-cancel').innerText = currentLang === 'en' ? "Cancel" : "取消";
+            document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Download" : "掃描下載"; document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
+            document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
+            document.getElementById('em-sub').innerText = currentLang === 'en' ? "Enter your email to receive the photo." : "請輸入電郵以接收照片。"; document.getElementById('em-send-txt').innerText = currentLang === 'en' ? "Send ➔" : "發送 ➔";
         }
 
-        // Virtual Keyboard
-        window.setActiveInput = function(id) { activeInput = id; };
-        window.showKeyboard = function() { document.getElementById('virtual-keyboard').style.display = 'block'; };
-        window.closeKeyboard = function() { document.getElementById('virtual-keyboard').style.display = 'none'; };
-        
-        window.vk = function(char) {
-            const input = document.getElementById(activeInput);
-            if (!input) return;
+        // Virtual Keyboard Router
+        function showKeyboard(targetId) { currentInputTarget = targetId; document.getElementById('virtual-keyboard').style.display = 'block'; }
+        function hideKeyboard() { document.getElementById('virtual-keyboard').style.display = 'none'; currentInputTarget = null;}
+        function vk(char) {
+            if(!currentInputTarget) return; const input = document.getElementById(currentInputTarget);
             if (char === 'DEL') input.value = input.value.slice(0, -1);
             else if (char === 'CLR') input.value = '';
-            else if (input.value.length < 35) input.value += char;
+            else input.value += char;
+        }
+
+        applyTranslations(); // Init text
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const photoId = urlParams.get('photo');
+            if (photoId) {
+                showView('viewer');
+                document.getElementById('viewer-img').src = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/artifacts%2F${APP_ID}%2Fpublic%2Fdata%2Fphotos%2F${photoId}.png?alt=media`;
+                document.getElementById('viewer-img').onload = () => {
+                    document.getElementById('viewer-loading').classList.add('hidden');
+                    document.getElementById('viewer-img').classList.remove('hidden');
+                    document.getElementById('btn-viewer-dl').classList.remove('hidden');
+                }
+                document.getElementById('viewer-img').onerror = () => { document.getElementById('viewer-loading').innerText = "Photo not found or expired."; }
+                
+                document.getElementById('btn-viewer-dl').onclick = async () => {
+                    try {
+                        const response = await fetch(document.getElementById('viewer-img').src);
+                        const blob = await response.blob(); const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `${photoId}.png`;
+                        document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
+                    } catch(e) { alert("Cannot download directly due to browser restrictions. Please long-press the image and select 'Save Image'."); }
+                }
+            }
         };
 
-        applyTranslations();
-
-        window.showMessage = function(text, callback) {
-            const modal = document.getElementById('msg-modal');
-            const content = document.getElementById('msg-modal-content');
-            document.getElementById('msg-modal-text').innerHTML = text;
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        function showMessage(text, callback, icon = '💡') {
+            const modal = document.getElementById('msg-modal'); const content = document.getElementById('msg-modal-content');
+            document.getElementById('msg-modal-text').innerHTML = text; document.getElementById('msg-icon').innerText = icon;
+            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
             document.getElementById('msg-modal-btn').onclick = () => {
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); if(callback) callback(); }, 200);
             };
-        };
+        }
 
-        window.showInstruction = function(text, startCallback) {
-            const modal = document.getElementById('instruction-modal');
-            const content = document.getElementById('instruction-modal-content');
+        function showInstruction(text, startCallback) {
+            const modal = document.getElementById('instruction-modal'); const content = document.getElementById('instruction-modal-content');
             document.getElementById('instruction-modal-text').innerText = text;
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
             document.getElementById('instruction-modal-btn').onclick = () => {
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); startCallback(); }, 200);
             };
-        };
+        }
         
-        window.showHook = function(text, callback) {
-            const modal = document.getElementById('hook-modal');
-            const content = document.getElementById('hook-modal-content');
+        function showHook(text, callback) {
+            const modal = document.getElementById('hook-modal'); const content = document.getElementById('hook-modal-content');
             document.getElementById('hook-modal-text').innerText = text;
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
             document.getElementById('hook-modal-btn').onclick = () => {
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); callback(); }, 200);
             };
-        };
+        }
 
-        window.showStatsIntro = function(callback) {
-            applyTranslations(); 
-            const modal = document.getElementById('stats-intro-modal');
-            const content = document.getElementById('stats-intro-modal-content');
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-            document.getElementById('stats-intro-btn').onclick = () => {
+        function showCatcherIntro(mode, callback) {
+            const modal = document.getElementById('catcher-intro-modal'); const content = document.getElementById('catcher-intro-modal-content');
+            
+            if(mode === 'spse') {
+                document.getElementById('catcher-intro-title').innerText = currentLang === 'en' ? '5 Core Stats' : '5 項核心屬性';
+                document.getElementById('catcher-intro-text').innerHTML = currentLang === 'en' ? 
+                    'Social Entrepreneurship requires a balanced team:<br><br>💪 <b>Strength:</b> Action & Courage<br>🧠 <b>Wisdom:</b> Strategy & Logic<br>✨ <b>Charm:</b> Trust & Networking<br>⚙️ <b>Discipline:</b> Planning & Execution<br>👁️ <b>Insight:</b> Empathy & Vision' : 
+                    '社會創業需要一個均衡的團隊：<br><br>💪 <b>力量：</b> 行動與勇氣<br>🧠 <b>智慧：</b> 策略與邏輯<br>✨ <b>魅力：</b> 信任與網絡<br>⚙️ <b>紀律：</b> 規劃與執行<br>👁️ <b>洞察力：</b> 同理心與願景';
+            } else {
+                document.getElementById('catcher-intro-title').innerText = currentLang === 'en' ? '5 Social Work Stats' : '5 項社工屬性';
+                document.getElementById('catcher-intro-text').innerHTML = currentLang === 'en' ? 
+                    'Professional social work relies on five capacities:<br><br>❤️ <b>Empathy:</b> Understanding feelings & needs<br>👁️ <b>Insight:</b> Seeing the real problem & risk<br>💬 <b>Communication:</b> Listening & building trust<br>🚀 <b>Action:</b> Taking useful steps & follow-up<br>⚖️ <b>Professionalism:</b> Ethical & responsible practice' : 
+                    '專業社會工作依賴五種能力：<br><br>❤️ <b>同理心：</b> 理解感受和需求<br>👁️ <b>洞察力：</b> 看清真實問題和風險<br>💬 <b>溝通：</b> 聆聽和建立信任<br>🚀 <b>行動：</b> 採取有用步驟和跟進<br>⚖️ <b>專業精神：</b> 合乎道德和負責任的實踐';
+            }
+            
+            document.getElementById('catcher-intro-btn').innerText = currentLang === 'en' ? 'Next ➔' : '下一步 ➔';
+            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            document.getElementById('catcher-intro-btn').onclick = () => {
                 modal.classList.add('opacity-0'); content.classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); callback(); }, 200);
             };
-        };
+        }
 
-        window.renderStoryWithImage = function(dataObj, buttonsConfig) {
+        function renderStoryWithImage(dataObj, buttonsConfig) {
             document.getElementById('story-title').innerHTML = dataObj.title;
             let safeStory = dataObj.story.replace("{name}", `<strong>${playerName}</strong>`);
             document.getElementById('story-text').innerHTML = safeStory;
@@ -862,50 +704,51 @@
             imgEl.src = dataObj.img;
             imgEl.onerror = () => { imgEl.src = `https://placehold.co/1080x1080/${dataObj.fallbackColor}/ffffff?text=${encodeURIComponent(dataObj.title)}`; };
             
-            const btnContainer = document.getElementById('story-btn-container');
-            btnContainer.innerHTML = '';
+            const btnContainer = document.getElementById('story-btn-container'); btnContainer.innerHTML = '';
             
             buttonsConfig.forEach(btnInfo => {
                 const btn = document.createElement('button');
                 btn.className = btnInfo.className || "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg";
-                btn.innerText = btnInfo.text;
-                btn.onclick = btnInfo.onClick;
-                btnContainer.appendChild(btn);
+                btn.innerText = btnInfo.text; btn.onclick = btnInfo.onClick; btnContainer.appendChild(btn);
             });
             showView('story');
-        };
+        }
 
-        window.startGame = function() {
-            closeKeyboard();
-            const nameInput = document.getElementById('player-name').value.trim();
+        function startGame() {
+            hideKeyboard(); const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
-                playerName = nameInput;
-                const d = gameData[currentLang].preU;
+                playerName = nameInput; const d = gameData[currentLang].preU;
                 renderStoryWithImage(d, [{ text: i18n[currentLang].next, onClick: () => { showHook(d.hook, () => initSwingGame(1, true)); } }]);
             } else {
                 const inputEl = document.getElementById('player-name');
-                inputEl.style.transform = 'translateX(-10px)';
-                setTimeout(() => inputEl.style.transform = 'translateX(10px)', 100);
-                setTimeout(() => inputEl.style.transform = 'translateX(0)', 200);
+                inputEl.style.transform = 'translateX(-10px)'; setTimeout(() => inputEl.style.transform = 'translateX(10px)', 100); setTimeout(() => inputEl.style.transform = 'translateX(0)', 200);
             }
-        };
+        }
 
-        // --- STREAMING_CHUNK:Games Logic ---
+        function showMajorSelect() { showView('ms'); }
+
+        function startMajor(major) {
+            currentMajor = major; const data = gameData[currentLang][major];
+            renderStoryWithImage(data, [{ text: i18n[currentLang].next, onClick: () => {
+                if (data.hook) { showHook(data.hook, () => { showCatcherIntro(major, () => initCatcher(major)); }); } 
+                else { showCatcherIntro(major, () => initCatcher(major)); }
+            }}]);
+        }
+
         let swingState = { stage: 1, active: false, pos: 0, dir: 1, speed: 2, min: 40, max: 70, animId: null };
 
-        window.initSwingGame = function(stage, showInst = false) {
+        function initSwingGame(stage, showInst = false) {
             swingState.stage = stage; swingState.pos = 0; swingState.dir = 1; swingState.active = false; 
             document.getElementById('btn-swing-retry').classList.add('hidden');
 
-            const hint = document.getElementById('swing-hint');
-            const scoreTitle = document.getElementById('swing-score-title');
+            const hint = document.getElementById('swing-hint'); const scoreTitle = document.getElementById('swing-score-title');
             
             if(stage === 1) {
                 hint.innerText = i18n[currentLang].hint_r1; scoreTitle.innerText = i18n[currentLang].target_r1;
                 swingState.speed = 1.8; swingState.min = 35; swingState.max = 75; 
             } else {
                 hint.innerText = i18n[currentLang].hint_r2; scoreTitle.innerText = i18n[currentLang].target_r2;
-                swingState.speed = 3.6; swingState.min = 50; swingState.max = 85; 
+                swingState.speed = 3.6; swingState.min = 50; swingState.max = 85; // 90% of original 4.0 speed
             }
 
             [1,2].forEach(i => {
@@ -919,19 +762,16 @@
             targetZone.style.left = `${swingState.min}%`; targetZone.style.width = `${swingState.max - swingState.min}%`;
 
             const scoreDisplay = document.getElementById('swing-score-display');
-            scoreDisplay.textContent = i18n[currentLang].swing_wait;
-            scoreDisplay.className = "font-bold text-2xl text-gray-800 transition-colors h-8";
+            scoreDisplay.textContent = i18n[currentLang].swing_wait; scoreDisplay.className = "font-bold text-2xl text-gray-800 transition-colors h-8";
             
             const btn = document.getElementById('btn-swing-stop');
             btn.textContent = i18n[currentLang].stop; btn.onclick = stopSwing; btn.classList.remove('hidden');
             
-            document.getElementById('swing-needle').style.left = `0%`;
-            showView('swingGame');
+            document.getElementById('swing-needle').style.left = `0%`; showView('swingGame');
 
-            if (showInst) {
-                showInstruction(gameData[currentLang].preU.instruction, () => { swingState.active = true; swingLoop(); });
-            } else { swingState.active = true; swingLoop(); }
-        };
+            if (showInst) { showInstruction(gameData[currentLang].preU.instruction, () => { swingState.active = true; swingLoop(); }); } 
+            else { swingState.active = true; swingLoop(); }
+        }
 
         function swingLoop() {
             if (!swingState.active) return;
@@ -942,14 +782,13 @@
             swingState.animId = requestAnimationFrame(swingLoop);
         }
 
-        window.stopSwing = function() {
+        function stopSwing() {
             if (!swingState.active) return;
             swingState.active = false; cancelAnimationFrame(swingState.animId);
             
             const isSuccess = swingState.pos >= swingState.min && swingState.pos <= swingState.max;
             const scoreDisplay = document.getElementById('swing-score-display');
-            const btn = document.getElementById('btn-swing-stop');
-            const retryBtn = document.getElementById('btn-swing-retry');
+            const btn = document.getElementById('btn-swing-stop'); const retryBtn = document.getElementById('btn-swing-retry');
             
             if (isSuccess) {
                 scoreDisplay.textContent = i18n[currentLang].swing_win; scoreDisplay.classList.add('text-correct');
@@ -960,45 +799,22 @@
                 scoreDisplay.textContent = i18n[currentLang].swing_fail; scoreDisplay.classList.add('text-present');
                 btn.classList.add('hidden'); retryBtn.classList.remove('hidden');
             }
-        };
+        }
+        function retrySwing() { initSwingGame(swingState.stage); }
 
-        window.retrySwing = function() { initSwingGame(swingState.stage); };
-
-        window.showJupasResult = function() {
+        function showJupasResult() {
             renderStoryWithImage(gameData[currentLang].jupasSuccess, [
                 { text: i18n[currentLang].jupas_a, className: "w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg", onClick: () => { startCamera('admission'); } },
                 { text: i18n[currentLang].jupas_b, className: "w-full bg-absent text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-base mt-3", onClick: () => showView('quit') }
             ]);
-        };
-
-        window.showMajorSelect = function() {
-            showView('ms');
-        };
-
-        window.startMajor = function(major) {
-            currentMajor = major;
-            const data = gameData[currentLang][major];
-            renderStoryWithImage(data, [{
-                text: i18n[currentLang].next,
-                onClick: () => {
-                    if (data.hook) {
-                        showHook(data.hook, () => {
-                            showStatsIntro(() => initCatcher(major));
-                        });
-                    } else {
-                        showStatsIntro(() => initCatcher(major));
-                    }
-                }
-            }]);
-        };
+        }
 
         let catcherState = { 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 },
-            timer: 30, timerInterval: null, 
-            active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
+            timer: 30, timerInterval: null, active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
         };
 
-        window.initCatcher = function(mode) {
+        function initCatcher(mode) {
             catcherState.config = {
                 mode: mode === 'spse' ? 'spse_stats' : 'sw_stats',
                 instruction: gameData[currentLang][mode].instruction,
@@ -1006,112 +822,87 @@
             };
 
             catcherState.stats = { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 };
-            catcherState.timer = 30; 
-            clearInterval(catcherState.timerInterval);
-
+            catcherState.timer = 30; clearInterval(catcherState.timerInterval);
             catcherState.active = false; 
+
             if (catcherState.items) { catcherState.items.forEach(item => item.el.remove()); }
-            catcherState.items = [];
-            catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
+            catcherState.items = []; catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
             document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}30s | ${i18n[currentLang].catch_score}0`;
-            
             showView('catcher');
             
             if (mode === 'spse') {
-                document.getElementById('catcher-stats-bar-spse').classList.remove('hidden');
-                document.getElementById('catcher-stats-bar-spse').classList.add('flex');
-                document.getElementById('catcher-stats-bar-sw').classList.add('hidden');
-                document.getElementById('catcher-stats-bar-sw').classList.remove('flex');
-                ['str', 'wis', 'cha', 'dis', 'ins'].forEach(s => document.getElementById(`stat-val-spse-${s}`).innerText = '0');
+                document.getElementById('catcher-spse-stats-bar').classList.remove('hidden'); document.getElementById('catcher-spse-stats-bar').classList.add('flex');
+                document.getElementById('catcher-sw-stats-bar').classList.add('hidden'); document.getElementById('catcher-sw-stats-bar').classList.remove('flex');
+                ['str', 'wis', 'cha', 'dis', 'ins'].forEach(s => document.getElementById(`stat-spse-${s}`).innerText = '0');
             } else {
-                document.getElementById('catcher-stats-bar-sw').classList.remove('hidden');
-                document.getElementById('catcher-stats-bar-sw').classList.add('flex');
-                document.getElementById('catcher-stats-bar-spse').classList.add('hidden');
-                document.getElementById('catcher-stats-bar-spse').classList.remove('flex');
-                ['emp', 'ins', 'com', 'act', 'pro'].forEach(s => document.getElementById(`stat-val-sw-${s}`).innerText = '0');
+                document.getElementById('catcher-sw-stats-bar').classList.remove('hidden'); document.getElementById('catcher-sw-stats-bar').classList.add('flex');
+                document.getElementById('catcher-spse-stats-bar').classList.add('hidden'); document.getElementById('catcher-spse-stats-bar').classList.remove('flex');
+                ['emp', 'ins', 'com', 'act', 'pro'].forEach(s => document.getElementById(`stat-sw-${s}`).innerText = '0');
             }
             
-            const container = document.getElementById('catcher-area'); 
-
             showInstruction(catcherState.config.instruction, () => {
-                catcherState.active = true; 
-                catcherState.lastSpawn = performance.now();
+                catcherState.active = true; catcherState.lastSpawn = performance.now();
                 
                 catcherState.timerInterval = setInterval(() => {
                     catcherState.timer--;
-                    
                     let totalScore = 0;
                     if(catcherState.config.mode === 'spse_stats') totalScore = catcherState.stats.str + catcherState.stats.wis + catcherState.stats.cha + catcherState.stats.dis + catcherState.stats.ins;
-                    if(catcherState.config.mode === 'sw_stats') totalScore = catcherState.stats.emp + catcherState.stats.ins + catcherState.stats.com + catcherState.stats.act + catcherState.stats.pro;
-                    
+                    else totalScore = catcherState.stats.emp + catcherState.stats.ins + catcherState.stats.com + catcherState.stats.act + catcherState.stats.pro;
+
                     document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}${catcherState.timer}s | ${i18n[currentLang].catch_score}${totalScore}`;
-                    
                     if (catcherState.timer <= 0) {
-                        clearInterval(catcherState.timerInterval); 
-                        catcherState.active = false; 
-                        cancelAnimationFrame(catcherState.animId);
-                        if(catcherState.config.mode === 'spse_stats') evaluateSPSEFit();
+                        clearInterval(catcherState.timerInterval); catcherState.active = false; cancelAnimationFrame(catcherState.animId);
+                        if (catcherState.config.mode === 'spse_stats') evaluateSPSEFit();
                         else evaluateSWFit();
                     }
                 }, 1000);
                 
                 catcherLoop(performance.now());
             });
-        };
+        }
 
         function getCatcherIcon(word, mode) {
             if(word.type === 'bad') return '⚠️';
             switch(word.stat) { 
                 case 'str': return '💪'; case 'wis': return '🧠'; case 'cha': return '✨'; case 'dis': return '⚙️'; case 'ins': return '👁️'; 
-                case 'emp': return '❤️'; case 'com': return '💬'; case 'act': return '🚀'; case 'pro': return '⚖️';
-                default: return '💡'; 
+                case 'emp': return '❤️'; case 'com': return '💬'; case 'act': return '🚀'; case 'pro': return '⚖️'; default: return '💡'; 
             }
         }
 
-        window.spawnCatcherItem = function(container) {
+        function spawnCatcherItem(container) {
             if (!catcherState.availableWords || catcherState.availableWords.length === 0) catcherState.availableWords = [...catcherState.config.words].sort(() => Math.random() - 0.5);
             
-            const word = catcherState.availableWords.pop(); 
-            const el = document.createElement('div');
+            const word = catcherState.availableWords.pop(); const el = document.createElement('div');
             const icon = getCatcherIcon(word, catcherState.config.mode);
             
             el.className = `falling-item soap-bubble`;
             let bg = "rgba(255, 255, 255, 0.2)", border = "rgba(255, 255, 255, 0.8)", text = "#1e293b";
             
-            if(word.stat === 'str') { bg = 'rgba(254, 226, 226, 0.5)'; border = 'rgba(252, 165, 165, 0.9)'; text = '#991b1b'; }
-            else if(word.stat === 'wis') { bg = 'rgba(219, 234, 254, 0.5)'; border = 'rgba(147, 197, 253, 0.9)'; text = '#1e40af'; }
-            else if(word.stat === 'cha') { bg = 'rgba(252, 231, 243, 0.5)'; border = 'rgba(249, 168, 212, 0.9)'; text = '#9d174d'; }
-            else if(word.stat === 'dis') { bg = 'rgba(243, 244, 246, 0.5)'; border = 'rgba(209, 213, 219, 0.9)'; text = '#374151'; }
+            if(word.stat === 'str' || word.stat === 'emp') { bg = 'rgba(254, 226, 226, 0.5)'; border = 'rgba(252, 165, 165, 0.9)'; text = '#991b1b'; }
+            else if(word.stat === 'wis' || word.stat === 'com') { bg = 'rgba(219, 234, 254, 0.5)'; border = 'rgba(147, 197, 253, 0.9)'; text = '#1e40af'; }
+            else if(word.stat === 'cha' || word.stat === 'act') { bg = 'rgba(252, 231, 243, 0.5)'; border = 'rgba(249, 168, 212, 0.9)'; text = '#9d174d'; }
+            else if(word.stat === 'dis' || word.stat === 'pro') { bg = 'rgba(243, 244, 246, 0.5)'; border = 'rgba(209, 213, 219, 0.9)'; text = '#374151'; }
             else if(word.stat === 'ins') { bg = 'rgba(243, 232, 255, 0.5)'; border = 'rgba(216, 180, 254, 0.9)'; text = '#6b21a8'; }
-            else if(word.stat === 'emp') { bg = 'rgba(254, 226, 226, 0.5)'; border = 'rgba(252, 165, 165, 0.9)'; text = '#991b1b'; }
-            else if(word.stat === 'com') { bg = 'rgba(219, 234, 254, 0.5)'; border = 'rgba(147, 197, 253, 0.9)'; text = '#1e40af'; }
-            else if(word.stat === 'act') { bg = 'rgba(252, 231, 243, 0.5)'; border = 'rgba(249, 168, 212, 0.9)'; text = '#9d174d'; }
-            else if(word.stat === 'pro') { bg = 'rgba(243, 244, 246, 0.5)'; border = 'rgba(209, 213, 219, 0.9)'; text = '#374151'; }
             
             if(word.type === 'bad') { el.style.borderStyle = 'dashed'; }
-            el.style.backgroundColor = bg; 
-            el.style.borderColor = border; 
-            el.style.color = text;
-            el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-md">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full font-bold text-xs">${word.t}</span>`;
+            el.style.backgroundColor = bg; el.style.borderColor = border; el.style.color = text;
+            el.innerHTML = `<span class="text-4xl mb-1 leading-none drop-shadow-sm">${icon}</span><span class="leading-tight px-1 drop-shadow-sm w-full">${word.t}</span>`;
             
-            el.style.visibility = 'hidden'; 
-            container.appendChild(el);
+            el.style.visibility = 'hidden'; container.appendChild(el);
 
             const containerRect = container.getBoundingClientRect();
-            const itemWidth = 105;
-            const itemHeight = 105;
+            const itemWidth = 105; const itemHeight = 105;
             const maxLeft = Math.max(0, containerRect.width - itemWidth);
-            const maxTop = Math.max(0, containerRect.height - itemHeight);
+            const maxTop = Math.max(0, containerRect.height - itemHeight - 70);
 
             let startX, startY; let valid = false; let attempts = 0;
             
             while (!valid && attempts < 15) {
-                startX = Math.random() * maxLeft; startY = Math.random() * maxTop; 
-                valid = true;
+                startX = Math.random() * maxLeft; startY = Math.random() * maxTop; valid = true;
                 for (let i = 0; i < catcherState.items.length; i++) {
                     const other = catcherState.items[i];
-                    if (startX < other.x + other.width + 10 && startX + itemWidth + 10 > other.x && startY < other.y + other.height + 10 && startY + itemHeight + 10 > other.y) { valid = false; break; }
+                    if (startX < other.x + other.width + 5 && startX + itemWidth + 5 > other.x && startY < other.y + other.height + 5 && startY + itemHeight + 5 > other.y) { valid = false; break; }
                 }
                 attempts++;
             }
@@ -1120,77 +911,56 @@
             
             el.style.left = `${startX}px`; el.style.top = `${startY}px`; el.style.visibility = 'visible';
             el.style.transition = 'opacity 0.15s, transform 0.15s';
-            el.style.cursor = 'pointer';
-            el.style.pointerEvents = 'auto';
             
-            const angle = Math.random() * Math.PI * 2;
-            const speed = 1.0 + Math.random() * 2.0; 
-            const vx = Math.cos(angle) * speed; 
-            const vy = Math.sin(angle) * speed;
+            const angle = Math.random() * Math.PI * 2; const speed = 1.0 + Math.random() * 2.5; 
+            const vx = Math.cos(angle) * speed; const vy = Math.sin(angle) * speed;
             
             let itemObj = { el: el, y: startY, x: startX, width: itemWidth, height: itemHeight, word: word, vx: vx, vy: vy, spawnTime: performance.now(), lifespan: 2000 + Math.random() * 1000 };
             
-            el.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleBubbleTap(itemObj);
-            });
-            
+            el.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); handleBubbleTap(itemObj); });
             catcherState.items.push(itemObj);
-        };
+        }
 
-        window.handleBubbleTap = function(item) {
+        function handleBubbleTap(item) {
             if (!catcherState.active) return;
-            const index = catcherState.items.indexOf(item);
-            if (index === -1) return;
+            const index = catcherState.items.indexOf(item); if (index === -1) return;
 
             const st = catcherState;
-            if (item.word.type === 'good') {
-                st.stats[item.word.stat] += 1;
-                item.el.style.transform = 'scale(1.2)';
-            } else if (item.word.type === 'bad') {
-                st.stats[item.word.stat] -= 1;
-                item.el.style.backgroundColor = '#ef4444';
-            }
+            if (item.word.type === 'good') { st.stats[item.word.stat] = (st.stats[item.word.stat] || 0) + 1; item.el.style.transform = 'scale(1.2)'; } 
+            else if (item.word.type === 'bad') { st.stats[item.word.stat] = Math.max(0, (st.stats[item.word.stat] || 0) - 1); item.el.style.backgroundColor = '#ef4444'; }
             
-            item.el.style.opacity = '0';
-            setTimeout(() => item.el.remove(), 150);
+            item.el.style.opacity = '0'; setTimeout(() => item.el.remove(), 150);
             
             let totalScore = 0;
             if(catcherState.config.mode === 'spse_stats') {
                 totalScore = st.stats.str + st.stats.wis + st.stats.cha + st.stats.dis + st.stats.ins;
-                document.getElementById(`stat-val-spse-${item.word.stat}`).innerText = st.stats[item.word.stat];
-            } else {
+                document.getElementById(`stat-spse-${item.word.stat}`).innerText = st.stats[item.word.stat];
+            } else if (catcherState.config.mode === 'sw_stats') {
                 totalScore = st.stats.emp + st.stats.ins + st.stats.com + st.stats.act + st.stats.pro;
-                document.getElementById(`stat-val-sw-${item.word.stat}`).innerText = st.stats[item.word.stat];
+                document.getElementById(`stat-sw-${item.word.stat}`).innerText = st.stats[item.word.stat];
             }
 
             document.getElementById('catcher-score').innerText = `${i18n[currentLang].catch_time}${catcherState.timer}s | ${i18n[currentLang].catch_score}${totalScore}`;
-            
             catcherState.items.splice(index, 1);
-        };
+        }
 
-        window.catcherLoop = function(timestamp) {
+        function catcherLoop(timestamp) {
             if (!catcherState.active) return;
             const container = document.getElementById('catcher-area'); 
             
-            let spawnRate = 400;
-            if (catcherState.timer < 15) spawnRate = 300; 
-
-            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnRate) {
-                for (let k = 0; k < 3; k++) spawnCatcherItem(container);
+            let spawnDelay = catcherState.timer <= 15 ? 300 : 450;
+            if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnDelay) {
+                const numItemsToSpawn = catcherState.timer <= 15 ? 3 : 2; 
+                for (let k = 0; k < numItemsToSpawn; k++) spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
 
             const containerRect = container.getBoundingClientRect(); 
-            const maxLeft = containerRect.width;
-            const maxTop = containerRect.height;
+            const maxLeft = containerRect.width; const maxTop = containerRect.height - 70; 
 
             for (let i = 0; i < catcherState.items.length; i++) {
                 let item = catcherState.items[i];
-                
-                item.x += item.vx;
-                item.y += item.vy;
+                item.x += item.vx; item.y += item.vy;
                 
                 if (item.x <= 0) { item.x = 0; item.vx *= -1; }
                 if (item.x + item.width >= maxLeft) { item.x = maxLeft - item.width; item.vx *= -1; }
@@ -1200,31 +970,129 @@
                 for(let j = i + 1; j < catcherState.items.length; j++) {
                     let other = catcherState.items[j];
                     if (item.x < other.x + other.width && item.x + item.width > other.x && item.y < other.y + other.height && item.y + item.height > other.y) {
-                        let tempVx = item.vx; item.vx = other.vx; other.vx = tempVx;
-                        let tempVy = item.vy; item.vy = other.vy; other.vy = tempVy;
-                        item.x += item.vx * 2; item.y += item.vy * 2;
-                        other.x += other.vx * 2; other.y += other.vy * 2;
+                        let tempVx = item.vx; item.vx = other.vx; other.vx = tempVx; let tempVy = item.vy; item.vy = other.vy; other.vy = tempVy;
+                        item.x += item.vx * 2; item.y += item.vy * 2; other.x += other.vx * 2; other.y += other.vy * 2;
                     }
                 }
 
                 item.el.style.top = `${item.y}px`; item.el.style.left = `${item.x}px`;
 
                 if (timestamp - item.spawnTime > item.lifespan) {
-                    item.el.style.opacity = '0';
-                    setTimeout(() => item.el.remove(), 150);
+                    item.el.style.opacity = '0'; setTimeout(() => item.el.remove(), 150);
                     catcherState.items.splice(i, 1); i--;
                 }
             }
             catcherState.animId = requestAnimationFrame(catcherLoop);
-        };
+        }
 
-        // --- Result Modals for Both Branches ---
-        window.renderResultPage = function(step, best, stats, mode) {
-            const modal = document.getElementById('msg-modal');
-            const content = document.getElementById('msg-modal-content');
-            const titleEl = document.getElementById('msg-title');
-            const textEl = document.getElementById('msg-modal-text');
-            const btnEl = document.getElementById('msg-modal-btn');
+        function evaluateSWFit() {
+            const s = catcherState.stats; finalResultRole = null; 
+            
+            const roles = [
+                { id: 'rc', name_en: 'Rights Champion', name_zh: '權益倡導者', req: {emp:6, ins:4, com:0, act:6, pro:4}, sig: ['emp', 'com', 'act'],
+                  str_en: 'Supporting individual rights, access, and fairness.', sup_en: 'Operations & Execution', str_zh: '支持個人權利、機會均等和公平。', sup_zh: '營運與執行' },
+                { id: 'sp', name_en: 'Support Planner', name_zh: '支援規劃師', req: {emp:4, ins:6, com:0, act:6, pro:6}, sig: ['ins', 'act', 'pro'],
+                  str_en: 'Assessing needs, coordinating services, and monitoring progress.', sup_en: 'Vision & Empathy', str_zh: '評估需求、協調服務和監察進度。', sup_zh: '願景與同理心' },
+                { id: 'rc_broker', name_en: 'Resource Connector', name_zh: '資源連繫者', req: {emp:5, ins:5, com:7, act:5, pro:4}, sig: ['com', 'ins', 'emp'],
+                  str_en: 'Identifying resources and linking users to appropriate supports.', sup_en: 'Structure & Finance', str_zh: '識別資源並將使用者連繫至合適的支援。', sup_zh: '結構與財務' },
+                { id: 'cb', name_en: 'Community Builder', name_zh: '社區建設者', req: {emp:6, ins:4, com:7, act:5, pro:3}, sig: ['emp', 'com', 'act'],
+                  str_en: 'Facilitating participation and organising collective action.', sup_en: 'Operations & Finance', str_zh: '促進參與並組織集體行動。', sup_zh: '營運與財務' },
+                { id: 'pi', name_en: 'Practice Improver', name_zh: '實務改進者', req: {emp:4, ins:7, com:3, act:4, pro:7}, sig: ['ins', 'pro', 'emp'],
+                  str_en: 'Evaluating interventions and using research to improve outcomes.', sup_en: 'Action & Relationships', str_zh: '評估介入措施並運用研究來改善成果。', sup_zh: '行動與人際關係' },
+                { id: 'dev', name_en: 'Developing Social Worker', name_zh: '發展中社會工作者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
+                  str_en: 'You have started building useful strengths.', sup_en: 'Your current profile does not yet meet the basic requirements of one clear social-work role.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案尚未達到一個明確社工角色的基本要求。' }
+            ];
+
+            let qualified = [];
+            roles.forEach(r => {
+                if(s.emp >= r.req.emp && s.ins >= r.req.ins && (r.req.com === 0 || s.com >= r.req.com) && s.act >= r.req.act && s.pro >= r.req.pro && r.id !== 'dev') {
+                    let roleFitScore = r.sig.reduce((sum, stat) => sum + s[stat], 0);
+                    let bonus = 0;
+                    if (r.id === 'rc' && s.act >= 7 && s.pro >= 5) bonus = 2;
+                    if (r.id === 'sp' && s.ins >= 7 && s.pro >= 7) bonus = 2;
+                    if (r.id === 'rc_broker' && s.com >= 8 && s.ins >= 6) bonus = 2;
+                    if (r.id === 'cb' && s.emp >= 7 && s.com >= 8) bonus = 2;
+                    if (r.id === 'pi' && s.ins >= 8 && s.pro >= 8) bonus = 2;
+                    qualified.push({...r, finalScore: roleFitScore + bonus, roleFitScore: roleFitScore});
+                }
+            });
+
+            let best = null;
+            if (qualified.length === 0) {
+                best = roles.find(r => r.id === 'dev');
+                const highestStat = Object.keys(s).reduce((a, b) => s[a] > s[b] ? a : b);
+                if (highestStat === 'emp') { best.sup_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.sup_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
+                if (highestStat === 'ins') { best.sup_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.sup_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
+                if (highestStat === 'com') { best.sup_en = "You can build relationships. Develop Professionalism and Insight to use this strength safely and effectively."; best.sup_zh = "你能夠建立關係。發展專業精神和洞察力，以安全有效地運用這項優勢。"; }
+                if (highestStat === 'act') { best.sup_en = "You are ready to help and respond. Strengthen Insight and Professionalism so your actions are well planned and ethical."; best.sup_zh = "你準備好提供幫助和回應。加強洞察力和專業精神，使你的行動有良好計劃並符合道德。"; }
+                if (highestStat === 'pro') { best.sup_en = "You show responsibility and reliability. Build Empathy and Communication to connect your standards with people's lived experiences."; best.sup_zh = "你表現出責任感和可靠性。建立同理心和溝通能力，將你的標準與人們的生活經驗連結起來。"; }
+            } else {
+                qualified.sort((a, b) => {
+                    if(b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+                    const gateSumA = Object.values(a.req).reduce((sum, val) => sum + val, 0); const gateSumB = Object.values(b.req).reduce((sum, val) => sum + val, 0);
+                    if (gateSumB !== gateSumA) return gateSumB - gateSumA;
+                    if (b.roleFitScore !== a.roleFitScore) return b.roleFitScore - a.roleFitScore;
+                    const order = ['rc', 'sp', 'rc_broker', 'cb', 'pi']; return order.indexOf(a.id) - order.indexOf(b.id);
+                });
+                best = qualified[0];
+            }
+
+            finalResultRole = best.id === 'dev' ? null : `sw_${best.id}`;
+            if (finalResultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+            renderResultPage(1, best, s, 'sw');
+        }
+
+        function evaluateSPSEFit() {
+            const s = catcherState.stats; finalResultRole = null;
+            
+            const roles = [
+                { id: 'mc', name_en: 'Mission Champion', name_zh: '使命倡導者', req: {str:2, wis:1, cha:1, dis:0, ins:2}, sig: 'ins',
+                  str_en: 'Vision, Purpose, Ethics', sup_en: 'Operations, Financial realism', str_zh: '願景、目標、道德', sup_zh: '營運執行、財務現實',
+                  desc_en: 'As a Mission Champion, you are exceptional at pitching new ideas in competitions and inspiring others to join your cause.', desc_zh: '作為使命倡導者，你擅長在比賽中提出新想法，並激勵他人加入你的事業。' },
+                { id: 'ob', name_en: 'Operations Builder', name_zh: '營運建設者', req: {str:1, wis:1, cha:0, dis:3, ins:0}, sig: 'dis',
+                  str_en: 'Execution, Planning, Structure', sup_en: 'Vision, Empathy', str_zh: '執行、規劃、結構', sup_zh: '願景、同理心',
+                  desc_en: 'As an Operations Builder, you excel at coordinating complex tasks, managing timelines, and executing strategies flawlessly.', desc_zh: '作為營運建設者，你擅長協調複雜任務、管理時間表並完美執行策略。' },
+                { id: 'fs', name_en: 'Financial Steward', name_zh: '財務管家', req: {str:0, wis:3, cha:0, dis:2, ins:1}, sig: 'wis',
+                  str_en: 'Budgeting, Realism, Viability', sup_en: 'Community connection', str_zh: '預算管理、現實考量、可行性', sup_zh: '社區連繫',
+                  desc_en: 'As a Financial Steward, you ensure sustainability by securing funding, managing budgets, and assessing economic viability.', desc_zh: '作為財務管家，你透過確保資金、管理預算和評估經濟可行性來確保可持續性。' },
+                { id: 'cc', name_en: 'Community Connector', name_zh: '社區連繫者', req: {str:0, wis:1, cha:3, dis:0, ins:2}, sig: 'cha',
+                  str_en: 'Networking, Trust-building', sup_en: 'Structure, Finance', str_zh: '建立網絡、建立信任', sup_zh: '結構、財務',
+                  desc_en: 'As a Community Connector, you are the bridge that builds trust between stakeholders, NGOs, and the people you serve.', desc_zh: '作為社區連繫者，你是建立持份者、非政府組織和服務對象之間信任的橋樑。' },
+                { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:2, cha:0, dis:1, ins:3}, sig: 'ins',
+                  str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships', str_zh: '分析、證據、評估', sup_zh: '行動、建立關係',
+                  desc_en: 'As an Impact Strategist, you generate innovative solutions backed by deep data analysis and continuous impact evaluation.', desc_zh: '作為影響力策略師，你透過深入的數據分析和持續的影響力評估，制定創新的解決方案。' },
+                { id: 'dev', name_en: 'Generalist in Progress', name_zh: '發展中通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
+                  str_en: 'Adaptable, Broad Interests', sup_en: 'Specialized Focus', str_zh: '適應力強、興趣廣泛', sup_zh: '專業專注',
+                  desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你已掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
+            ];
+
+            let qualified = [];
+            roles.forEach(r => {
+                if(s.str >= r.req.str && s.wis >= r.req.wis && s.cha >= r.req.cha && s.dis >= r.req.dis && s.ins >= r.req.ins && r.id !== 'dev') {
+                    let surplus = (s.str - r.req.str) + (s.wis - r.req.wis) + (s.cha - r.req.cha) + (s.dis - r.req.dis) + (s.ins - r.req.ins);
+                    qualified.push({...r, surplus: surplus});
+                }
+            });
+
+            let best = null;
+            if (qualified.length === 0) { best = roles.find(r => r.id === 'dev'); } 
+            else {
+                qualified.sort((a, b) => {
+                    if(b.surplus !== a.surplus) return b.surplus - a.surplus;
+                    return s[b.sig] - s[a.sig];
+                });
+                best = qualified[0];
+            }
+            
+            finalResultRole = best.id === 'dev' ? null : best.id;
+            if (finalResultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+
+            renderResultPage(1, best, s, 'spse');
+        }
+
+        function renderResultPage(step, best, stats, mode) {
+            const modal = document.getElementById('msg-modal'); const content = document.getElementById('msg-modal-content');
+            const titleEl = document.getElementById('msg-title'); const textEl = document.getElementById('msg-modal-text'); const btnEl = document.getElementById('msg-modal-btn');
             const lang = currentLang;
             
             const radarKeys = mode === 'spse' ? ['str', 'wis', 'cha', 'dis', 'ins'] : ['emp', 'ins', 'com', 'act', 'pro'];
@@ -1233,19 +1101,18 @@
             const radarLabels = lang === 'en' ? radarLabelsEn : radarLabelsZh;
 
             if (step === 1) {
-                titleEl.innerText = lang === 'en' ? 'Ability Profile' : '能力檔案';
+                document.getElementById('msg-icon').style.display = 'none';
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'SPSE Ability Profile':'SW Ability Profile') : (mode==='spse'?'SPSE 能力檔案':'SW 能力檔案');
                 
-                const maxStat = Math.max(5, ...radarKeys.map(k => stats[k]));
+                const maxStat = Math.max(5, ...Object.values(stats));
                 const getPt = (val, angle) => {
-                    const r = (Math.max(0, val) / maxStat) * 50; 
-                    const a = angle * Math.PI / 180;
+                    const r = (Math.max(0, val) / maxStat) * 50; const a = angle * Math.PI / 180;
                     return `${75 + r * Math.cos(a)},${75 + r * Math.sin(a)}`;
                 };
                 const pts = `${getPt(stats[radarKeys[0]], -90)} ${getPt(stats[radarKeys[1]], -18)} ${getPt(stats[radarKeys[2]], 54)} ${getPt(stats[radarKeys[3]], 126)} ${getPt(stats[radarKeys[4]], 198)}`;
                 
-                const radarColor = mode === 'spse' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(59, 130, 246, 0.4)';
-                const radarStroke = mode === 'spse' ? '#a855f7' : '#3b82f6';
-                const avatarSrc = mode === 'spse' ? `image/character/${best.id}.png` : `image/character/sw_${best.id}.png`;
+                const themeColor = mode === 'spse' ? '#a855f7' : '#3b82f6';
+                const themeFill = mode === 'spse' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(59, 130, 246, 0.4)';
 
                 const radarSvg = `
                 <div class="flex flex-col items-center flex-1">
@@ -1257,7 +1124,7 @@
                         <line x1="75" y1="75" x2="104.5" y2="115.5" stroke="#e2e8f0" stroke-width="1"/>
                         <line x1="75" y1="75" x2="45.5" y2="115.5" stroke="#e2e8f0" stroke-width="1"/>
                         <line x1="75" y1="75" x2="27.5" y2="59.5" stroke="#e2e8f0" stroke-width="1"/>
-                        <polygon points="${pts}" fill="${radarColor}" stroke="${radarStroke}" stroke-width="2" stroke-linejoin="round"/>
+                        <polygon points="${pts}" fill="${themeFill}" stroke="${themeColor}" stroke-width="2" stroke-linejoin="round"/>
                         <text x="75" y="15" font-size="10" font-weight="bold" text-anchor="middle" fill="#6b7280">${radarLabels[0]}</text>
                         <text x="138" y="62" font-size="10" font-weight="bold" text-anchor="middle" fill="#6b7280">${radarLabels[1]}</text>
                         <text x="120" y="132" font-size="10" font-weight="bold" text-anchor="middle" fill="#6b7280">${radarLabels[2]}</text>
@@ -1266,47 +1133,54 @@
                     </svg>
                 </div>`;
 
+                let avatarSrc = best.id === 'dev' ? `https://placehold.co/200x200/${themeColor.replace('#','')}/ffffff?text=?` : `image/character/${mode==='sw'?`sw_${best.id}`:best.id}.png`;
+
                 textEl.innerHTML = `
                     <div class="flex flex-row items-center justify-between w-full gap-2 mb-2">
                         <div class="flex-1 flex flex-col items-center border-r border-gray-100 pr-2">
-                            <img src="${avatarSrc}" class="w-24 h-24 object-contain mb-3 drop-shadow-md" onerror="this.src='https://placehold.co/200x200/${mode==='spse'?'a855f7':'3b82f6'}/ffffff?text=${best.id}'">
+                            <img src="${avatarSrc}" class="w-24 h-24 object-contain mb-3 drop-shadow-md" onerror="this.src='https://placehold.co/200x200/${themeColor.replace('#','')}/ffffff?text=${best.id}'">
                             <div class="font-bold text-sm text-theme text-center leading-tight whitespace-pre-wrap">${lang==='en'?best.name_en:best.name_zh}</div>
                         </div>
                         ${radarSvg}
                     </div>
                 `;
                 
-                btnEl.innerText = lang === 'en' ? 'Next ➔' : '下一步 ➔';
-                btnEl.onclick = () => renderResultPage(2, best, stats, mode);
-                
-                modal.classList.remove('hidden');
-                setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+                btnEl.innerText = lang === 'en' ? 'Next ➔' : '下一步 ➔'; btnEl.onclick = () => renderResultPage(2, best, stats, mode);
+                modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
                 
             } else if (step === 2) {
-                titleEl.innerText = lang === 'en' ? 'Your Profile' : '你的檔案';
+                document.getElementById('msg-icon').style.display = 'none'; titleEl.innerText = lang === 'en' ? 'Your Profile' : '你的檔案';
                 const bgClass = mode === 'spse' ? 'bg-purple-50 border-purple-100' : 'bg-blue-50 border-blue-100';
-                const hrClass = mode === 'spse' ? 'border-purple-200' : 'border-blue-200';
+                
+                let descText = "";
+                if(best.id !== 'dev') {
+                    const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
+                    descText = `<hr class="border-${mode==='spse'?'purple':'blue'}-200 mb-2 mt-2"><p class="italic text-gray-700">"${descStr}"</p>`;
+                }
+
                 textEl.innerHTML = `
                     <div class="text-left w-full text-[13px] ${bgClass} p-4 rounded-xl border mb-2 leading-relaxed">
-                        <p class="mb-2"><strong>${lang==='en'?'Your Strengths':'你的優勢'}:</strong> ${lang==='en'?best.str_en:best.str_zh}</p>
-                        <p class="mb-4"><strong>${lang==='en'?'Support Needed':'需要支援'}:</strong> ${lang==='en'?best.sup_en:best.sup_zh}</p>
-                        <hr class="${hrClass} mb-3">
-                        <p><strong>${lang==='en'?'Your Role Details':'角色詳情'}:</strong><br>${lang==='en'?best.elaborate_en:best.elaborate_zh}</p>
+                        <p class="mb-2"><strong>${lang==='en'?'Strengths':'優勢'}:</strong> ${lang==='en'?best.str_en:best.str_zh}</p>
+                        <p><strong>${lang==='en'?'Support Needed':'需要支援'}:</strong> ${lang==='en'?best.sup_en:best.sup_zh}</p>
+                        ${descText}
                     </div>
                 `;
-                btnEl.innerText = lang === 'en' ? 'Next ➔' : '下一步 ➔';
-                btnEl.onclick = () => renderResultPage(3, best, stats, mode);
+                btnEl.innerText = lang === 'en' ? 'Next ➔' : '下一步 ➔'; btnEl.onclick = () => renderResultPage(3, best, stats, mode);
                 
             } else if (step === 3) {
-                titleEl.innerText = lang === 'en' ? 'Life in APSS' : 'APSS 多彩生活';
-                const img1 = mode === 'spse' ? 'image/events/story_05_spse_year2.png' : 'image/events/story_05_sw_year2.png';
-                const img2 = mode === 'spse' ? 'image/events/story_06_spse_year4.png' : 'image/events/story_06_sw_year4.png';
-                const eventTextEn = mode === 'spse' ? 
-                    '✨ <b>Expand Your Horizon:</b> Join global exchange programs (e.g., Dual Degree in Poland), tackle real case competitions, secure impactful internships, and build networks with leading social innovators!' :
-                    '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients, applying theory into life-changing practice.';
-                const eventTextZh = mode === 'spse' ? 
-                    '✨ <b>拓展視野：</b> 參加全球交流計劃（例如波蘭雙學位）、應對真實的商業案例比賽、獲得具影響力的實習機會，並與頂尖社會創新者建立網絡！' :
-                    '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人，將理論應用於改變生命的實踐中。';
+                document.getElementById('msg-icon').style.display = 'none';
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'Life in SPSE':'Life in SW') : (mode==='spse'?'SPSE 多彩生活':'SW 多彩生活');
+                
+                let img1 = '', img2 = '', eventTextEn = '', eventTextZh = '';
+                if (mode === 'spse') {
+                    img1 = 'image/events/story_05_spse_year2.png'; img2 = 'image/events/story_06_spse_year4.png';
+                    eventTextEn = '✨ <b>Expand Your Horizon:</b> Join global exchange programs, tackle real case competitions, and build networks with leading social innovators!';
+                    eventTextZh = '✨ <b>拓展視野：</b> 參加全球交流計劃、應對真實的商業案例比賽，並與頂尖社會創新者建立網絡！';
+                } else {
+                    img1 = 'image/events/story_05_sw_year2.png'; img2 = 'image/events/story_06_sw_year4.png';
+                    eventTextEn = '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients.';
+                    eventTextZh = '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人。';
+                }
 
                 textEl.innerHTML = `
                     <div class="flex flex-col gap-3 items-center">
@@ -1314,9 +1188,7 @@
                             <img src="${img1}" class="flex-1 w-1/2 h-24 object-cover rounded-lg shadow-sm" onerror="this.src='https://placehold.co/300x200/cccccc/ffffff?text=Event'">
                             <img src="${img2}" class="flex-1 w-1/2 h-24 object-cover rounded-lg shadow-sm" onerror="this.src='https://placehold.co/300x200/cccccc/ffffff?text=Event'">
                         </div>
-                        <p class="text-[13px] text-gray-700 text-left w-full bg-gray-50 p-3 rounded-lg border border-gray-100 leading-relaxed">
-                            ${lang==='en' ? eventTextEn : eventTextZh}
-                        </p>
+                        <p class="text-[13px] text-gray-700 text-left w-full bg-gray-50 p-3 rounded-lg border border-gray-100 leading-relaxed">${lang==='en' ? eventTextEn : eventTextZh}</p>
                     </div>
                 `;
                 btnEl.innerText = lang === 'en' ? 'Take Graduation Photo 📸' : '拍攝畢業照 📸';
@@ -1325,146 +1197,20 @@
                     setTimeout(() => { modal.classList.add('hidden'); startCamera('graduation'); }, 200);
                 };
             }
-        };
+        }
 
-        window.evaluateSWFit = function() {
-            const s = catcherState.stats;
-            spseResultRole = null; 
-            
-            const roles = [
-                { id: 'advocate', name_en: 'Client Advocate', name_zh: '受助者倡導者', req: {emp:1, ins:0, com:1, act:1, pro:0}, sig: 'com',
-                  str_en: 'Rights, Dignity, Action', sup_en: 'Systematic Assessment, Documentation',
-                  str_zh: '權益、尊嚴、行動', sup_zh: '系統評估、文件記錄',
-                  elaborate_en: 'You speak up for clients’ rights and dignity. You excel at advocacy, ensuring access to services, and confronting injustice head-on.', elaborate_zh: '你為受助者的權益和尊嚴發聲。你擅長倡議、確保服務可及性，並直面不公。' },
-                { id: 'casework', name_en: 'Casework Helper', name_zh: '個案輔導員', req: {emp:0, ins:1, com:0, act:1, pro:1}, sig: 'pro',
-                  str_en: 'Assessment, Planning, Reliability', sup_en: 'Broader Community Networking',
-                  str_zh: '評估、規劃、可靠', sup_zh: '廣泛的社區聯繫',
-                  elaborate_en: 'You deeply understand individual situations. You excel at planning targeted support, coordinating resources, and managing rigorous case follow-ups.', elaborate_zh: '你深入了解個人情況。你擅長規劃針對性支援、協調資源，並管理嚴謹的個案跟進。' },
-                { id: 'community', name_en: 'Community Builder', name_zh: '社區建設者', req: {emp:1, ins:0, com:2, act:1, pro:0}, sig: 'com',
-                  str_en: 'Trust, Networking, Participation', sup_en: 'Clinical Focus, Crisis Handling',
-                  str_zh: '信任、網絡、參與', sup_zh: '臨床焦點、危機處理',
-                  elaborate_en: 'You build bridges! You excel at fostering trust, connecting diverse groups, and encouraging active community participation and mutual help.', elaborate_zh: '你是橋樑的建設者！你擅長建立信任、連結多元群體，並鼓勵積極的社區參與和互助。' },
-                { id: 'crisis', name_en: 'Crisis Helper', name_zh: '危機處理員', req: {emp:0, ins:1, com:0, act:2, pro:1}, sig: 'act',
-                  str_en: 'Urgency, Safety, Action', sup_en: 'Long-term reflection, Deep counseling',
-                  str_zh: '緊急、安全、行動', sup_zh: '長期反思、深度輔導',
-                  elaborate_en: 'You are calm under pressure. You excel at recognizing urgent needs, making rapid safety assessments, and taking safe, timely interventions.', elaborate_zh: '你在壓力下保持冷靜。你擅長辨識緊急需求、進行快速安全評估，並採取安全及時的介入行動。' },
-                { id: 'reflective', name_en: 'Reflective Improver', name_zh: '反思改進者', req: {emp:1, ins:2, com:0, act:0, pro:2}, sig: 'ins',
-                  str_en: 'Evidence, Ethics, Evaluation', sup_en: 'Direct Action, Networking',
-                  str_zh: '證據、道德、評估', sup_zh: '直接行動、建立網絡',
-                  elaborate_en: 'You focus on the quality of practice. You excel at using evidence, maintaining strict ethical boundaries, and constantly evaluating services for improvement.', elaborate_zh: '你專注於實踐的質量。你擅長運用證據、維持嚴格的道德界線，並持續評估以改進服務。' },
-                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '全能發展者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: 'emp',
-                  str_en: 'Adaptability, Broad Interest', sup_en: 'Focus, Specialization',
-                  str_zh: '適應力、廣泛興趣', sup_zh: '專注、專業化',
-                  elaborate_en: 'You show potential across multiple areas but haven\'t locked into a specific role yet. Keep exploring to find your true specialization!', elaborate_zh: '你在多個領域展現潛力，但尚未鎖定特定角色。繼續探索以發掘你真正的專業！' }
-            ];
-
-            let qualified = [];
-            roles.forEach(r => {
-                if(s.emp >= r.req.emp && s.ins >= r.req.ins && s.com >= r.req.com && s.act >= r.req.act && s.pro >= r.req.pro) {
-                    let surplus = (s.emp - r.req.emp) + (s.ins - r.req.ins) + (s.com - r.req.com) + (s.act - r.req.act) + (s.pro - r.req.pro);
-                    qualified.push({...r, surplus: surplus});
-                }
-            });
-
-            if (qualified.length === 0) qualified = [roles[roles.length-1]]; // Fallback to generalist
-
-            qualified.sort((a, b) => {
-                if(b.surplus !== a.surplus) return b.surplus - a.surplus;
-                return s[b.sig] - s[a.sig];
-            });
-            
-            let best = qualified[0];
-            
-            spseResultRole = best.id === 'gen' ? null : `sw_${best.id}`;
-            if (spseResultRole) {
-                const imgPreloader = new Image();
-                imgPreloader.src = `image/character/${spseResultRole}.png`;
-            }
-
-            renderResultPage(1, best, s, 'sw');
-        };
-
-        window.evaluateSPSEFit = function() {
-            const s = catcherState.stats;
-            spseResultRole = null;
-            
-            const roles = [
-                { id: 'mc', name_en: 'Mission Champion', name_zh: '使命倡導者', req: {str:1, wis:0, cha:1, dis:0, ins:1}, sig: 'ins',
-                  str_en: 'Vision, Purpose, Ethics', sup_en: 'Operations, Financial realism',
-                  str_zh: '願景、目標、道德', sup_zh: '營運執行、財務現實',
-                  elaborate_en: 'You excel at pitching ideas in competitions, ensuring ethical standards, and keeping the team perfectly aligned with the core social mission.', elaborate_zh: '你擅長在比賽中推介提案、確保道德標準，並讓團隊完美契合核心社會使命。' },
-                { id: 'ob', name_en: 'Operations Builder', name_zh: '營運建設者', req: {str:1, wis:1, cha:0, dis:1, ins:0}, sig: 'dis',
-                  str_en: 'Execution, Planning, Structure', sup_en: 'Vision, Empathy',
-                  str_zh: '執行、規劃、結構', sup_zh: '願景、同理心',
-                  elaborate_en: 'You are the engine of the team! You excel at coordinating complex tasks, flawless execution, and turning abstract ideas into reality.', elaborate_zh: '你是團隊的引擎！你擅長協調複雜任務、完美執行，並將抽象概念轉化為現實。' },
-                { id: 'fs', name_en: 'Financial Steward', name_zh: '財務管家', req: {str:0, wis:1, cha:0, dis:1, ins:1}, sig: 'wis',
-                  str_en: 'Budgeting, Realism, Viability', sup_en: 'Community connection',
-                  str_zh: '預算管理、現實考量、可行性', sup_zh: '社區連繫',
-                  elaborate_en: 'You bring realism to the table. You are great at budgeting, ensuring long-term sustainability, and resource management.', elaborate_zh: '你為團隊帶來現實考量。你擅長預算編製、確保長期可持續性以及資源管理。' },
-                { id: 'cc', name_en: 'Community Connector', name_zh: '社區連繫者', req: {str:0, wis:0, cha:2, dis:0, ins:1}, sig: 'cha',
-                  str_en: 'Networking, Trust-building', sup_en: 'Structure, Finance',
-                  str_zh: '建立網絡、建立信任', sup_zh: '結構、財務',
-                  elaborate_en: 'You are a natural networker! You excel at presentations, building strong partnerships, and truly understanding user needs.', elaborate_zh: '你是天生的溝通者！你擅長發表演說、建立強大的合作夥伴關係，並真正了解用戶需求。' },
-                { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:1, cha:0, dis:0, ins:2}, sig: 'ins',
-                  str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships',
-                  str_zh: '分析、證據、評估', sup_zh: '行動、建立關係',
-                  elaborate_en: 'You are the brain behind the impact. You excel at generating innovative ideas, researching, and measuring the real-world outcomes.', elaborate_zh: '你是影響力背後的智囊。你擅長激發創新想法、進行研究以及評估實際社會成效。' },
-                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '全能發展者', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: 'str',
-                  str_en: 'Adaptability, Broad Interest', sup_en: 'Focus, Specialization',
-                  str_zh: '適應力、廣泛興趣', sup_zh: '專注、專業化',
-                  elaborate_en: 'You show potential across multiple areas but haven\'t locked into a specific role yet. Keep exploring to find your true specialization!', elaborate_zh: '你在多個領域展現潛力，但尚未鎖定特定角色。繼續探索以發掘你真正的專業！' }
-            ];
-
-            let qualified = [];
-            roles.forEach(r => {
-                if(s.str >= r.req.str && s.wis >= r.req.wis && s.cha >= r.req.cha && s.dis >= r.req.dis && s.ins >= r.req.ins) {
-                    let surplus = (s.str - r.req.str) + (s.wis - r.req.wis) + (s.cha - r.req.cha) + (s.dis - r.req.dis) + (s.ins - r.req.ins);
-                    qualified.push({...r, surplus: surplus});
-                }
-            });
-
-            if (qualified.length === 0) qualified = [roles[roles.length-1]]; // Fallback to generalist
-
-            qualified.sort((a, b) => {
-                if(b.surplus !== a.surplus) return b.surplus - a.surplus;
-                return s[b.sig] - s[a.sig];
-            });
-            
-            let best = qualified[0];
-            spseResultRole = best.id === 'gen' ? null : best.id;
-
-            if (spseResultRole) {
-                const imgPreloader = new Image();
-                imgPreloader.src = `image/character/${spseResultRole}.png`;
-            }
-
-            renderResultPage(1, best, s, 'spse');
-        };
-
-        // --- STREAMING_CHUNK:Camera & Sharing Engine ---
         let stream = null; 
-        let currentCamMode = 'admission';
-        let sharedPhotoDocId = null;
 
-        window.startCamera = async function(mode) {
-            currentCamMode = mode;
-            showView('camera');
+        async function startCamera(mode) {
+            currentCamMode = mode; showView('camera');
             
             const frameImg = document.getElementById('camera-frame');
-            if (mode === 'admission') {
-                frameImg.src = 'image/camera/APSS-Offer.png';
-                document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit;
-            } else {
-                frameImg.src = 'image/camera/APSS-Graduated.png';
-                document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad;
-            }
+            if (mode === 'admission') { frameImg.src = 'image/camera/APSS-Offer.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit; } 
+            else { frameImg.src = 'image/camera/APSS-Graduated.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; }
             
-            if (mode === 'graduation' && spseResultRole) {
-                document.getElementById('camera-pin-overlay').src = `image/character/${spseResultRole}.png`;
-                document.getElementById('camera-pin-overlay').classList.remove('hidden');
-            } else {
-                document.getElementById('camera-pin-overlay').classList.add('hidden');
-            }
+            const pinImg = document.getElementById('camera-pin-overlay');
+            if (mode === 'graduation' && finalResultRole) { pinImg.src = `image/character/${finalResultRole}.png`; pinImg.classList.remove('hidden'); } 
+            else { pinImg.classList.add('hidden'); }
 
             const skipBtn = document.getElementById('btn-camera-skip'); const captureBtn = document.getElementById('btn-capture');
             captureBtn.style.display = 'flex';
@@ -1475,164 +1221,143 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 document.getElementById('camera-feed').srcObject = stream;
             } catch (err) {
-                captureBtn.style.display = 'none';
-                skipBtn.innerText = i18n[currentLang].continue;
+                captureBtn.style.display = 'none'; skipBtn.innerText = i18n[currentLang].continue;
                 skipBtn.className = "w-full bg-white text-gray-800 font-bold py-3 px-4 rounded-xl shadow-md active:scale-95 transition-all text-center";
             }
             captureBtn.onclick = takePhoto;
-        };
+        }
 
-        window.stopCamera = function() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } };
+        function stopCamera() { if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; } }
 
-        window.takePhoto = function() {
+        function takePhoto() {
             if (!stream) return; 
-            const video = document.getElementById('camera-feed'); 
-            const canvas = document.getElementById('camera-canvas'); 
-            const frameImg = document.getElementById('camera-frame');
+            const video = document.getElementById('camera-feed'); const canvas = document.getElementById('camera-canvas'); 
+            const frameImg = document.getElementById('camera-frame'); const pinImg = document.getElementById('camera-pin-overlay');
             
-            canvas.width = 1080; 
-            canvas.height = 1920;
-            const ctx = canvas.getContext('2d');
+            const targetWidth = 1080; const targetHeight = 1920;
+            canvas.width = targetWidth; canvas.height = targetHeight; const ctx = canvas.getContext('2d');
             
-            const videoRatio = video.videoWidth / video.videoHeight;
-            const targetRatio = 1080 / 1920;
-            let drawWidth, drawHeight, offsetX, offsetY;
-            
-            if (videoRatio > targetRatio) {
-                drawHeight = 1920;
-                drawWidth = video.videoWidth * (1920 / video.videoHeight);
-                offsetX = (1080 - drawWidth) / 2;
-                offsetY = 0;
-            } else {
-                drawWidth = 1080;
-                drawHeight = video.videoHeight * (1080 / video.videoWidth);
-                offsetX = 0;
-                offsetY = (1920 - drawHeight) / 2;
-            }
+            const videoRatio = video.videoWidth / video.videoHeight; const targetRatio = targetWidth / targetHeight;
+            let drawWidth = targetWidth; let drawHeight = targetHeight; let offsetX = 0; let offsetY = 0;
+
+            if (videoRatio > targetRatio) { drawWidth = targetHeight * videoRatio; offsetX = (targetWidth - drawWidth) / 2; } 
+            else { drawHeight = targetWidth / videoRatio; offsetY = (targetHeight - drawHeight) / 2; }
             
             ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
             ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
             ctx.setTransform(1, 0, 0, 1, 0, 0); 
             
-            if(frameImg.complete && frameImg.naturalHeight !== 0) {
-                ctx.drawImage(frameImg, 0, 0, 1080, 1920);
-            }
-            
-            const pinImg = document.getElementById('camera-pin-overlay');
+            if(frameImg.complete && frameImg.naturalHeight !== 0) ctx.drawImage(frameImg, 0, 0, targetWidth, targetHeight);
             if(!pinImg.classList.contains('hidden') && pinImg.complete && pinImg.naturalHeight !== 0) {
-                const pinSize = 250;
-                const margin = 60;
-                ctx.drawImage(pinImg, 1080 - pinSize - margin, 1920 - pinSize - margin, pinSize, pinSize);
+                const pinSize = targetWidth * 0.25; const margin = targetWidth * 0.05;
+                ctx.drawImage(pinImg, targetWidth - pinSize - margin, targetHeight - pinSize - margin, pinSize, pinSize);
             }
             
             video.pause(); stopCamera(); 
             
-            // Compress and get Base64 string directly
-            const base64Data = canvas.toDataURL('image/jpeg', 0.6);
-            showPhotoPreview(base64Data);
+            canvas.toBlob(async (blob) => { 
+                showView('preview');
+                const url = window.URL.createObjectURL(blob);
+                document.getElementById('preview-img').src = url;
+                document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
+                
+                // Background upload to Firebase
+                currentPhotoId = `photo_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+                const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.png`);
+                try {
+                    await storageRef.put(blob, { contentType: 'image/png' });
+                    uploadedPhotoUrl = await storageRef.getDownloadURL();
+                } catch(e) { console.error("Firebase upload failed", e); }
+                
+            }, 'image/png', 0.8);
+        }
+
+        document.getElementById('btn-share-options').onclick = () => {
+            const modal = document.getElementById('share-modal'); const content = document.getElementById('share-modal-content');
+            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+        };
+        
+        function closeShareModal() {
+            const modal = document.getElementById('share-modal'); const content = document.getElementById('share-modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        }
+
+        document.getElementById('btn-preview-next').onclick = () => {
+            deletePhotoFromServer();
+            if(currentCamMode === 'admission') showMajorSelect();
+            else showEndScreen();
         };
 
-        window.showPhotoPreview = async function(base64Data) {
-            showView('preview');
-            const previewImg = document.getElementById('preview-img');
-            previewImg.src = base64Data;
-            
-            document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
-            
-            // Reset state
-            document.getElementById('share-choice-panel').classList.add('hidden');
-            document.getElementById('share-choice-panel').classList.remove('flex');
-            document.getElementById('qr-panel').classList.add('hidden');
-            document.getElementById('qr-panel').classList.remove('flex');
-            document.getElementById('email-panel').classList.add('hidden');
-            document.getElementById('email-panel').classList.remove('flex');
-            document.getElementById('qrcode-container').innerHTML = '';
-            
-            // Auto Upload to Firebase
-            sharedPhotoDocId = await window.uploadPhotoToFirebase(base64Data);
-            
-            // Setup Popups Routing
-            document.getElementById('btn-init-share').onclick = () => {
-                document.getElementById('share-choice-panel').classList.remove('hidden');
-                document.getElementById('share-choice-panel').classList.add('flex');
-            };
+        function openEmailModal() {
+            closeShareModal();
+            setTimeout(() => {
+                const modal = document.getElementById('email-modal'); const content = document.getElementById('email-modal-content');
+                modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            }, 250);
+        }
 
-            document.getElementById('btn-close-share-choice').onclick = () => {
-                document.getElementById('share-choice-panel').classList.add('hidden');
-                document.getElementById('share-choice-panel').classList.remove('flex');
-            };
+        function closeEmailModal() {
+            hideKeyboard();
+            const modal = document.getElementById('email-modal'); const content = document.getElementById('email-modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        }
+
+        async function sendEmail() {
+            const emailInput = document.getElementById('email-input').value.trim();
+            if (!emailInput || !emailInput.includes('@')) { alert("Invalid email"); return; }
             
-            document.getElementById('btn-choose-qr').onclick = () => {
-                document.getElementById('share-choice-panel').classList.add('hidden');
-                document.getElementById('share-choice-panel').classList.remove('flex');
-                document.getElementById('qr-panel').classList.remove('hidden');
-                document.getElementById('qr-panel').classList.add('flex');
-                
-                const qrContainer = document.getElementById('qrcode-container');
-                qrContainer.innerHTML = '';
-                
-                if (sharedPhotoDocId) {
-                    const link = window.location.href.split('?')[0] + "?photo=" + sharedPhotoDocId;
-                    new QRCode(qrContainer, {
-                        text: link, 
-                        width: 190, height: 190,
-                        colorDark : "#1f2937", colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.L
-                    });
-                } else {
-                    qrContainer.innerHTML = '<div class="text-red-500 font-bold text-center">Database unavailable. Please download directly.</div>';
-                }
-            };
+            const btnTxt = document.getElementById('em-send-txt'); btnTxt.innerText = "Sending...";
             
-            document.getElementById('btn-choose-email').onclick = () => {
-                document.getElementById('share-choice-panel').classList.add('hidden');
-                document.getElementById('share-choice-panel').classList.remove('flex');
-                document.getElementById('email-panel').classList.remove('hidden');
-                document.getElementById('email-panel').classList.add('flex');
-                document.getElementById('share-email-input').value = "";
-            };
-            
-            // Modal Closers & Send logic
-            document.getElementById('btn-qr-done').onclick = () => {
-                document.getElementById('qr-panel').classList.add('hidden');
-                document.getElementById('qr-panel').classList.remove('flex');
-            };
-            
-            document.getElementById('btn-email-cancel').onclick = () => {
-                closeKeyboard();
-                document.getElementById('email-panel').classList.add('hidden');
-                document.getElementById('email-panel').classList.remove('flex');
-            };
-            
-            document.getElementById('btn-email-send').onclick = async () => {
-                closeKeyboard();
-                const email = document.getElementById('share-email-input').value.trim();
-                if(email && sharedPhotoDocId) {
-                    const link = window.location.href.split('?')[0] + "?photo=" + sharedPhotoDocId;
-                    document.getElementById('btn-email-send').innerText = "Sending...";
-                    const success = await window.sendPhotoEmail(email, link);
-                    
-                    if (success) {
-                        showMessage(i18n[currentLang].photo_sent, () => {
-                            document.getElementById('email-panel').classList.add('hidden');
-                            document.getElementById('email-panel').classList.remove('flex');
-                            document.getElementById('btn-email-send').innerText = i18n[currentLang].btn_send;
-                        });
-                    } else {
-                        showMessage("Failed to send email. Database unavailable.");
-                        document.getElementById('btn-email-send').innerText = i18n[currentLang].btn_send;
+            if (!uploadedPhotoUrl) { await new Promise(r => setTimeout(r, 1500)); }
+
+            try {
+                await db.collection(`artifacts/${APP_ID}/public/data/mail`).add({
+                    to: emailInput,
+                    message: {
+                        subject: "Your PolyU APSS Journey Photo!",
+                        html: `<p>Hello!</p><p>Thank you for exploring the PolyU APSS Journey. Here is your commemorative photo!</p><p><a href="${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}">View & Download Photo</a></p>`
                     }
-                }
-            };
+                });
+                btnTxt.innerText = "Sent! ✅"; setTimeout(() => { closeEmailModal(); }, 1000);
+            } catch(e) {
+                console.error(e); btnTxt.innerText = "Failed ❌"; setTimeout(() => { btnTxt.innerText = "Send ➔"; }, 1500);
+            }
+        }
 
-            // Continue
-            document.getElementById('btn-preview-next').onclick = () => {
-                if(currentCamMode === 'admission') showMajorSelect();
-                else showEndScreen();
-            };
-        };
+        function openQRModal() {
+            closeShareModal();
+            setTimeout(() => {
+                const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
+                const container = document.getElementById('qrcode-container'); const loading = document.getElementById('qr-loading');
+                
+                container.innerHTML = ''; loading.style.display = 'block'; modal.classList.remove('hidden');
+                setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+                
+                const checkUpload = setInterval(() => {
+                    if (uploadedPhotoUrl || currentPhotoId) {
+                        clearInterval(checkUpload); loading.style.display = 'none';
+                        const viewUrl = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
+                        new QRCode(container, { text: viewUrl, width: 160, height: 160 });
+                    }
+                }, 500);
+                setTimeout(() => clearInterval(checkUpload), 5000);
+            }, 250);
+        }
 
-        window.showEndScreen = function() { showView('end'); };
+        function closeQRModal() {
+            const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        }
+
+        async function deletePhotoFromServer() {
+            if (currentPhotoId) {
+                const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.png`);
+                try { await storageRef.delete(); console.log("Photo deleted from server."); } catch(e) { console.error("Deletion failed", e); }
+                currentPhotoId = null; uploadedPhotoUrl = null;
+            }
+        }
+
+        function showEndScreen() { showView('end'); }
     </script>
 </body>
 </html>
