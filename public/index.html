@@ -11,11 +11,10 @@
     <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <!-- Firebase Storage -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     
     <script>
@@ -286,16 +285,18 @@
         <!-- CAMERA VIEW (ADMISSION & GRADUATION) -->
         <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50 overflow-hidden">
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
-            <div class="flex-grow relative flex items-center justify-center bg-gray-900 w-full">
+            
+            <div class="flex-grow flex items-center justify-center bg-gray-900 w-full overflow-hidden relative">
                 <!-- Strict 1080x1920 (9:16) Ratio Container -->
-                <div class="relative w-full max-h-full aspect-[9/16] bg-black overflow-hidden flex justify-center items-center">
-                    <video id="camera-feed" class="absolute w-full h-full object-cover z-0" autoplay playsinline></video>
-                    <!-- Removed onerror to ensure it doesn't accidentally hide forever -->
-                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"> 
+                <div class="relative w-full max-h-full aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
+                    <video id="camera-feed" class="absolute inset-0 w-full h-full object-cover z-0" autoplay playsinline></video>
+                    <!-- Display forcefully block to guarantee visibility over video -->
+                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" style="display: block; opacity: 1; visibility: visible;"> 
                     <img id="camera-pin-overlay" src="" class="absolute bottom-[5%] right-[5%] w-[25%] max-w-[150px] object-contain z-20 pointer-events-none hidden">
                 </div>
                 <canvas id="camera-canvas" class="hidden"></canvas>
             </div>
+            
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex justify-between items-center z-20 relative">
                 <button id="btn-camera-skip" class="text-white/70 font-semibold px-4 py-2 transition-all">Skip</button>
                 <button id="btn-capture" class="w-16 h-16 bg-white rounded-full border-4 border-gray-300 shadow-lg active:scale-90 transition-transform flex items-center justify-center absolute left-1/2 -translate-x-1/2">
@@ -459,6 +460,7 @@
 
     <script>
         // --- FIREBASE CONFIGURATION ---
+        // Ensure you configure this properly in your console, particularly checking Firebase rules and Auth
         const firebaseConfig = {
             apiKey: "AIzaSy_YOUR_API_KEY",
             authDomain: "your-project.firebaseapp.com",
@@ -468,9 +470,16 @@
             appId: "1:123456789:web:abcdef123456"
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        
+        const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
         const APP_ID = "apss_journey"; 
+
+        // Authenticate anonymously so we can securely write to the "mail" collection
+        auth.signInAnonymously().catch((error) => {
+            console.error("Firebase Anonymous Auth failed:", error);
+        });
 
         // --- GLOBAL STATE ---
         let playerName = ""; let currentMajor = ""; let currentLang = 'en'; 
@@ -763,7 +772,7 @@
                 swingState.speed = 1.8; swingState.min = 35; swingState.max = 75; 
             } else {
                 hint.innerText = i18n[currentLang].hint_r2; scoreTitle.innerText = i18n[currentLang].target_r2;
-                swingState.speed = 3.0; swingState.min = 50; swingState.max = 85; 
+                swingState.speed = 3.0; swingState.min = 50; swingState.max = 85; // Speed strictly cut to 3.0 as requested
             }
 
             [1,2].forEach(i => {
@@ -1224,6 +1233,8 @@
             
             const frameImg = document.getElementById('camera-frame');
             frameImg.style.display = 'block'; 
+            frameImg.classList.remove('hidden');
+            
             if (mode === 'admission') { frameImg.src = 'image/camera/APSS-Offer.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit; } 
             else { frameImg.src = 'image/camera/APSS-Graduated.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; }
             
