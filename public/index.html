@@ -450,7 +450,7 @@
                 <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Download</h3>
                 <p class="text-sm text-gray-500 mb-6" id="qr-sub">Scan this code with your phone camera.</p>
                 <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6 w-56 h-56 flex items-center justify-center relative">
-                    <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Uploading photo...</div>
+                    <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Generating...</div>
                     <div id="qrcode-container" class="z-10"></div>
                 </div>
                 <button onclick="closeQRModal()" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl active:scale-95 transition-transform" id="qr-close">Done</button>
@@ -461,12 +461,13 @@
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
-            apiKey: "AIzaSy_YOUR_API_KEY",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyAs8IULYmHUGLQujX0Z6di3EZhi1mNxhB8",
+            authDomain: "polyu-apss-info.firebaseapp.com",
+            projectId: "polyu-apss-info",
+            storageBucket: "polyu-apss-info.firebasestorage.app",
+            messagingSenderId: "859117127098",
+            appId: "1:859117127098:web:8817028150ea4fe53d4983",
+            measurementId: "G-WMG89VNTBN"
         };
         
         const APP_ID = "apss_journey"; 
@@ -485,7 +486,7 @@
                 console.error("Firebase Anonymous Auth failed:", error);
             });
         } else {
-            console.warn("Firebase is not configured. Running in Local Demo Mode. Replace 'firebaseConfig' with your actual keys to enable cloud sharing.");
+            console.warn("Firebase is not configured. Running in Local Demo Mode.");
         }
 
         // --- GLOBAL STATE ---
