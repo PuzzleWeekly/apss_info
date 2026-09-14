@@ -283,16 +283,16 @@
         </div>
 
         <!-- CAMERA VIEW (ADMISSION & GRADUATION) -->
-        <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50 overflow-hidden">
+        <div id="view-camera" class="view-panel h-full flex-col bg-black relative z-50">
             <h2 id="cam-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Take a Photo!</h2>
             
             <div class="flex-grow flex items-center justify-center bg-gray-900 w-full overflow-hidden relative">
                 <!-- Strict 1080x1920 (9:16) Ratio Container -->
-                <div class="relative w-full max-h-full aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
+                <div class="relative w-full max-w-[480px] aspect-[9/16] bg-black overflow-hidden flex items-center justify-center shadow-2xl">
                     <video id="camera-feed" class="absolute inset-0 w-full h-full object-cover z-0" autoplay playsinline></video>
                     <!-- Display forcefully block to guarantee visibility over video -->
-                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" style="display: block; opacity: 1; visibility: visible;"> 
-                    <img id="camera-pin-overlay" src="" class="absolute bottom-[5%] right-[5%] w-[25%] max-w-[150px] object-contain z-20 pointer-events-none hidden">
+                    <img id="camera-frame" src="" crossorigin="anonymous" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" style="display: block; opacity: 1; visibility: visible;"> 
+                    <img id="camera-pin-overlay" src="" crossorigin="anonymous" class="absolute bottom-[5%] right-[5%] w-[25%] max-w-[150px] object-contain z-20 pointer-events-none hidden">
                 </div>
                 <canvas id="camera-canvas" class="hidden"></canvas>
             </div>
@@ -460,7 +460,6 @@
 
     <script>
         // --- FIREBASE CONFIGURATION ---
-        // Ensure you configure this properly in your console, particularly checking Firebase rules and Auth
         const firebaseConfig = {
             apiKey: "AIzaSy_YOUR_API_KEY",
             authDomain: "your-project.firebaseapp.com",
@@ -469,21 +468,29 @@
             messagingSenderId: "123456789",
             appId: "1:123456789:web:abcdef123456"
         };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
         const APP_ID = "apss_journey"; 
+        const isFirebaseConfigured = firebaseConfig.apiKey !== "AIzaSy_YOUR_API_KEY";
+        
+        let auth = null, db = null, storage = null;
 
-        // Authenticate anonymously so we can securely write to the "mail" collection
-        auth.signInAnonymously().catch((error) => {
-            console.error("Firebase Anonymous Auth failed:", error);
-        });
+        if (isFirebaseConfigured && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+            storage = firebase.storage();
+            
+            // Authenticate anonymously so we can securely write to the "mail" collection
+            auth.signInAnonymously().catch((error) => {
+                console.error("Firebase Anonymous Auth failed:", error);
+            });
+        } else {
+            console.warn("Firebase is not configured. Running in Local Demo Mode. Replace 'firebaseConfig' with your actual keys to enable cloud sharing.");
+        }
 
         // --- GLOBAL STATE ---
         let playerName = ""; let currentMajor = ""; let currentLang = 'en'; 
-        let finalResultRole = null; let currentInputTarget = null; 
+        let resultRole = null; let currentInputTarget = null; 
         let currentPhotoId = null; let uploadedPhotoUrl = null;
 
         // Translation Dictionary
@@ -632,10 +639,14 @@
         function showKeyboard(targetId) { currentInputTarget = targetId; document.getElementById('virtual-keyboard').style.display = 'block'; }
         function hideKeyboard() { document.getElementById('virtual-keyboard').style.display = 'none'; currentInputTarget = null;}
         function vk(char) {
-            if(!currentInputTarget) return; const input = document.getElementById(currentInputTarget);
+            if(!currentInputTarget) return; 
+            const input = document.getElementById(currentInputTarget);
             if (char === 'DEL') input.value = input.value.slice(0, -1);
             else if (char === 'CLR') input.value = '';
-            else input.value += char;
+            else {
+                if (currentInputTarget === 'player-name' && input.value.length >= 12) return;
+                input.value += char;
+            }
         }
 
         applyTranslations(); // Init text
@@ -646,7 +657,11 @@
             const photoId = urlParams.get('photo');
             if (photoId) {
                 showView('viewer');
-                document.getElementById('viewer-img').src = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/artifacts%2F${APP_ID}%2Fpublic%2Fdata%2Fphotos%2F${photoId}.png?alt=media`;
+                if (isFirebaseConfigured) {
+                    document.getElementById('viewer-img').src = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/artifacts%2F${APP_ID}%2Fpublic%2Fdata%2Fphotos%2F${photoId}.jpg?alt=media`;
+                } else {
+                    document.getElementById('viewer-img').src = 'https://placehold.co/1080x1920/1e293b/ffffff?text=Demo+Photo+Unavailable';
+                }
                 document.getElementById('viewer-img').onload = () => {
                     document.getElementById('viewer-loading').classList.add('hidden');
                     document.getElementById('viewer-img').classList.remove('hidden');
@@ -658,7 +673,7 @@
                     try {
                         const response = await fetch(document.getElementById('viewer-img').src);
                         const blob = await response.blob(); const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `${photoId}.png`;
+                        const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `${photoId}.jpg`;
                         document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
                     } catch(e) { alert("Cannot download directly due to browser restrictions. Please long-press the image and select 'Save Image'."); }
                 }
@@ -772,7 +787,7 @@
                 swingState.speed = 1.8; swingState.min = 35; swingState.max = 75; 
             } else {
                 hint.innerText = i18n[currentLang].hint_r2; scoreTitle.innerText = i18n[currentLang].target_r2;
-                swingState.speed = 3.0; swingState.min = 50; swingState.max = 85; // Speed strictly cut to 3.0 as requested
+                swingState.speed = 3.0; swingState.min = 50; swingState.max = 85; 
             }
 
             [1,2].forEach(i => {
@@ -973,9 +988,9 @@
             if (!catcherState.active) return;
             const container = document.getElementById('catcher-area'); 
             
-            let spawnDelay = catcherState.timer <= 10 ? 300 : 450;
+            let spawnDelay = catcherState.timer <= 10 ? 300 : 400; // Accelerated speed for more points
             if (!catcherState.lastSpawn || timestamp - catcherState.lastSpawn > spawnDelay) {
-                const numItemsToSpawn = catcherState.timer <= 10 ? 3 : 2; 
+                const numItemsToSpawn = catcherState.timer <= 10 ? 3 : 3; 
                 for (let k = 0; k < numItemsToSpawn; k++) spawnCatcherItem(container);
                 catcherState.lastSpawn = timestamp;
             }
@@ -1012,7 +1027,7 @@
 
         // --- STREAMING_CHUNK:Evaluation Algorithms... ---
         function evaluateSWFit() {
-            const s = catcherState.stats; finalResultRole = null; 
+            const s = catcherState.stats; resultRole = null; 
             
             const roles = [
                 { id: 'sw_rc', name_en: 'Rights Champion', name_zh: '權益倡導者', req: {emp:6, ins:4, com:0, act:6, pro:4}, sig: ['emp', 'com', 'act'],
@@ -1063,13 +1078,13 @@
                 best = qualified[0];
             }
 
-            finalResultRole = best.id;
-            if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+            resultRole = best.id;
+            if (resultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${resultRole}.png`; }
             renderResultPage(1, best, s, 'sw');
         }
 
         function evaluateSPSEFit() {
-            const s = catcherState.stats; finalResultRole = null;
+            const s = catcherState.stats; resultRole = null;
             
             const roles = [
                 { id: 'mc', name_en: 'Mission Champion', name_zh: '使命倡導者', req: {str:2, wis:1, cha:1, dis:0, ins:2}, sig: 'ins',
@@ -1110,8 +1125,8 @@
                 best = qualified[0];
             }
             
-            finalResultRole = best.id;
-            if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
+            resultRole = best.id;
+            if (resultRole) { const imgPreloader = new Image(); imgPreloader.src = `image/character/${resultRole}.png`; }
 
             renderResultPage(1, best, s, 'spse');
         }
@@ -1160,7 +1175,7 @@
                     </svg>
                 </div>`;
 
-                let avatarSrc = `image/character/${finalResultRole}.png`;
+                let avatarSrc = `image/character/${best.id}.png`;
 
                 textEl.innerHTML = `
                     <div class="flex flex-row items-center justify-between w-full gap-2 mb-2">
@@ -1227,23 +1242,34 @@
         }
 
         let stream = null; 
+        let capturedPhotoBlob = null; 
+        let currentCamMode = 'admission';
 
         async function startCamera(mode) {
             currentCamMode = mode; showView('camera');
             
             const frameImg = document.getElementById('camera-frame');
-            frameImg.style.display = 'block'; 
-            frameImg.classList.remove('hidden');
-            
-            if (mode === 'admission') { frameImg.src = 'image/camera/APSS-Offer.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit; } 
-            else { frameImg.src = 'image/camera/APSS-Graduated.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; }
+            if (mode === 'admission') { 
+                frameImg.src = 'image/camera/APSS-Offer.png'; 
+                document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit; 
+            } else { 
+                frameImg.src = 'image/camera/APSS-Graduated.png'; 
+                document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; 
+            }
             
             const pinImg = document.getElementById('camera-pin-overlay');
-            if (mode !== 'admission' && finalResultRole && finalResultRole !== 'gen') { pinImg.src = `image/character/${finalResultRole}.png`; pinImg.classList.remove('hidden'); } 
-            else { pinImg.classList.add('hidden'); }
+            if (mode !== 'admission' && resultRole && resultRole !== 'gen') { 
+                pinImg.src = `image/character/${resultRole}.png`; 
+                pinImg.classList.remove('hidden'); 
+            } else { 
+                pinImg.classList.add('hidden'); 
+            }
 
             const skipBtn = document.getElementById('btn-camera-skip'); const captureBtn = document.getElementById('btn-capture');
             captureBtn.style.display = 'flex';
+            skipBtn.innerText = i18n[currentLang].skip;
+            skipBtn.className = "text-white/70 font-semibold px-4 py-2 transition-all";
+            
             skipBtn.onclick = () => { stopCamera(); mode === 'admission' ? showMajorSelect() : showEndScreen(); };
             
             try {
@@ -1261,49 +1287,87 @@
 
         function takePhoto() {
             if (!stream) return; 
-            const video = document.getElementById('camera-feed'); const canvas = document.getElementById('camera-canvas'); 
-            const frameImg = document.getElementById('camera-frame'); const pinImg = document.getElementById('camera-pin-overlay');
+            const video = document.getElementById('camera-feed'); 
+            const canvas = document.getElementById('camera-canvas'); 
+            const frameImg = document.getElementById('camera-frame'); 
+            const pinImg = document.getElementById('camera-pin-overlay');
             
             const targetWidth = 1080; const targetHeight = 1920;
             canvas.width = targetWidth; canvas.height = targetHeight; const ctx = canvas.getContext('2d');
             
-            // Fill background
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-            const videoRatio = video.videoWidth / video.videoHeight; const targetRatio = targetWidth / targetHeight;
+            const vWidth = video.videoWidth || 1080;
+            const vHeight = video.videoHeight || 1920;
+            const videoRatio = vWidth / vHeight; const targetRatio = targetWidth / targetHeight;
             let drawWidth = targetWidth; let drawHeight = targetHeight; let offsetX = 0; let offsetY = 0;
 
-            if (videoRatio > targetRatio) { drawWidth = targetHeight * videoRatio; offsetX = (targetWidth - drawWidth) / 2; } 
-            else { drawHeight = targetWidth / videoRatio; offsetY = (targetHeight - drawHeight) / 2; }
+            if (videoRatio > targetRatio) { 
+                drawWidth = targetHeight * videoRatio; offsetX = (targetWidth - drawWidth) / 2; 
+            } else { 
+                drawHeight = targetWidth / videoRatio; offsetY = (targetHeight - drawHeight) / 2; 
+            }
             
-            ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+            ctx.save();
+            ctx.translate(targetWidth, 0); ctx.scale(-1, 1);
             ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-            ctx.setTransform(1, 0, 0, 1, 0, 0); 
+            ctx.restore();
             
-            if(frameImg.complete && frameImg.naturalHeight !== 0 && frameImg.style.display !== 'none') ctx.drawImage(frameImg, 0, 0, targetWidth, targetHeight);
-            if(!pinImg.classList.contains('hidden') && pinImg.complete && pinImg.naturalHeight !== 0) {
+            if(frameImg.complete && frameImg.naturalHeight !== 0) {
+                ctx.drawImage(frameImg, 0, 0, targetWidth, targetHeight);
+            }
+            
+            if(pinImg && !pinImg.classList.contains('hidden') && pinImg.complete && pinImg.naturalHeight !== 0) {
                 const pinSize = targetWidth * 0.25; const margin = targetWidth * 0.05;
                 ctx.drawImage(pinImg, targetWidth - pinSize - margin, targetHeight - pinSize - margin, pinSize, pinSize);
             }
             
             video.pause(); stopCamera(); 
             
-            canvas.toBlob(async (blob) => { 
-                showView('preview');
-                const url = window.URL.createObjectURL(blob);
-                document.getElementById('preview-img').src = url;
-                document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
+            try {
+                // Tainted Canvas Handling: local file:// execution will throw security errors.
+                // We wrap it securely to prevent app crashes!
+                canvas.toBlob((blob) => { 
+                    if(blob) {
+                        capturedPhotoBlob = blob;
+                    } else {
+                        console.warn("Canvas blob empty. Likely a local security/CORS issue.");
+                        capturedPhotoBlob = null;
+                    }
+                    showPhotoPreview(); 
+                }, 'image/jpeg', 0.85);
+            } catch(e) {
+                console.error("Canvas export failed due to security:", e);
+                capturedPhotoBlob = null;
+                showPhotoPreview();
+            }
+        }
+
+        async function showPhotoPreview() {
+            showView('preview');
+            const previewImg = document.getElementById('preview-img');
+            document.getElementById('preview-title').innerText = currentCamMode === 'admission' ? i18n[currentLang].prev_admit : i18n[currentLang].prev_grad;
+            
+            if (capturedPhotoBlob) {
+                previewImg.src = window.URL.createObjectURL(capturedPhotoBlob);
                 
-                // Background upload to Firebase
                 currentPhotoId = `photo_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-                const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.png`);
-                try {
-                    await storageRef.put(blob, { contentType: 'image/png' });
-                    uploadedPhotoUrl = await storageRef.getDownloadURL();
-                } catch(e) { console.error("Firebase upload failed", e); }
                 
-            }, 'image/png', 0.8);
+                if (isFirebaseConfigured) {
+                    const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.jpg`);
+                    try {
+                        await storageRef.put(capturedPhotoBlob, { contentType: 'image/jpeg' });
+                        uploadedPhotoUrl = await storageRef.getDownloadURL();
+                    } catch(e) { console.error("Firebase upload failed", e); }
+                } else {
+                    uploadedPhotoUrl = "demo_mode"; // Mock successful upload for testing
+                }
+            } else {
+                // Fallback placeholder if canvas was tainted by local file security
+                previewImg.src = 'https://placehold.co/1080x1920/1e293b/ffffff?text=Photo+Preview+Unavailable+(Local+Security)';
+                uploadedPhotoUrl = null;
+            }
         }
 
         // --- STREAMING_CHUNK:Sharing and Ending Logic... ---
@@ -1343,19 +1407,28 @@
             
             const btnTxt = document.getElementById('em-send-txt'); btnTxt.innerText = "Sending...";
             
-            if (!uploadedPhotoUrl) { await new Promise(r => setTimeout(r, 1500)); }
+            let waitCount = 0;
+            while (!uploadedPhotoUrl && waitCount < 10) { await new Promise(r => setTimeout(r, 500)); waitCount++; }
 
-            try {
-                await db.collection(`artifacts/${APP_ID}/public/data/mail`).add({
-                    to: emailInput,
-                    message: {
-                        subject: "Your PolyU APSS Journey Photo!",
-                        html: `<p>Hello!</p><p>Thank you for exploring the PolyU APSS Journey. Here is your commemorative photo!</p><p><a href="${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}">View & Download Photo</a></p>`
-                    }
-                });
-                btnTxt.innerText = "Sent! ✅"; setTimeout(() => { closeEmailModal(); }, 1000);
-            } catch(e) {
-                console.error(e); btnTxt.innerText = "Failed ❌"; setTimeout(() => { btnTxt.innerText = "Send ➔"; }, 1500);
+            const photoLink = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
+
+            if (isFirebaseConfigured) {
+                try {
+                    await db.collection(`artifacts/${APP_ID}/public/data/mail`).add({
+                        to: emailInput,
+                        message: {
+                            subject: "Your PolyU APSS Journey Photo!",
+                            html: `<p>Hello!</p><p>Thank you for exploring the PolyU APSS Journey. Here is your commemorative photo!</p><p><a href="${photoLink}">View & Download Photo</a></p>`
+                        }
+                    });
+                    btnTxt.innerText = "Sent! ✅"; setTimeout(() => { closeEmailModal(); btnTxt.innerText = "Send ➔"; }, 1500);
+                } catch(e) {
+                    console.error(e); btnTxt.innerText = "Failed ❌"; setTimeout(() => { btnTxt.innerText = "Send ➔"; }, 1500);
+                }
+            } else {
+                // Demo Mode
+                btnTxt.innerText = "Sent! (Demo) ✅"; 
+                setTimeout(() => { closeEmailModal(); btnTxt.innerText = "Send ➔"; }, 1500);
             }
         }
 
@@ -1385,11 +1458,11 @@
         }
 
         async function deletePhotoFromServer() {
-            if (currentPhotoId) {
-                const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.png`);
+            if (isFirebaseConfigured && currentPhotoId && uploadedPhotoUrl && uploadedPhotoUrl !== "demo_mode") {
+                const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.jpg`);
                 try { await storageRef.delete(); console.log("Photo deleted from server."); } catch(e) { console.error("Deletion failed", e); }
-                currentPhotoId = null; uploadedPhotoUrl = null;
             }
+            currentPhotoId = null; uploadedPhotoUrl = null;
         }
 
         function showEndScreen() { showView('end'); }
