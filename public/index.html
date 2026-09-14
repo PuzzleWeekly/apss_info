@@ -106,9 +106,9 @@
             overflow-wrap: break-word; padding: 4px; box-sizing: border-box; cursor: pointer; pointer-events: auto;
         }
         .soap-bubble {
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.2) 60%, transparent 100%);
             border: 1px solid rgba(255, 255, 255, 0.8); color: #1e293b; backdrop-filter: blur(3px);
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.8), inset 6px 0 12px rgba(255,192,203,0.5), inset -6px 0 12px rgba(173,216,230,0.5), 0 6px 12px rgba(0,0,0,0.15);
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.9), inset 6px 0 12px rgba(255,192,203,0.5), inset -6px 0 12px rgba(173,216,230,0.5), 0 6px 12px rgba(0,0,0,0.15);
         }
 
         #virtual-keyboard {
@@ -290,7 +290,8 @@
                 <!-- Strict 1080x1920 (9:16) Ratio Container -->
                 <div class="relative w-full max-h-full aspect-[9/16] bg-black overflow-hidden flex justify-center items-center">
                     <video id="camera-feed" class="absolute w-full h-full object-cover z-0" autoplay playsinline></video>
-                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" onerror="this.style.display='none'"> 
+                    <!-- Removed onerror to ensure it doesn't accidentally hide forever -->
+                    <img id="camera-frame" src="" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"> 
                     <img id="camera-pin-overlay" src="" class="absolute bottom-[5%] right-[5%] w-[25%] max-w-[150px] object-contain z-20 pointer-events-none hidden">
                 </div>
                 <canvas id="camera-canvas" class="hidden"></canvas>
@@ -1005,37 +1006,37 @@
             const s = catcherState.stats; finalResultRole = null; 
             
             const roles = [
-                { id: 'rc', name_en: 'Rights Champion', name_zh: '權益倡導者', req: {emp:6, ins:4, com:0, act:6, pro:4}, sig: ['emp', 'com', 'act'],
+                { id: 'sw_rc', name_en: 'Rights Champion', name_zh: '權益倡導者', req: {emp:6, ins:4, com:0, act:6, pro:4}, sig: ['emp', 'com', 'act'],
                   str_en: 'Supporting individual rights, access, and fairness.', sup_en: 'Operations & Execution', str_zh: '支持個人權利、機會均等和公平。', sup_zh: '營運與執行' },
-                { id: 'sp', name_en: 'Support Planner', name_zh: '支援規劃師', req: {emp:4, ins:6, com:0, act:6, pro:6}, sig: ['ins', 'act', 'pro'],
+                { id: 'sw_sp', name_en: 'Support Planner', name_zh: '支援規劃師', req: {emp:4, ins:6, com:0, act:6, pro:6}, sig: ['ins', 'act', 'pro'],
                   str_en: 'Assessing needs, coordinating services, and monitoring progress.', sup_en: 'Vision & Empathy', str_zh: '評估需求、協調服務和監察進度。', sup_zh: '願景與同理心' },
-                { id: 'rc_broker', name_en: 'Resource Connector', name_zh: '資源連繫者', req: {emp:5, ins:5, com:7, act:5, pro:4}, sig: ['com', 'ins', 'emp'],
+                { id: 'sw_rc_broker', name_en: 'Resource Connector', name_zh: '資源連繫者', req: {emp:5, ins:5, com:7, act:5, pro:4}, sig: ['com', 'ins', 'emp'],
                   str_en: 'Identifying resources and linking users to appropriate supports.', sup_en: 'Structure & Finance', str_zh: '識別資源並將使用者連繫至合適的支援。', sup_zh: '結構與財務' },
-                { id: 'cb', name_en: 'Community Builder', name_zh: '社區建設者', req: {emp:6, ins:4, com:7, act:5, pro:3}, sig: ['emp', 'com', 'act'],
+                { id: 'sw_cb', name_en: 'Community Builder', name_zh: '社區建設者', req: {emp:6, ins:4, com:7, act:5, pro:3}, sig: ['emp', 'com', 'act'],
                   str_en: 'Facilitating participation and organising collective action.', sup_en: 'Operations & Finance', str_zh: '促進參與並組織集體行動。', sup_zh: '營運與財務' },
-                { id: 'pi', name_en: 'Practice Improver', name_zh: '實務改進者', req: {emp:4, ins:7, com:3, act:4, pro:7}, sig: ['ins', 'pro', 'emp'],
+                { id: 'sw_pi', name_en: 'Practice Improver', name_zh: '實務改進者', req: {emp:4, ins:7, com:3, act:4, pro:7}, sig: ['ins', 'pro', 'emp'],
                   str_en: 'Evaluating interventions and using research to improve outcomes.', sup_en: 'Action & Relationships', str_zh: '評估介入措施並運用研究來改善成果。', sup_zh: '行動與人際關係' },
-                { id: 'dev', name_en: 'Developing Social Worker', name_zh: '發展中社會工作者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
+                { id: 'gen', name_en: 'Developing Social Worker', name_zh: '發展中社會工作者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
                   str_en: 'You have started building useful strengths.', sup_en: 'Your current profile does not yet meet the basic requirements of one clear social-work role.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案尚未達到一個明確社工角色的基本要求。' }
             ];
 
             let qualified = [];
             roles.forEach(r => {
-                if(s.emp >= r.req.emp && s.ins >= r.req.ins && (r.req.com === 0 || s.com >= r.req.com) && s.act >= r.req.act && s.pro >= r.req.pro && r.id !== 'dev') {
+                if(s.emp >= r.req.emp && s.ins >= r.req.ins && (r.req.com === 0 || s.com >= r.req.com) && s.act >= r.req.act && s.pro >= r.req.pro && r.id !== 'gen') {
                     let roleFitScore = r.sig.reduce((sum, stat) => sum + s[stat], 0);
                     let bonus = 0;
-                    if (r.id === 'rc' && s.act >= 7 && s.pro >= 5) bonus = 2;
-                    if (r.id === 'sp' && s.ins >= 7 && s.pro >= 7) bonus = 2;
-                    if (r.id === 'rc_broker' && s.com >= 8 && s.ins >= 6) bonus = 2;
-                    if (r.id === 'cb' && s.emp >= 7 && s.com >= 8) bonus = 2;
-                    if (r.id === 'pi' && s.ins >= 8 && s.pro >= 8) bonus = 2;
+                    if (r.id === 'sw_rc' && s.act >= 7 && s.pro >= 5) bonus = 2;
+                    if (r.id === 'sw_sp' && s.ins >= 7 && s.pro >= 7) bonus = 2;
+                    if (r.id === 'sw_rc_broker' && s.com >= 8 && s.ins >= 6) bonus = 2;
+                    if (r.id === 'sw_cb' && s.emp >= 7 && s.com >= 8) bonus = 2;
+                    if (r.id === 'sw_pi' && s.ins >= 8 && s.pro >= 8) bonus = 2;
                     qualified.push({...r, finalScore: roleFitScore + bonus, roleFitScore: roleFitScore});
                 }
             });
 
             let best = null;
             if (qualified.length === 0) {
-                best = roles.find(r => r.id === 'dev');
+                best = roles.find(r => r.id === 'gen');
                 const highestStat = Object.keys(s).reduce((a, b) => s[a] > s[b] ? a : b);
                 if (highestStat === 'emp') { best.sup_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.sup_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
                 if (highestStat === 'ins') { best.sup_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.sup_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
@@ -1048,12 +1049,12 @@
                     const gateSumA = Object.values(a.req).reduce((sum, val) => sum + val, 0); const gateSumB = Object.values(b.req).reduce((sum, val) => sum + val, 0);
                     if (gateSumB !== gateSumA) return gateSumB - gateSumA;
                     if (b.roleFitScore !== a.roleFitScore) return b.roleFitScore - a.roleFitScore;
-                    const order = ['rc', 'sp', 'rc_broker', 'cb', 'pi']; return order.indexOf(a.id) - order.indexOf(b.id);
+                    const order = ['sw_rc', 'sw_sp', 'sw_rc_broker', 'sw_cb', 'sw_pi']; return order.indexOf(a.id) - order.indexOf(b.id);
                 });
                 best = qualified[0];
             }
 
-            finalResultRole = best.id === 'dev' ? 'gen' : `sw_${best.id}`;
+            finalResultRole = best.id;
             if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
             renderResultPage(1, best, s, 'sw');
         }
@@ -1077,21 +1078,21 @@
                 { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:2, cha:0, dis:1, ins:3}, sig: 'ins',
                   str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships', str_zh: '分析、證據、評估', sup_zh: '行動、建立關係',
                   desc_en: 'As an Impact Strategist, you generate innovative solutions backed by deep data analysis and continuous impact evaluation.', desc_zh: '作為影響力策略師，你透過深入的數據分析和持續的影響力評估，制定創新的解決方案。' },
-                { id: 'dev', name_en: 'Generalist in Progress', name_zh: '發展中通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
+                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
                   str_en: 'Adaptable, Broad Interests', sup_en: 'Specialized Focus', str_zh: '適應力強、興趣廣泛', sup_zh: '專業專注',
                   desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你已掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
             ];
 
             let qualified = [];
             roles.forEach(r => {
-                if(s.str >= r.req.str && s.wis >= r.req.wis && s.cha >= r.req.cha && s.dis >= r.req.dis && s.ins >= r.req.ins && r.id !== 'dev') {
+                if(s.str >= r.req.str && s.wis >= r.req.wis && s.cha >= r.req.cha && s.dis >= r.req.dis && s.ins >= r.req.ins && r.id !== 'gen') {
                     let surplus = (s.str - r.req.str) + (s.wis - r.req.wis) + (s.cha - r.req.cha) + (s.dis - r.req.dis) + (s.ins - r.req.ins);
                     qualified.push({...r, surplus: surplus});
                 }
             });
 
             let best = null;
-            if (qualified.length === 0) { best = roles.find(r => r.id === 'dev'); } 
+            if (qualified.length === 0) { best = roles.find(r => r.id === 'gen'); } 
             else {
                 qualified.sort((a, b) => {
                     if(b.surplus !== a.surplus) return b.surplus - a.surplus;
@@ -1100,7 +1101,7 @@
                 best = qualified[0];
             }
             
-            finalResultRole = best.id === 'dev' ? 'gen' : best.id;
+            finalResultRole = best.id;
             if (finalResultRole && finalResultRole !== 'gen') { const imgPreloader = new Image(); imgPreloader.src = `image/character/${finalResultRole}.png`; }
 
             renderResultPage(1, best, s, 'spse');
@@ -1170,7 +1171,7 @@
                 const bgClass = mode === 'spse' ? 'bg-purple-50 border-purple-100' : 'bg-blue-50 border-blue-100';
                 
                 let descText = "";
-                if(best.id !== 'dev') {
+                if(best.id !== 'gen') {
                     const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
                     descText = `<hr class="border-${mode==='spse'?'purple':'blue'}-200 mb-2 mt-2"><p class="italic text-gray-700">"${descStr}"</p>`;
                 }
@@ -1222,6 +1223,7 @@
             currentCamMode = mode; showView('camera');
             
             const frameImg = document.getElementById('camera-frame');
+            frameImg.style.display = 'block'; 
             if (mode === 'admission') { frameImg.src = 'image/camera/APSS-Offer.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_admit; } 
             else { frameImg.src = 'image/camera/APSS-Graduated.png'; document.getElementById('cam-title').innerText = i18n[currentLang].cam_grad; }
             
