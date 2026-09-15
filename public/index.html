@@ -127,7 +127,6 @@
 <body>
 
     <div id="app-container">
-        <!--        
         <!-- LANGUAGE TOGGLE -->
         <button id="lang-toggle" onclick="toggleLanguage()">繁 / EN</button>
 
@@ -307,14 +306,12 @@
         </div>
 
         <!-- PHOTO PREVIEW & SHARE VIEW -->
-        <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50">
-            <h2 id="preview-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Looking Good!</h2>
+        <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50 overflow-y-auto items-center justify-center py-8 px-4">
+            <h2 id="preview-title" class="text-white text-center font-bold text-xl mb-4 z-20">Looking Good!</h2>
             
-            <div class="flex-grow relative flex items-center justify-center p-4">
-                <img id="preview-img" src="" class="max-w-full max-h-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20">
-            </div>
+            <img id="preview-img" src="" class="max-h-[55dvh] max-w-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20 mb-6">
             
-            <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
+            <div class="w-full max-w-[300px] flex flex-col gap-3 z-20">
                 <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
                     <span>📱</span> <span id="txt-share-opt">Get QR Code</span>
                 </button>
@@ -373,7 +370,6 @@
         </div>
         
         <!-- MODALS -->
-        <!-- -->
         <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
                 <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
@@ -411,10 +407,9 @@
         </div>
 
         <!-- QR CODE MODAL -->
-        <!-- -->
         <div id="qr-modal" class="fixed inset-0 bg-black/80 hidden z-[80] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="qr-modal-content">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Get Photo</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Download</h3>
                 <p class="text-sm text-gray-500 mb-6" id="qr-sub">Scan this code with your phone camera.</p>
                 <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6 w-56 h-56 flex items-center justify-center relative">
                     <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Generating...</div>
@@ -425,7 +420,6 @@
         </div>
     </div>
 
-    <!-- -->
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
@@ -434,8 +428,7 @@
             projectId: "polyu-apss-info",
             storageBucket: "polyu-apss-info.firebasestorage.app",
             messagingSenderId: "859117127098",
-            appId: "1:859117127098:web:8817028150ea4fe53d4983",
-            measurementId: "G-WMG89VNTBN"
+            appId: "1:859117127098:web:8817028150ea4fe53d4983"
         };
         
         const APP_ID = "apss_journey"; 
@@ -449,12 +442,12 @@
             db = firebase.firestore();
             storage = firebase.storage();
             
-            // Authenticate anonymously
+            // Authenticate anonymously so we can securely write to the "mail" collection
             auth.signInAnonymously().catch((error) => {
                 console.error("Firebase Anonymous Auth failed:", error);
             });
         } else {
-            console.warn("Firebase is not configured. Running in Local Demo Mode.");
+            console.warn("Firebase is not configured. Running in Local Demo Mode. Replace 'firebaseConfig' with your actual keys to enable cloud sharing.");
         }
 
         // --- GLOBAL STATE ---
@@ -596,15 +589,9 @@
             document.getElementById('btn-play-again').innerText = t.btn_play_again; document.getElementById('quit-title').innerText = t.quit_title; document.getElementById('quit-text').innerText = t.quit_text;
             document.getElementById('btn-quit-back').innerText = t.btn_quit_back; document.getElementById('ms-title').innerText = t.ms_title; document.getElementById('ms-text').innerText = t.ms_text;
             document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw; document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            
-            // Share related translations
-            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Get QR Code" : "獲取 QR 碼"; 
-            document.getElementById('btn-preview-next').innerText = t.continue;
-            document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Get Photo" : "掃描獲取照片"; 
-            document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
-            document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; 
-            document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
-            document.getElementById('btn-viewer-dl').innerText = currentLang === 'en' ? "Save / Share ⬇️" : "儲存 / 分享 ⬇️";
+            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Get QR Code" : "獲取 QR 碼"; document.getElementById('btn-preview-next').innerText = t.continue;
+            document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Download" : "掃描下載"; document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
+            document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
         }
 
         // Virtual Keyboard Router
@@ -623,6 +610,7 @@
 
         applyTranslations(); // Init text
 
+        // --- STREAMING_CHUNK:Loading View and Helper Logic... ---
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const photoId = urlParams.get('photo');
@@ -633,7 +621,6 @@
                 } else {
                     document.getElementById('viewer-img').src = 'https://placehold.co/1080x1920/1e293b/ffffff?text=Demo+Photo+Unavailable';
                 }
-                
                 document.getElementById('viewer-img').onload = () => {
                     document.getElementById('viewer-loading').classList.add('hidden');
                     document.getElementById('viewer-img').classList.remove('hidden');
@@ -641,32 +628,18 @@
                 }
                 document.getElementById('viewer-img').onerror = () => { document.getElementById('viewer-loading').innerText = "Photo not found or expired."; }
                 
-                // Enhanced Download/Share Logic for Viewer
+                // Enhanced Download/Share Logic using native sharing
                 document.getElementById('btn-viewer-dl').onclick = async () => {
-                    const img = document.getElementById('viewer-img');
                     try {
-                        const response = await fetch(img.src);
-                        const blob = await response.blob();
-                        
-                        // Try Native Web Share API first
-                        if (navigator.canShare) {
-                            const file = new File([blob], `${photoId}.jpg`, { type: 'image/jpeg' });
-                            if (navigator.canShare({ files: [file] })) {
-                                await navigator.share({
-                                    title: 'My APSS Journey',
-                                    files: [file]
-                                });
-                                return; // Success sharing natively
-                            }
+                        if (navigator.share) {
+                            await navigator.share({
+                                title: 'My APSS Journey',
+                                url: window.location.href
+                            });
+                        } else {
+                            throw new Error("Share not supported");
                         }
-                        
-                        // Fallback to standard Anchor Tag download
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `${photoId}.jpg`;
-                        document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
-                        
-                    } catch(e) { 
-                        // If both fail (common on in-app browsers like Instagram/WeChat), prompt user to long-press
+                    } catch (err) {
                         showMessage(currentLang === 'en' ? "Please long-press the image and select 'Save Image' or 'Share'." : "請長按圖片並選擇「儲存圖片」或「分享」。", null, '📱');
                     }
                 }
@@ -745,6 +718,7 @@
             showView('story');
         }
 
+        // --- STREAMING_CHUNK:Interactive Game Initialization... ---
         function startGame() {
             hideKeyboard(); const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
@@ -840,6 +814,7 @@
             ]);
         }
 
+        // --- STREAMING_CHUNK:Catcher Game Engine... ---
         let catcherState = { 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 },
             timer: 20, timerInterval: null, active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
@@ -1016,6 +991,7 @@
             catcherState.animId = requestAnimationFrame(catcherLoop);
         }
 
+        // --- STREAMING_CHUNK:Evaluation Algorithms... ---
         function evaluateSWFit() {
             const s = catcherState.stats; resultRole = null; 
             
@@ -1121,6 +1097,7 @@
             renderResultPage(1, best, s, 'spse');
         }
 
+        // --- STREAMING_CHUNK:Post-Game Modal & Canvas Flow... ---
         function renderResultPage(step, best, stats, mode) {
             const modal = document.getElementById('msg-modal'); const content = document.getElementById('msg-modal-content');
             const titleEl = document.getElementById('msg-title'); const textEl = document.getElementById('msg-modal-text'); const btnEl = document.getElementById('msg-modal-btn');
@@ -1359,10 +1336,10 @@
             }
         }
 
-        document.getElementById('btn-share-options').onclick = () => {
-            openQRModal();
-        };
+        // --- STREAMING_CHUNK:Sharing and Ending Logic... ---
         
+        document.getElementById('btn-share-options').onclick = openQRModal;
+
         document.getElementById('btn-preview-next').onclick = () => {
             deletePhotoFromServer();
             if(currentCamMode === 'admission') showMajorSelect();
@@ -1370,13 +1347,10 @@
         };
 
         function openQRModal() {
-            const modal = document.getElementById('qr-modal'); 
-            const content = document.getElementById('qr-modal-content');
-            const container = document.getElementById('qrcode-container'); 
-            const loading = document.getElementById('qr-loading');
+            const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
+            const container = document.getElementById('qrcode-container'); const loading = document.getElementById('qr-loading');
             
-            container.innerHTML = ''; loading.style.display = 'block'; 
-            modal.classList.remove('hidden');
+            container.innerHTML = ''; loading.style.display = 'block'; modal.classList.remove('hidden');
             setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
             
             const checkUpload = setInterval(() => {
