@@ -127,6 +127,7 @@
 <body>
 
     <div id="app-container">
+        <!--        
         <!-- LANGUAGE TOGGLE -->
         <button id="lang-toggle" onclick="toggleLanguage()">繁 / EN</button>
 
@@ -315,7 +316,7 @@
             
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
                 <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                    <span>📤</span> <span id="txt-share-opt">Share Photo</span>
+                    <span>📱</span> <span id="txt-share-opt">Get QR Code</span>
                 </button>
                 <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                     Continue ➔
@@ -332,7 +333,7 @@
             </div>
             <div class="flex-shrink-0 pb-8 pt-4 w-full max-w-sm z-20">
                 <button id="btn-viewer-dl" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden mb-3">
-                    Download ⬇️
+                    Save / Share ⬇️
                 </button>
                 <button onclick="window.location.href=window.location.pathname" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">
                     Start Your Own Journey
@@ -372,6 +373,7 @@
         </div>
         
         <!-- MODALS -->
+        <!-- -->
         <div id="instruction-modal" class="fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="instruction-modal-content">
                 <div class="w-16 h-16 bg-theme/10 text-theme rounded-full flex items-center justify-center text-3xl mb-4">🎮</div>
@@ -408,46 +410,11 @@
             </div>
         </div>
 
-        <!-- SHARE SELECTION MODAL -->
-        <div id="share-modal" class="fixed inset-0 bg-black/80 hidden z-[70] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center" id="share-modal-content">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6" id="sh-title">Share Method</h3>
-                <div class="flex gap-4 w-full">
-                    <button onclick="openEmailModal()" class="flex-1 flex flex-col items-center justify-center bg-blue-50 border border-blue-200 rounded-xl p-4 active:scale-95 transition-transform">
-                        <span class="text-4xl mb-2">📧</span>
-                        <span class="font-bold text-blue-700 text-sm" id="sh-email">Email</span>
-                    </button>
-                    <button onclick="openQRModal()" class="flex-1 flex flex-col items-center justify-center bg-green-50 border border-green-200 rounded-xl p-4 active:scale-95 transition-transform">
-                        <span class="text-4xl mb-2">📱</span>
-                        <span class="font-bold text-green-700 text-sm" id="sh-qr">QR Code</span>
-                    </button>
-                </div>
-                <button onclick="closeShareModal()" class="mt-6 text-gray-500 font-bold underline" id="sh-cancel">Cancel</button>
-            </div>
-        </div>
-
-        <!-- EMAIL ENTRY MODAL -->
-        <div id="email-modal" class="fixed inset-0 bg-black/80 hidden z-[80] flex flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-200">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200" id="email-modal-content">
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Send via Email</h3>
-                <p class="text-sm text-gray-500 mb-4" id="em-sub">Enter your email to receive the photo.</p>
-                <div class="relative w-full mb-4">
-                    <input type="email" id="email-input" class="w-full px-4 py-3 pr-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="your@email.com">
-                    <span class="absolute right-3 top-3 text-gray-400 text-xl cursor-pointer" onclick="showKeyboard('email-input')">⌨️</span>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="closeEmailModal()" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl">Cancel</button>
-                    <button onclick="sendEmail()" class="flex-1 bg-blue-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">
-                        <span id="em-send-txt">Send ➔</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- QR CODE MODAL -->
+        <!-- -->
         <div id="qr-modal" class="fixed inset-0 bg-black/80 hidden z-[80] flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col items-center text-center" id="qr-modal-content">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Download</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Get Photo</h3>
                 <p class="text-sm text-gray-500 mb-6" id="qr-sub">Scan this code with your phone camera.</p>
                 <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6 w-56 h-56 flex items-center justify-center relative">
                     <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Generating...</div>
@@ -458,6 +425,7 @@
         </div>
     </div>
 
+    <!-- -->
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
@@ -481,7 +449,7 @@
             db = firebase.firestore();
             storage = firebase.storage();
             
-            // Authenticate anonymously so we can securely write to the "mail" collection
+            // Authenticate anonymously
             auth.signInAnonymously().catch((error) => {
                 console.error("Firebase Anonymous Auth failed:", error);
             });
@@ -628,12 +596,15 @@
             document.getElementById('btn-play-again').innerText = t.btn_play_again; document.getElementById('quit-title').innerText = t.quit_title; document.getElementById('quit-text').innerText = t.quit_text;
             document.getElementById('btn-quit-back').innerText = t.btn_quit_back; document.getElementById('ms-title').innerText = t.ms_title; document.getElementById('ms-text').innerText = t.ms_text;
             document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw; document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Share Photo" : "分享照片"; document.getElementById('btn-preview-next').innerText = t.continue;
-            document.getElementById('sh-title').innerText = currentLang === 'en' ? "Share Method" : "分享方式"; document.getElementById('sh-email').innerText = currentLang === 'en' ? "Email" : "電郵";
-            document.getElementById('sh-qr').innerText = currentLang === 'en' ? "QR Code" : "QR碼"; document.getElementById('sh-cancel').innerText = currentLang === 'en' ? "Cancel" : "取消";
-            document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Download" : "掃描下載"; document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
-            document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
-            document.getElementById('em-sub').innerText = currentLang === 'en' ? "Enter your email to receive the photo." : "請輸入電郵以接收照片。"; document.getElementById('em-send-txt').innerText = currentLang === 'en' ? "Send ➔" : "發送 ➔";
+            
+            // Share related translations
+            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Get QR Code" : "獲取 QR 碼"; 
+            document.getElementById('btn-preview-next').innerText = t.continue;
+            document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Get Photo" : "掃描獲取照片"; 
+            document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
+            document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; 
+            document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
+            document.getElementById('btn-viewer-dl').innerText = currentLang === 'en' ? "Save / Share ⬇️" : "儲存 / 分享 ⬇️";
         }
 
         // Virtual Keyboard Router
@@ -652,7 +623,6 @@
 
         applyTranslations(); // Init text
 
-        // --- STREAMING_CHUNK:Loading View and Helper Logic... ---
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const photoId = urlParams.get('photo');
@@ -663,6 +633,7 @@
                 } else {
                     document.getElementById('viewer-img').src = 'https://placehold.co/1080x1920/1e293b/ffffff?text=Demo+Photo+Unavailable';
                 }
+                
                 document.getElementById('viewer-img').onload = () => {
                     document.getElementById('viewer-loading').classList.add('hidden');
                     document.getElementById('viewer-img').classList.remove('hidden');
@@ -670,13 +641,34 @@
                 }
                 document.getElementById('viewer-img').onerror = () => { document.getElementById('viewer-loading').innerText = "Photo not found or expired."; }
                 
+                // Enhanced Download/Share Logic for Viewer
                 document.getElementById('btn-viewer-dl').onclick = async () => {
+                    const img = document.getElementById('viewer-img');
                     try {
-                        const response = await fetch(document.getElementById('viewer-img').src);
-                        const blob = await response.blob(); const url = window.URL.createObjectURL(blob);
+                        const response = await fetch(img.src);
+                        const blob = await response.blob();
+                        
+                        // Try Native Web Share API first
+                        if (navigator.canShare) {
+                            const file = new File([blob], `${photoId}.jpg`, { type: 'image/jpeg' });
+                            if (navigator.canShare({ files: [file] })) {
+                                await navigator.share({
+                                    title: 'My APSS Journey',
+                                    files: [file]
+                                });
+                                return; // Success sharing natively
+                            }
+                        }
+                        
+                        // Fallback to standard Anchor Tag download
+                        const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `${photoId}.jpg`;
                         document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
-                    } catch(e) { alert("Cannot download directly due to browser restrictions. Please long-press the image and select 'Save Image'."); }
+                        
+                    } catch(e) { 
+                        // If both fail (common on in-app browsers like Instagram/WeChat), prompt user to long-press
+                        showMessage(currentLang === 'en' ? "Please long-press the image and select 'Save Image' or 'Share'." : "請長按圖片並選擇「儲存圖片」或「分享」。", null, '📱');
+                    }
                 }
             }
         };
@@ -753,7 +745,6 @@
             showView('story');
         }
 
-        // --- STREAMING_CHUNK:Interactive Game Initialization... ---
         function startGame() {
             hideKeyboard(); const nameInput = document.getElementById('player-name').value.trim();
             if(nameInput) {
@@ -849,7 +840,6 @@
             ]);
         }
 
-        // --- STREAMING_CHUNK:Catcher Game Engine... ---
         let catcherState = { 
             stats: { str: 0, wis: 0, cha: 0, dis: 0, ins: 0, emp: 0, com: 0, act: 0, pro: 0 },
             timer: 20, timerInterval: null, active: false, items: [], lastSpawn: 0, config: null, animId: null, availableWords: []
@@ -1026,7 +1016,6 @@
             catcherState.animId = requestAnimationFrame(catcherLoop);
         }
 
-        // --- STREAMING_CHUNK:Evaluation Algorithms... ---
         function evaluateSWFit() {
             const s = catcherState.stats; resultRole = null; 
             
@@ -1132,7 +1121,6 @@
             renderResultPage(1, best, s, 'spse');
         }
 
-        // --- STREAMING_CHUNK:Post-Game Modal & Canvas Flow... ---
         function renderResultPage(step, best, stats, mode) {
             const modal = document.getElementById('msg-modal'); const content = document.getElementById('msg-modal-content');
             const titleEl = document.getElementById('msg-title'); const textEl = document.getElementById('msg-modal-text'); const btnEl = document.getElementById('msg-modal-btn');
@@ -1371,86 +1359,34 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Sharing and Ending Logic... ---
         document.getElementById('btn-share-options').onclick = () => {
-            const modal = document.getElementById('share-modal'); const content = document.getElementById('share-modal-content');
-            modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            openQRModal();
         };
         
-        function closeShareModal() {
-            const modal = document.getElementById('share-modal'); const content = document.getElementById('share-modal-content');
-            modal.classList.add('opacity-0'); content.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
-        }
-
         document.getElementById('btn-preview-next').onclick = () => {
             deletePhotoFromServer();
             if(currentCamMode === 'admission') showMajorSelect();
             else showEndScreen();
         };
 
-        function openEmailModal() {
-            closeShareModal();
-            setTimeout(() => {
-                const modal = document.getElementById('email-modal'); const content = document.getElementById('email-modal-content');
-                modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-            }, 250);
-        }
-
-        function closeEmailModal() {
-            hideKeyboard();
-            const modal = document.getElementById('email-modal'); const content = document.getElementById('email-modal-content');
-            modal.classList.add('opacity-0'); content.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
-        }
-
-        async function sendEmail() {
-            const emailInput = document.getElementById('email-input').value.trim();
-            if (!emailInput || !emailInput.includes('@')) { alert("Invalid email"); return; }
-            
-            const btnTxt = document.getElementById('em-send-txt'); btnTxt.innerText = "Sending...";
-            
-            let waitCount = 0;
-            while (!uploadedPhotoUrl && waitCount < 10) { await new Promise(r => setTimeout(r, 500)); waitCount++; }
-
-            const photoLink = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
-
-            if (isFirebaseConfigured) {
-                try {
-                    await db.collection(`artifacts/${APP_ID}/public/data/mail`).add({
-                        to: emailInput,
-                        message: {
-                            subject: "Your PolyU APSS Journey Photo!",
-                            html: `<p>Hello!</p><p>Thank you for exploring the PolyU APSS Journey. Here is your commemorative photo!</p><p><a href="${photoLink}">View & Download Photo</a></p>`
-                        }
-                    });
-                    btnTxt.innerText = "Sent! ✅"; setTimeout(() => { closeEmailModal(); btnTxt.innerText = "Send ➔"; }, 1500);
-                } catch(e) {
-                    console.error(e); btnTxt.innerText = "Failed ❌"; setTimeout(() => { btnTxt.innerText = "Send ➔"; }, 1500);
-                }
-            } else {
-                // Demo Mode
-                btnTxt.innerText = "Sent! (Demo) ✅"; 
-                setTimeout(() => { closeEmailModal(); btnTxt.innerText = "Send ➔"; }, 1500);
-            }
-        }
-
         function openQRModal() {
-            closeShareModal();
-            setTimeout(() => {
-                const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
-                const container = document.getElementById('qrcode-container'); const loading = document.getElementById('qr-loading');
-                
-                container.innerHTML = ''; loading.style.display = 'block'; modal.classList.remove('hidden');
-                setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-                
-                const checkUpload = setInterval(() => {
-                    if (uploadedPhotoUrl || currentPhotoId) {
-                        clearInterval(checkUpload); loading.style.display = 'none';
-                        const viewUrl = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
-                        new QRCode(container, { text: viewUrl, width: 160, height: 160 });
-                    }
-                }, 500);
-                setTimeout(() => clearInterval(checkUpload), 5000);
-            }, 250);
+            const modal = document.getElementById('qr-modal'); 
+            const content = document.getElementById('qr-modal-content');
+            const container = document.getElementById('qrcode-container'); 
+            const loading = document.getElementById('qr-loading');
+            
+            container.innerHTML = ''; loading.style.display = 'block'; 
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+            
+            const checkUpload = setInterval(() => {
+                if (uploadedPhotoUrl || currentPhotoId) {
+                    clearInterval(checkUpload); loading.style.display = 'none';
+                    const viewUrl = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
+                    new QRCode(container, { text: viewUrl, width: 160, height: 160 });
+                }
+            }, 500);
+            setTimeout(() => clearInterval(checkUpload), 5000);
         }
 
         function closeQRModal() {
