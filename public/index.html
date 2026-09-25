@@ -197,25 +197,18 @@
 
         <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
-            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-8">
+            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
                 <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
-                <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-8"></p>
-                
-                <!-- Hidden spans to preserve JS translation targets without breaking code -->
-                <span id="ms-btn-sw" class="hidden"></span>
-                <span id="ms-btn-spse" class="hidden"></span>
-
-                <div class="flex flex-row w-full gap-4 mb-2">
-                    <!-- SW Button (Left, Orange) -->
-                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl bg-present text-white font-bold py-6 shadow-[0_6px_0_#d67111,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#d67111,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2">
-                        <span class="text-xs opacity-90 mb-1">PolyU APSS</span>
-                        <span class="text-2xl">Social Work</span>
+                <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-6"></p>
+                <div class="flex flex-row w-full gap-4">
+                    <!-- SW Button (Left, Orange/Maroon Gradient) -->
+                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-lg bg-gradient-to-r from-[#3B0000] to-[#fc8d1e] text-white font-bold py-5 shadow-[0_6px_0_#8c2200,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#8c2200,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden">
+                        <span id="ms-btn-sw" class="text-[12px] sm:text-sm text-center leading-tight">Social Work (SW)</span>
                     </button>
                     
-                    <!-- SPSE Button (Right, Green) -->
-                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl bg-correct text-white font-bold py-6 shadow-[0_6px_0_#368a32,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#368a32,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2">
-                        <span class="text-xs opacity-90 mb-1">PolyU APSS</span>
-                        <span class="text-2xl">Social Policy and Social Entrepreneurship</span>
+                    <!-- SPSE Button (Right, Green/Maroon Gradient) -->
+                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-lg bg-gradient-to-r from-[#3B0000] to-[#012903] text-white font-bold py-5 shadow-[0_6px_0_#011502,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#011502,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden">
+                        <span id="ms-btn-spse" class="text-[11px] sm:text-xs text-center leading-tight px-1 break-words">Social Policy and Social Entrepreneurship (SPSE)</span>
                     </button>
                 </div>
             </div>
@@ -252,7 +245,7 @@
         <!-- CATCHER GAME (YEAR 2-3) -->
         <div id="view-catcher" class="view-panel h-full flex-col bg-white/95 backdrop-blur-sm relative">
             <div class="flex-shrink-0 p-4 border-b border-gray-200 flex justify-between items-center bg-white/90 z-30 relative">
-                <h3 class="font-bold text-gray-700" id="catcher-title">Years 2-3</h3>
+                <h3 class="font-bold text-gray-700 text-[15px] sm:text-base leading-tight truncate pr-2" id="catcher-title">Years 2-3</h3>
             </div>
             <div class="px-4 py-2 bg-yellow-50/90 flex-shrink-0 flex justify-between items-center border-b border-yellow-100 z-30 relative">
                 <span class="text-[13px] font-bold text-yellow-800 flex-1 pr-2 leading-tight" id="catcher-instruction">Catch items!</span>
@@ -314,7 +307,7 @@
             </div>
             
             <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
-                <button id="btn-share-options" onclick="openQRModal()" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
                     <span>📤</span> <span id="txt-share-opt">Share Photo</span>
                 </button>
                 <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
@@ -332,7 +325,7 @@
             </div>
             <div class="flex-shrink-0 pb-8 pt-4 w-full max-w-sm z-20">
                 <button id="btn-viewer-dl" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden mb-3">
-                    Download ⬇️
+                    Download / Share 📤
                 </button>
                 <button onclick="window.location.href=window.location.pathname" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">
                     Start Your Own Journey
@@ -425,13 +418,12 @@
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAs8IULYmHUGLQujX0Z6di3EZhi1mNxhB8",
-            authDomain: "polyu-apss-info.firebaseapp.com",
-            projectId: "polyu-apss-info",
-            storageBucket: "polyu-apss-info.firebasestorage.app",
-            messagingSenderId: "859117127098",
-            appId: "1:859117127098:web:8817028150ea4fe53d4983",
-            measurementId: "G-WMG89VNTBN"
+            apiKey: "AIzaSy_YOUR_API_KEY",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
         };
         
         const APP_ID = "apss_journey"; 
@@ -466,7 +458,7 @@
                 cam_admit: "Admission Photo Booth!", cam_grad: "Graduation Photo Booth!", prev_admit: "Looking Good!", prev_grad: "Congratulations!",
                 end_title: "Journey Complete!", end_sub: "You have experienced an amazing life as a PolyU APSS student.", btn_play_again: "Play Again",
                 quit_title: "Every Path is Meaningful", quit_text: "Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best!", btn_quit_back: "Back to Start",
-                ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy & Social Entrepreneurship",
+                ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy and Social Entrepreneurship (SPSE)",
                 inst_title: "How to Play", hook_title: "Challenge", msg_title: "Notice", target_r1: "Target: Level 3 (Eng/Chin)", hint_r1: "Stage 1 (Warm Up): Stop needle in the green zone to meet basic English/Chinese DSE requirements!",
                 target_r2: "Target Best 5: 24.7", hint_r2: "Stage 2 (Competitive): JS3250 is highly competitive. Aim for the 2025 average Best 5 score!",
                 swing_wait: "Waiting...", swing_win: "Great! 🎉", swing_fail: "Missed it... Try again!", swing_btn_next: "Next Round", swing_btn_res: "View Results",
@@ -496,10 +488,10 @@
                 },
                 jupasSuccess: { img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS Results", story: "YES! You achieved an excellent DSE score! You received an offer! Will you enter APSS?" },
                 sw: {
-                    title: "Years 2-3: Social Work", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
+                    title: "Years 2-4: Social Work", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "Social workers engage with people, understand situations, take action, and review whether support is helping.",
                     hook: "Can you build a solid social worker profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Meet minimum requirements to reveal your true Social Worker role!",
+                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Empathy, Insight, Communication, Action, Professionalism). Meet minimum requirements to reveal your potential Social Worker role!",
                     words: [
                         { t: "+1 Empathy", type: "good", stat: "emp" }, { t: "-1 Empathy", type: "bad", stat: "emp" },
                         { t: "+1 Insight", type: "good", stat: "ins" }, { t: "-1 Insight", type: "bad", stat: "ins" },
@@ -512,10 +504,10 @@
                     ]
                 },
                 spse: {
-                    title: "Years 2-3: Social Innovator", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
+                    title: "Years 2-4: Social Policy and Social Entrepreneurship", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "To build a successful social enterprise, you need the right mix of traits.",
                     hook: "Can you build a solid role profile? Let's test your stats!",
-                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your true Social Enterprise role!",
+                    instruction: "Expected Outcome: Survive 20s. Tap bubbles to build your stats (Strength, Wisdom, Charm, Discipline, Insight). Meet the minimum requirements to reveal your potential Social Enterprise role!",
                     words: [
                         { t: "+1 Strength", type: "good", stat: "str" }, { t: "-1 Strength", type: "bad", stat: "str" },
                         { t: "+1 Wisdom", type: "good", stat: "wis" }, { t: "-1 Wisdom", type: "bad", stat: "wis" },
@@ -537,10 +529,10 @@
                 },
                 jupasSuccess: { img: "image/story_02_jupas_success.png", fallbackColor: "4bb747", title: "JUPAS 結果", story: "太棒了！你取得了優異的 DSE 成績！你收到了錄取通知！你要進入 APSS 嗎？" },
                 sw: {
-                    title: "第二至三年：社會工作", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
+                    title: "第二至四年：社會工作", mode: 'sw_stats', img: "image/story_05_sw_year2.png", fallbackColor: "3b82f6",
                     story: "社工與人接觸，了解情況，採取行動，並檢討支援是否有效。",
                     hook: "你能建立紮實的社工檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。達到最低要求，揭曉你的最終社工角色！",
+                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性（同理心、洞察力、溝通、行動、專業精神）。達到最低要求，揭曉你可能的社工角色！",
                     words: [
                         { t: "+1 同理心", type: "good", stat: "emp" }, { t: "-1 同理心", type: "bad", stat: "emp" },
                         { t: "+1 洞察力", type: "good", stat: "ins" }, { t: "-1 洞察力", type: "bad", stat: "ins" },
@@ -553,10 +545,10 @@
                     ]
                 },
                 spse: {
-                    title: "第二至三年：社會創新者", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
+                    title: "第二至四年：社會政策及社會創業", mode: 'spse_stats', img: "image/story_05_spse_year2.png", fallbackColor: "a855f7",
                     story: "要建立成功的社會企業，你需要適當的特質組合。",
                     hook: "你能建立紮實的角色檔案嗎？讓我們測試你的屬性！",
-                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你真正的社會企業角色！",
+                    instruction: "預期結果：生存 20 秒。點擊氣泡以建立你的屬性 (力量、智慧、魅力、紀律、洞察力)。達到最低要求，揭曉你潛在的社會企業角色！",
                     words: [
                         { t: "+1 力量", type: "good", stat: "str" }, { t: "-1 力量", type: "bad", stat: "str" },
                         { t: "+1 智慧", type: "good", stat: "wis" }, { t: "-1 智慧", type: "bad", stat: "wis" },
@@ -592,7 +584,7 @@
             document.getElementById('btn-play-again').innerText = t.btn_play_again; document.getElementById('quit-title').innerText = t.quit_title; document.getElementById('quit-text').innerText = t.quit_text;
             document.getElementById('btn-quit-back').innerText = t.btn_quit_back; document.getElementById('ms-title').innerText = t.ms_title; document.getElementById('ms-text').innerText = t.ms_text;
             document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw; document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Share Photo" : "分享照片"; document.getElementById('btn-preview-next').innerText = t.continue;
+            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Get QR Code" : "獲取 QR 碼"; document.getElementById('btn-preview-next').innerText = t.continue;
             document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Download" : "掃描下載"; document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
             document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
         }
@@ -1008,8 +1000,8 @@
                   str_en: 'Facilitating participation and organising collective action.', sup_en: 'Operations & Finance', str_zh: '促進參與並組織集體行動。', sup_zh: '營運與財務' },
                 { id: 'sw_pi', name_en: 'Practice Improver', name_zh: '實務改進者', req: {emp:4, ins:7, com:3, act:4, pro:7}, sig: ['ins', 'pro', 'emp'],
                   str_en: 'Evaluating interventions and using research to improve outcomes.', sup_en: 'Action & Relationships', str_zh: '評估介入措施並運用研究來改善成果。', sup_zh: '行動與人際關係' },
-                { id: 'gen', name_en: 'Developing Social Worker', name_zh: '發展中社會工作者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
-                  str_en: 'You have started building useful strengths.', sup_en: 'Your current profile does not yet meet the basic requirements of one clear social-work role.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案尚未達到一個明確社工角色的基本要求。' }
+                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中的通才', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
+                  str_en: 'You have started building useful strengths.', sup_en: 'Your current profile still holds limitless possibilities; continue to enrich yourself and gradually discover the social work role that suits you best.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案仍具無限的可能，繼續充實自己，慢慢找到自己喜歡的社工角色。' }
             ];
 
             let qualified = [];
@@ -1030,11 +1022,11 @@
             if (qualified.length === 0) {
                 best = roles.find(r => r.id === 'gen');
                 const highestStat = Object.keys(s).reduce((a, b) => s[a] > s[b] ? a : b);
-                if (highestStat === 'emp') { best.sup_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.sup_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
-                if (highestStat === 'ins') { best.sup_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.sup_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
-                if (highestStat === 'com') { best.sup_en = "You can build relationships. Develop Professionalism and Insight to use this strength safely and effectively."; best.sup_zh = "你能夠建立關係。發展專業精神和洞察力，以安全有效地運用這項優勢。"; }
-                if (highestStat === 'act') { best.sup_en = "You are ready to help and respond. Strengthen Insight and Professionalism so your actions are well planned and ethical."; best.sup_zh = "你準備好提供幫助和回應。加強洞察力和專業精神，使你的行動有良好計劃並符合道德。"; }
-                if (highestStat === 'pro') { best.sup_en = "You show responsibility and reliability. Build Empathy and Communication to connect your standards with people's lived experiences."; best.sup_zh = "你表現出責任感和可靠性。建立同理心和溝通能力，將你的標準與人們的生活經驗連結起來。"; }
+                if (highestStat === 'emp') { best.desc_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.desc_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
+                if (highestStat === 'ins') { best.desc_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.desc_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
+                if (highestStat === 'com') { best.desc_en = "You can build relationships. Develop Professionalism and Insight to use this strength safely and effectively."; best.desc_zh = "你能夠建立關係。發展專業精神和洞察力，以安全有效地運用這項優勢。"; }
+                if (highestStat === 'act') { best.desc_en = "You are ready to help and respond. Strengthen Insight and Professionalism so your actions are well planned and ethical."; best.desc_zh = "你準備好提供幫助和回應。加強洞察力和專業精神，使你的行動有良好計劃並符合道德。"; }
+                if (highestStat === 'pro') { best.desc_en = "You show responsibility and reliability. Build Empathy and Communication to connect your standards with people's lived experiences."; best.desc_zh = "你表現出責任感和可靠性。建立同理心和溝通能力，將你的標準與人們的生活經驗連結起來。"; }
             } else {
                 qualified.sort((a, b) => {
                     if(b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
@@ -1070,9 +1062,9 @@
                 { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:2, cha:0, dis:1, ins:3}, sig: 'ins',
                   str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships', str_zh: '分析、證據、評估', sup_zh: '行動、建立關係',
                   desc_en: 'As an Impact Strategist, you generate innovative solutions backed by deep data analysis and continuous impact evaluation.', desc_zh: '作為影響力策略師，你透過深入的數據分析和持續的影響力評估，制定創新的解決方案。' },
-                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
+                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中的通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
                   str_en: 'Adaptable, Broad Interests', sup_en: 'Specialized Focus', str_zh: '適應力強、興趣廣泛', sup_zh: '專業專注',
-                  desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你已掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
+                  desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
             ];
 
             let qualified = [];
@@ -1112,7 +1104,7 @@
 
             if (step === 1) {
                 document.getElementById('msg-icon').style.display = 'none';
-                titleEl.innerText = lang === 'en' ? (mode==='spse'?'SPSE Ability Profile':'SW Ability Profile') : (mode==='spse'?'SPSE 能力檔案':'SW 能力檔案');
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'SPSE Ability Profile':'SW Ability Profile') : (mode==='spse'?'社創家 能力檔案':'社會工作者能力檔案');
                 
                 const maxStat = Math.max(5, ...Object.values(stats));
                 const getPt = (val, angle) => {
@@ -1163,8 +1155,8 @@
                 const bgClass = mode === 'spse' ? 'bg-purple-50 border-purple-100' : 'bg-blue-50 border-blue-100';
                 
                 let descText = "";
-                if(best.id !== 'gen') {
-                    const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
+                const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
+                if(descStr) {
                     descText = `<hr class="border-${mode==='spse'?'purple':'blue'}-200 mb-2 mt-2"><p class="italic text-gray-700">"${descStr}"</p>`;
                 }
 
@@ -1179,7 +1171,7 @@
                 
             } else if (step === 3) {
                 document.getElementById('msg-icon').style.display = 'none';
-                titleEl.innerText = lang === 'en' ? (mode==='spse'?'Life in SPSE':'Life in SW') : (mode==='spse'?'SPSE 多彩生活':'SW 多彩生活');
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'Life in SPSE':'Life in SW') : (mode==='spse'?'社會政策及社會創業同學的多彩生活':'社會工作同學的多彩生活');
                 
                 let img1 = '', img2 = '', eventTextEn = '', eventTextZh = '';
                 if (mode === 'spse') {
@@ -1188,8 +1180,8 @@
                     eventTextZh = '✨ <b>拓展視野：</b> 參加全球交流計劃、應對真實的商業案例比賽，並與頂尖社會創新者建立網絡！';
                 } else {
                     img1 = 'image/events/story_05_sw_year2.png'; img2 = 'image/events/story_06_sw_year4.png';
-                    eventTextEn = '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients.';
-                    eventTextZh = '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人。';
+                    eventTextEn = '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients. Well prepared to enter the workforce.';
+                    eventTextZh = '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人，為進入職場做好準備。';
                 }
 
                 textEl.innerHTML = `
