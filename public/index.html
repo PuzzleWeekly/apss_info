@@ -197,25 +197,25 @@
 
         <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
-            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
+            <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-8">
                 <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
-                <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-6"></p>
-                <div class="flex flex-row w-full gap-4 h-48">
-                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
-                        <img src="image/major_sw_bg.png" onerror="this.src='https://placehold.co/400x800/3b82f6/ffffff?text=SW'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
-                        <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
-                            <span class="text-3xl mb-2">🤝</span>
-                            <span id="ms-btn-sw" class="font-bold text-sm text-center leading-tight">Social Work (SW)</span>
-                        </div>
+                <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-8"></p>
+                
+                <!-- Hidden spans to preserve JS translation targets without breaking code -->
+                <span id="ms-btn-sw" class="hidden"></span>
+                <span id="ms-btn-spse" class="hidden"></span>
+
+                <div class="flex flex-row w-full gap-4 mb-2">
+                    <!-- SW Button (Left, Orange) -->
+                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-2xl bg-present text-white font-bold py-6 shadow-[0_6px_0_#d67111,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#d67111,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2">
+                        <span class="text-xs opacity-90 mb-1">PolyU APSS</span>
+                        <span class="text-2xl">Social Work</span>
                     </button>
-                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl overflow-hidden shadow-md active:scale-95 transition-transform group">
-                        <img src="image/major_spse_bg.png" onerror="this.src='https://placehold.co/400x800/a855f7/ffffff?text=SPSE'" class="absolute inset-0 w-full h-full object-cover z-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
-                        <div class="absolute inset-0 z-20 flex flex-col items-center justify-end p-4 text-white">
-                            <span class="text-3xl mb-2">💡</span>
-                            <span id="ms-btn-spse" class="font-bold text-sm text-center leading-tight">SPSE</span>
-                        </div>
+                    
+                    <!-- SPSE Button (Right, Green) -->
+                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-2xl bg-correct text-white font-bold py-6 shadow-[0_6px_0_#368a32,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#368a32,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2">
+                        <span class="text-xs opacity-90 mb-1">PolyU APSS</span>
+                        <span class="text-2xl">Social Policy and Social Entrepreneurship</span>
                     </button>
                 </div>
             </div>
@@ -306,14 +306,16 @@
         </div>
 
         <!-- PHOTO PREVIEW & SHARE VIEW -->
-        <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50 overflow-y-auto items-center justify-center py-8 px-4">
-            <h2 id="preview-title" class="text-white text-center font-bold text-xl mb-4 z-20">Looking Good!</h2>
+        <div id="view-photo-preview" class="view-panel h-full flex-col bg-gray-900 relative z-50">
+            <h2 id="preview-title" class="text-white text-center py-4 font-bold absolute top-0 w-full z-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none">Looking Good!</h2>
             
-            <img id="preview-img" src="" class="max-h-[55dvh] max-w-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20 mb-6">
+            <div class="flex-grow relative flex items-center justify-center p-4">
+                <img id="preview-img" src="" class="max-w-full max-h-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20">
+            </div>
             
-            <div class="w-full max-w-[300px] flex flex-col gap-3 z-20">
-                <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                    <span>📱</span> <span id="txt-share-opt">Get QR Code</span>
+            <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
+                <button id="btn-share-options" onclick="openQRModal()" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
+                    <span>📤</span> <span id="txt-share-opt">Share Photo</span>
                 </button>
                 <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                     Continue ➔
@@ -330,7 +332,7 @@
             </div>
             <div class="flex-shrink-0 pb-8 pt-4 w-full max-w-sm z-20">
                 <button id="btn-viewer-dl" class="w-full bg-theme text-white font-bold py-4 rounded-xl shadow-md active:scale-95 transition-transform text-lg hidden mb-3">
-                    Save / Share ⬇️
+                    Download ⬇️
                 </button>
                 <button onclick="window.location.href=window.location.pathname" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">
                     Start Your Own Journey
@@ -412,7 +414,7 @@
                 <h3 class="text-2xl font-bold text-gray-800 mb-2" id="qr-title">Scan to Download</h3>
                 <p class="text-sm text-gray-500 mb-6" id="qr-sub">Scan this code with your phone camera.</p>
                 <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6 w-56 h-56 flex items-center justify-center relative">
-                    <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Generating...</div>
+                    <div id="qr-loading" class="absolute text-gray-400 font-bold animate-pulse text-sm">Uploading photo...</div>
                     <div id="qrcode-container" class="z-10"></div>
                 </div>
                 <button onclick="closeQRModal()" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl active:scale-95 transition-transform" id="qr-close">Done</button>
@@ -428,7 +430,8 @@
             projectId: "polyu-apss-info",
             storageBucket: "polyu-apss-info.firebasestorage.app",
             messagingSenderId: "859117127098",
-            appId: "1:859117127098:web:8817028150ea4fe53d4983"
+            appId: "1:859117127098:web:8817028150ea4fe53d4983",
+            measurementId: "G-WMG89VNTBN"
         };
         
         const APP_ID = "apss_journey"; 
@@ -463,7 +466,7 @@
                 cam_admit: "Admission Photo Booth!", cam_grad: "Graduation Photo Booth!", prev_admit: "Looking Good!", prev_grad: "Congratulations!",
                 end_title: "Journey Complete!", end_sub: "You have experienced an amazing life as a PolyU APSS student.", btn_play_again: "Play Again",
                 quit_title: "Every Path is Meaningful", quit_text: "Although you decided not to enter APSS, the world is vast and full of opportunities. We wish you the best!", btn_quit_back: "Back to Start",
-                ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy & SE (SPSE)",
+                ms_title: "Choose Your Major", ms_text: "You have completed your common core! Now, choose your specialization for the rest of your APSS journey.", ms_btn_sw: "Social Work (SW)", ms_btn_spse: "Social Policy & Social Entrepreneurship",
                 inst_title: "How to Play", hook_title: "Challenge", msg_title: "Notice", target_r1: "Target: Level 3 (Eng/Chin)", hint_r1: "Stage 1 (Warm Up): Stop needle in the green zone to meet basic English/Chinese DSE requirements!",
                 target_r2: "Target Best 5: 24.7", hint_r2: "Stage 2 (Competitive): JS3250 is highly competitive. Aim for the 2025 average Best 5 score!",
                 swing_wait: "Waiting...", swing_win: "Great! 🎉", swing_fail: "Missed it... Try again!", swing_btn_next: "Next Round", swing_btn_res: "View Results",
@@ -589,7 +592,7 @@
             document.getElementById('btn-play-again').innerText = t.btn_play_again; document.getElementById('quit-title').innerText = t.quit_title; document.getElementById('quit-text').innerText = t.quit_text;
             document.getElementById('btn-quit-back').innerText = t.btn_quit_back; document.getElementById('ms-title').innerText = t.ms_title; document.getElementById('ms-text').innerText = t.ms_text;
             document.getElementById('ms-btn-sw').innerText = t.ms_btn_sw; document.getElementById('ms-btn-spse').innerText = t.ms_btn_spse;
-            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Get QR Code" : "獲取 QR 碼"; document.getElementById('btn-preview-next').innerText = t.continue;
+            document.getElementById('txt-share-opt').innerText = currentLang === 'en' ? "Share Photo" : "分享照片"; document.getElementById('btn-preview-next').innerText = t.continue;
             document.getElementById('qr-title').innerText = currentLang === 'en' ? "Scan to Download" : "掃描下載"; document.getElementById('qr-sub').innerText = currentLang === 'en' ? "Scan this code with your phone camera." : "使用手機相機掃描此代碼。";
             document.getElementById('qr-close').innerText = currentLang === 'en' ? "Done" : "完成"; document.getElementById('qr-loading').innerText = currentLang === 'en' ? "Generating..." : "生成中...";
         }
@@ -628,7 +631,6 @@
                 }
                 document.getElementById('viewer-img').onerror = () => { document.getElementById('viewer-loading').innerText = "Photo not found or expired."; }
                 
-                // Enhanced Download/Share Logic using native sharing
                 document.getElementById('btn-viewer-dl').onclick = async () => {
                     try {
                         if (navigator.share) {
@@ -639,7 +641,7 @@
                         } else {
                             throw new Error("Share not supported");
                         }
-                    } catch (err) {
+                    } catch(e) { 
                         showMessage(currentLang === 'en' ? "Please long-press the image and select 'Save Image' or 'Share'." : "請長按圖片並選擇「儲存圖片」或「分享」。", null, '📱');
                     }
                 }
@@ -1337,8 +1339,9 @@
         }
 
         // --- STREAMING_CHUNK:Sharing and Ending Logic... ---
-        
-        document.getElementById('btn-share-options').onclick = openQRModal;
+        document.getElementById('btn-share-options').onclick = () => {
+            openQRModal();
+        };
 
         document.getElementById('btn-preview-next').onclick = () => {
             deletePhotoFromServer();
@@ -1347,20 +1350,22 @@
         };
 
         function openQRModal() {
-            const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
-            const container = document.getElementById('qrcode-container'); const loading = document.getElementById('qr-loading');
-            
-            container.innerHTML = ''; loading.style.display = 'block'; modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
-            
-            const checkUpload = setInterval(() => {
-                if (uploadedPhotoUrl || currentPhotoId) {
-                    clearInterval(checkUpload); loading.style.display = 'none';
-                    const viewUrl = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
-                    new QRCode(container, { text: viewUrl, width: 160, height: 160 });
-                }
-            }, 500);
-            setTimeout(() => clearInterval(checkUpload), 5000);
+            setTimeout(() => {
+                const modal = document.getElementById('qr-modal'); const content = document.getElementById('qr-modal-content');
+                const container = document.getElementById('qrcode-container'); const loading = document.getElementById('qr-loading');
+                
+                container.innerHTML = ''; loading.style.display = 'block'; modal.classList.remove('hidden');
+                setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+                
+                const checkUpload = setInterval(() => {
+                    if (uploadedPhotoUrl || currentPhotoId) {
+                        clearInterval(checkUpload); loading.style.display = 'none';
+                        const viewUrl = `${window.location.origin}${window.location.pathname}?photo=${currentPhotoId}`;
+                        new QRCode(container, { text: viewUrl, width: 160, height: 160 });
+                    }
+                }, 500);
+                setTimeout(() => clearInterval(checkUpload), 5000);
+            }, 250);
         }
 
         function closeQRModal() {
