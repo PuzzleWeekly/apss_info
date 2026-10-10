@@ -198,17 +198,21 @@
         <!-- MAJOR SELECT VIEW -->
         <div id="view-major-select" class="view-panel flex-col items-center justify-center p-4 bg-transparent z-40">
             <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col overflow-hidden shadow-2xl p-6">
-                <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center">Choose Your Major</h2>
+                <h2 id="ms-title" class="text-2xl font-bold mb-4 text-theme text-center truncate">Choose Your Major</h2>
                 <p id="ms-text" class="text-[15px] text-gray-700 leading-relaxed font-medium text-center mb-6"></p>
                 <div class="flex flex-row w-full gap-4">
                     <!-- SW Button (Left, Orange/Maroon Gradient) -->
-                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-lg bg-gradient-to-r from-[#3B0000] to-[#fc8d1e] text-white font-bold py-5 shadow-[0_6px_0_#8c2200,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#8c2200,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden">
-                        <span id="ms-btn-sw" class="text-[12px] sm:text-sm text-center leading-tight">Social Work (SW)</span>
+                    <button onclick="startMajor('sw')" class="flex-1 relative rounded-[32px] bg-gradient-to-r from-[#3B0000] to-[#fc8d1e] text-white font-bold py-5 shadow-[0_6px_0_#8c2200,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#8c2200,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden h-32">
+                        <span class="text-[10px] opacity-90 mb-1 whitespace-nowrap">PolyU APSS</span>
+                        <span class="text-[13px] text-center leading-tight">Social Work (SW)</span>
+                        <span id="ms-btn-sw" class="hidden">Social Work (SW)</span> <!-- Hidden translation hook -->
                     </button>
                     
                     <!-- SPSE Button (Right, Green/Maroon Gradient) -->
-                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-lg bg-gradient-to-r from-[#3B0000] to-[#012903] text-white font-bold py-5 shadow-[0_6px_0_#011502,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#011502,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden">
-                        <span id="ms-btn-spse" class="text-[11px] sm:text-xs text-center leading-tight px-1 break-words">Social Policy and Social Entrepreneurship (SPSE)</span>
+                    <button onclick="startMajor('spse')" class="flex-1 relative rounded-[32px] bg-gradient-to-r from-[#3B0000] to-[#012903] text-white font-bold py-5 shadow-[0_6px_0_#011502,0_10px_15px_rgba(0,0,0,0.2)] active:shadow-[0_0px_0_#011502,0_0px_0_rgba(0,0,0,0)] active:translate-y-[6px] transition-all flex flex-col items-center justify-center tracking-wide px-2 overflow-hidden h-32">
+                        <span class="text-[10px] opacity-90 mb-1 whitespace-nowrap">PolyU APSS</span>
+                        <span class="text-[11px] text-center leading-tight">Social Policy and Social Entrepreneurship (SPSE)</span>
+                        <span id="ms-btn-spse" class="hidden">Social Policy and Social Entrepreneurship (SPSE)</span> <!-- Hidden translation hook -->
                     </button>
                 </div>
             </div>
@@ -306,9 +310,9 @@
                 <img id="preview-img" src="" class="max-w-full max-h-full aspect-[9/16] object-contain rounded-xl shadow-2xl border-4 border-white/20">
             </div>
             
-            <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative">
+            <div class="flex-shrink-0 bg-black pb-8 pt-4 px-6 flex flex-col gap-3 z-20 relative items-center">
                 <button id="btn-share-options" class="w-full bg-theme text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg flex items-center justify-center gap-2">
-                    <span>📤</span> <span id="txt-share-opt">Share Photo</span>
+                    <span>📤</span> <span id="txt-share-opt">Get QR Code</span>
                 </button>
                 <button id="btn-preview-next" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform text-lg">
                     Continue ➔
@@ -418,12 +422,12 @@
     <script>
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
-            apiKey: "AIzaSy_YOUR_API_KEY",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyAs8IULYmHUGLQujX0Z6di3EZhi1mNxhB8",
+            authDomain: "polyu-apss-info.firebaseapp.com",
+            projectId: "polyu-apss-info",
+            storageBucket: "polyu-apss-info.firebasestorage.app",
+            messagingSenderId: "859117127098",
+            appId: "1:859117127098:web:8817028150ea4fe53d4983"
         };
         
         const APP_ID = "apss_journey"; 
@@ -1000,8 +1004,8 @@
                   str_en: 'Facilitating participation and organising collective action.', sup_en: 'Operations & Finance', str_zh: '促進參與並組織集體行動。', sup_zh: '營運與財務' },
                 { id: 'sw_pi', name_en: 'Practice Improver', name_zh: '實務改進者', req: {emp:4, ins:7, com:3, act:4, pro:7}, sig: ['ins', 'pro', 'emp'],
                   str_en: 'Evaluating interventions and using research to improve outcomes.', sup_en: 'Action & Relationships', str_zh: '評估介入措施並運用研究來改善成果。', sup_zh: '行動與人際關係' },
-                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中的通才', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
-                  str_en: 'You have started building useful strengths.', sup_en: 'Your current profile still holds limitless possibilities; continue to enrich yourself and gradually discover the social work role that suits you best.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案仍具無限的可能，繼續充實自己，慢慢找到自己喜歡的社工角色。' }
+                { id: 'gen', name_en: 'Developing Social Worker', name_zh: '發展中社會工作者', req: {emp:0, ins:0, com:0, act:0, pro:0}, sig: [],
+                  str_en: 'You have started building useful strengths.', sup_en: 'Your current profile does not yet meet the basic requirements of one clear social-work role.', str_zh: '你已開始建立有用的優勢。', sup_zh: '你目前的檔案尚未達到一個明確社工角色的基本要求。' }
             ];
 
             let qualified = [];
@@ -1022,11 +1026,11 @@
             if (qualified.length === 0) {
                 best = roles.find(r => r.id === 'gen');
                 const highestStat = Object.keys(s).reduce((a, b) => s[a] > s[b] ? a : b);
-                if (highestStat === 'emp') { best.desc_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.desc_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
-                if (highestStat === 'ins') { best.desc_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.desc_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
-                if (highestStat === 'com') { best.desc_en = "You can build relationships. Develop Professionalism and Insight to use this strength safely and effectively."; best.desc_zh = "你能夠建立關係。發展專業精神和洞察力，以安全有效地運用這項優勢。"; }
-                if (highestStat === 'act') { best.desc_en = "You are ready to help and respond. Strengthen Insight and Professionalism so your actions are well planned and ethical."; best.desc_zh = "你準備好提供幫助和回應。加強洞察力和專業精神，使你的行動有良好計劃並符合道德。"; }
-                if (highestStat === 'pro') { best.desc_en = "You show responsibility and reliability. Build Empathy and Communication to connect your standards with people's lived experiences."; best.desc_zh = "你表現出責任感和可靠性。建立同理心和溝通能力，將你的標準與人們的生活經驗連結起來。"; }
+                if (highestStat === 'emp') { best.sup_en = "You show strong person-centred potential. Build your Insight and Action through case analysis."; best.sup_zh = "你展現了以人為本的強大潛力。透過個案分析建立你的洞察力和行動力。"; }
+                if (highestStat === 'ins') { best.sup_en = "You are good at understanding situations. Practise Communication and Action so your analysis becomes useful support."; best.sup_zh = "你擅長理解情況。練習溝通和行動，使你的分析成為有用的支援。"; }
+                if (highestStat === 'com') { best.sup_en = "You can build relationships. Develop Professionalism and Insight to use this strength safely and effectively."; best.sup_zh = "你能夠建立關係。發展專業精神和洞察力，以安全有效地運用這項優勢。"; }
+                if (highestStat === 'act') { best.sup_en = "You are ready to help and respond. Strengthen Insight and Professionalism so your actions are well planned and ethical."; best.sup_zh = "你準備好提供幫助和回應。加強洞察力和專業精神，使你的行動有良好計劃並符合道德。"; }
+                if (highestStat === 'pro') { best.sup_en = "You show responsibility and reliability. Build Empathy and Communication to connect your standards with people's lived experiences."; best.sup_zh = "你表現出責任感和可靠性。建立同理心和溝通能力，將你的標準與人們的生活經驗連結起來。"; }
             } else {
                 qualified.sort((a, b) => {
                     if(b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
@@ -1062,9 +1066,9 @@
                 { id: 'is', name_en: 'Impact Strategist', name_zh: '影響力策略師', req: {str:0, wis:2, cha:0, dis:1, ins:3}, sig: 'ins',
                   str_en: 'Analysis, Evidence, Evaluation', sup_en: 'Action, Relationships', str_zh: '分析、證據、評估', sup_zh: '行動、建立關係',
                   desc_en: 'As an Impact Strategist, you generate innovative solutions backed by deep data analysis and continuous impact evaluation.', desc_zh: '作為影響力策略師，你透過深入的數據分析和持續的影響力評估，制定創新的解決方案。' },
-                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中的通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
+                { id: 'gen', name_en: 'Generalist in Progress', name_zh: '發展中通才', req: {str:0, wis:0, cha:0, dis:0, ins:0}, sig: '',
                   str_en: 'Adaptable, Broad Interests', sup_en: 'Specialized Focus', str_zh: '適應力強、興趣廣泛', sup_zh: '專業專注',
-                  desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
+                  desc_en: 'You have gathered a variety of skills! Keep exploring different aspects of social innovation to find your perfect niche.', desc_zh: '你已掌握了各種技能！繼續探索社會創新的不同方面，找到你最完美的定位。'}
             ];
 
             let qualified = [];
@@ -1104,7 +1108,7 @@
 
             if (step === 1) {
                 document.getElementById('msg-icon').style.display = 'none';
-                titleEl.innerText = lang === 'en' ? (mode==='spse'?'SPSE Ability Profile':'SW Ability Profile') : (mode==='spse'?'社創家 能力檔案':'社會工作者能力檔案');
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'SPSE Ability Profile':'SW Ability Profile') : (mode==='spse'?'SPSE 能力檔案':'SW 能力檔案');
                 
                 const maxStat = Math.max(5, ...Object.values(stats));
                 const getPt = (val, angle) => {
@@ -1155,8 +1159,8 @@
                 const bgClass = mode === 'spse' ? 'bg-purple-50 border-purple-100' : 'bg-blue-50 border-blue-100';
                 
                 let descText = "";
-                const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
-                if(descStr) {
+                if(best.id !== 'gen') {
+                    const descStr = lang === 'en' ? (best.desc_en || best.str_en) : (best.desc_zh || best.str_zh);
                     descText = `<hr class="border-${mode==='spse'?'purple':'blue'}-200 mb-2 mt-2"><p class="italic text-gray-700">"${descStr}"</p>`;
                 }
 
@@ -1171,7 +1175,7 @@
                 
             } else if (step === 3) {
                 document.getElementById('msg-icon').style.display = 'none';
-                titleEl.innerText = lang === 'en' ? (mode==='spse'?'Life in SPSE':'Life in SW') : (mode==='spse'?'社會政策及社會創業同學的多彩生活':'社會工作同學的多彩生活');
+                titleEl.innerText = lang === 'en' ? (mode==='spse'?'Life in SPSE':'Life in SW') : (mode==='spse'?'SPSE 多彩生活':'SW 多彩生活');
                 
                 let img1 = '', img2 = '', eventTextEn = '', eventTextZh = '';
                 if (mode === 'spse') {
@@ -1180,8 +1184,8 @@
                     eventTextZh = '✨ <b>拓展視野：</b> 參加全球交流計劃、應對真實的商業案例比賽，並與頂尖社會創新者建立網絡！';
                 } else {
                     img1 = 'image/events/story_05_sw_year2.png'; img2 = 'image/events/story_06_sw_year4.png';
-                    eventTextEn = '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients. Well prepared to enter the workforce.';
-                    eventTextZh = '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人，為進入職場做好準備。';
+                    eventTextEn = '✨ <b>Direct Impact:</b> Engage in intensive fieldwork placements (900 hours!), directly supporting communities, youths, or medical patients.';
+                    eventTextZh = '✨ <b>直接影響：</b> 參與密集的實習體驗（900小時！），直接支援社區、青年或醫療病人。';
                 }
 
                 textEl.innerHTML = `
@@ -1315,11 +1319,19 @@
                 currentPhotoId = `photo_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
                 
                 if (isFirebaseConfigured) {
-                    const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.jpg`);
-                    try {
-                        await storageRef.put(capturedPhotoBlob, { contentType: 'image/jpeg' });
-                        uploadedPhotoUrl = await storageRef.getDownloadURL();
-                    } catch(e) { console.error("Firebase upload failed", e); }
+                    // **CRITICAL FIX**: Make sure we have anonymous authentication before trying to upload!
+                    auth.onAuthStateChanged(async (user) => {
+                        if (user) {
+                            const storageRef = storage.ref(`artifacts/${APP_ID}/public/data/photos/${currentPhotoId}.jpg`);
+                            try {
+                                await storageRef.put(capturedPhotoBlob, { contentType: 'image/jpeg' });
+                                uploadedPhotoUrl = await storageRef.getDownloadURL();
+                            } catch(e) { console.error("Firebase upload failed", e); }
+                        } else {
+                            console.error("User is not authenticated. Upload blocked by security rules.");
+                            uploadedPhotoUrl = null;
+                        }
+                    });
                 } else {
                     uploadedPhotoUrl = "demo_mode"; // Mock successful upload for testing
                 }
